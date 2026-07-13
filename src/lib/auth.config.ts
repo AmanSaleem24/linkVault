@@ -1,4 +1,5 @@
 import type { NextAuthConfig } from 'next-auth'
+import Google from 'next-auth/providers/google'
 
 export const authConfig = {
   pages: {
@@ -11,5 +12,6 @@ export const authConfig = {
       return true
     },
   },
-  providers: [], // Populated in auth.ts
+  providers: [Google], // Google is Edge-compatible
 } satisfies NextAuthConfig
+
