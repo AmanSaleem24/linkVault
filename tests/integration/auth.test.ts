@@ -144,7 +144,7 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
       where: { email: testEmail },
     })
     expect(user).toBeDefined()
-    const valid = await bcrypt.compare('NewPassword2', user!.passwordHash)
+    const valid = await bcrypt.compare('NewPassword2', user!.passwordHash!)
     expect(valid).toBe(true)
   })
 })

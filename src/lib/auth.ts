@@ -6,6 +6,12 @@ import { prisma } from '@/lib/prisma'
 import { loginSchema } from '@/lib/validators'
 import { authConfig } from './auth.config'
 
+import { CredentialsSignin } from 'next-auth'
+
+class OAuthAccountNotLinkedError extends CredentialsSignin {
+  code = 'OAUTH_ACCOUNT_NO_PASSWORD'
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),
@@ -29,7 +35,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // User signed up with Google and has no password
         if (!user.passwordHash) {
-          throw new Error('OAUTH_ACCOUNT_NO_PASSWORD')
+          throw new OAuthAccountNotLinkedError()
         }
 
         const valid = await bcrypt.compare(parsed.data.password, user.passwordHash)

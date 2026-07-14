@@ -12,6 +12,10 @@ export const authConfig = {
       return true
     },
   },
-  providers: [Google], // Google is Edge-compatible
+  providers: [
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
+  ],
 } satisfies NextAuthConfig
 

@@ -22,6 +22,9 @@ export async function signUpAction(formData: unknown) {
     })
 
     if (existingUser) {
+      if (!existingUser.passwordHash) {
+        return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }
+      }
       return { success: false, error: 'Email already registered' }
     }
 
@@ -61,7 +64,7 @@ export async function signUpAction(formData: unknown) {
     return { success: true }
   } catch (error) {
     console.error('Signup error:', error)
-    return { success: false, error: 'Something went wrong. Please try again.' }
+    return { success: false, error: `Error: ${error instanceof Error ? error.message : String(error)}` }
   }
 }
 
@@ -116,13 +119,14 @@ export async function loginAction(formData: unknown) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
+          // Access the custom code from the thrown OAuthAccountNotLinkedError
+          if ((error as any).code === 'OAUTH_ACCOUNT_NO_PASSWORD' || (error.cause as any)?.err?.code === 'OAUTH_ACCOUNT_NO_PASSWORD') {
+            return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }
+          }
           return { success: false, error: 'Invalid credentials' }
         case 'CallbackRouteError':
           if (error.cause?.err?.message === 'EMAIL_NOT_VERIFIED') {
             return { success: false, error: 'EMAIL_NOT_VERIFIED' }
-          }
-          if (error.cause?.err?.message === 'OAUTH_ACCOUNT_NO_PASSWORD') {
-            return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }
           }
           return { success: false, error: 'Invalid credentials' }
         default:
