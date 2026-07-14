@@ -103,7 +103,6 @@ export default function SignupPage() {
                   minLength={2}
                   autoComplete="name"
                   className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
-                  placeholder="Jane Doe"
                 />
               </div>
 
@@ -118,7 +117,6 @@ export default function SignupPage() {
                   required
                   autoComplete="email"
                   className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
-                  placeholder="you@example.com"
                 />
               </div>
 
@@ -130,7 +128,6 @@ export default function SignupPage() {
                   id="password"
                   name="password"
                   type="password"
-                  placeholder="Min 8 chars, 1 uppercase, 1 number"
                   required
                   minLength={8}
                   autoComplete="new-password"

@@ -116,7 +116,6 @@ function ResetPasswordContent() {
               id="password"
               name="password"
               type="password"
-              placeholder="Min 8 chars, 1 uppercase, 1 number"
               required
               minLength={8}
               autoComplete="new-password"
@@ -129,7 +128,6 @@ function ResetPasswordContent() {
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              placeholder="Re-enter your password"
               required
               minLength={8}
               autoComplete="new-password"

@@ -88,7 +88,6 @@ export default function LoginPage() {
                   required
                   autoComplete="email"
                   className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
-                  placeholder="you@example.com"
                 />
               </div>
 
@@ -111,7 +110,6 @@ export default function LoginPage() {
                   required
                   autoComplete="current-password"
                   className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
-                  placeholder="Enter your password"
                 />
               </div>
 
