@@ -41,14 +41,14 @@ export default function SignupPage() {
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
             <CheckCircle2 className="h-10 w-10 text-emerald-500" />
           </div>
-          <h1 className="mb-4 text-3xl font-bold tracking-tight text-[#2a2e30]">
+          <h1 className="mb-4 text-3xl font-bold tracking-tight text-slate-900">
             Check your email
           </h1>
           <p className="mb-8 text-[#555]">
             We&apos;ve sent a verification link to your email address. Click the link to activate your account.
           </p>
           <Link href="/login">
-            <Button variant="outline" className="w-full h-11 rounded border-[#c4c7c5] text-[#2a2e30] font-semibold hover:bg-[#f4f5f5]">
+            <Button variant="outline" className="w-full h-11 rounded-sm border-[#c4c7c5] text-[#2a2e30] font-semibold hover:bg-[#f4f5f5]">
               Back to login
             </Button>
           </Link>
@@ -60,7 +60,7 @@ export default function SignupPage() {
   return (
     <div className="flex min-h-screen bg-white">
       {/* Left side: Form */}
-      <div className="flex w-full flex-col lg:w-1/2">
+      <div className="flex w-full flex-col lg:w-[60%]">
         <div className="px-10 pt-10 sm:px-14">
           <Link href="/" className="inline-flex items-center gap-2 text-brand">
             <LinkIcon className="h-7 w-7" />
@@ -69,7 +69,7 @@ export default function SignupPage() {
         </div>
 
         <div className="flex flex-1 flex-col justify-center px-10 sm:px-14 lg:px-20 xl:px-28 py-12">
-          <div className="w-full max-w-[400px]">
+          <div className="w-full max-w-[480px]">
             <h1 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">
               Create an account
             </h1>
@@ -83,16 +83,16 @@ export default function SignupPage() {
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-8">
               {error && (
-                <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
+                <div className="flex items-center gap-2 rounded-sm bg-destructive/10 px-4 py-3 text-[15px] font-medium text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   {error}
                 </div>
               )}
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="name" className="text-sm font-medium text-slate-700">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="name" className="text-[15px] font-medium text-slate-700">
                   Full name
                 </label>
                 <input
@@ -102,12 +102,12 @@ export default function SignupPage() {
                   required
                   minLength={2}
                   autoComplete="name"
-                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
+                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="email" className="text-sm font-medium text-slate-700">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="email" className="text-[15px] font-medium text-slate-700">
                   Email address
                 </label>
                 <input
@@ -116,12 +116,12 @@ export default function SignupPage() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
+                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="password" className="text-sm font-medium text-slate-700">
+              <div className="flex flex-col gap-2">
+                <label htmlFor="password" className="text-[15px] font-medium text-slate-700">
                   Password
                 </label>
                 <input
@@ -131,13 +131,16 @@ export default function SignupPage() {
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
+                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
                 />
+                <div className="mt-1">
+                  <span className="text-[13px] text-slate-500">Min 8 chars, 1 uppercase, 1 number</span>
+                </div>
               </div>
 
               <Button
                 type="submit"
-                className="mt-4 h-12 w-full rounded-lg bg-brand text-[15px] font-semibold text-white shadow-lg hover:bg-brand-500 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all"
+                className="mt-2 h-12 w-full rounded-sm bg-brand text-[15px] font-semibold text-white shadow-lg hover:bg-brand-500 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all"
                 disabled={loading}
               >
                 {loading ? (
@@ -151,7 +154,7 @@ export default function SignupPage() {
               </Button>
             </form>
 
-            <p className="mt-6 text-[11px] leading-relaxed text-[#555]">
+            <p className="mt-8 text-[12px] leading-relaxed text-[#555]">
               By signing up with an account, you agree to LinkVault&apos;s{' '}
               <a href="#" className="underline hover:text-[#2a2e30]">Terms of Service</a>,{' '}
               <a href="#" className="underline hover:text-[#2a2e30]">Privacy Policy</a> and{' '}
@@ -162,7 +165,7 @@ export default function SignupPage() {
       </div>
 
       {/* Right side: Simple full-bleed image */}
-      <div className="hidden lg:block lg:w-1/2 relative h-screen">
+      <div className="hidden lg:block lg:w-[40%] relative h-screen">
         <Image
           src="/signInSideBar.jpg"
           alt="LinkVault Sidebar"
