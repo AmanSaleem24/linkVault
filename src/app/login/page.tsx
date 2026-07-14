@@ -145,22 +145,15 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right side: Image showcase */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-brand-50 p-12">
-        <div className="flex w-full max-w-lg flex-col items-center animate-in fade-in zoom-in-95 duration-1000 ease-out">
-          <div className="relative aspect-square w-full">
-            <Image
-              src="/signInSideBar.jpg"
-              alt="Connect tools visualization"
-              fill
-              className="object-contain drop-shadow-xl"
-              priority
-            />
-          </div>
-          <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-brand-600">
-            Secure, fast, and reliable linking.
-          </h2>
-        </div>
+      {/* Right side: Full-bleed image */}
+      <div className="hidden lg:block lg:w-1/2 relative">
+        <Image
+          src="/signInSideBar.jpg"
+          alt="LinkVault"
+          fill
+          className="object-cover"
+          priority
+        />
       </div>
     </div>
   )
