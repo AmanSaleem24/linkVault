@@ -38,8 +38,8 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen bg-background items-center justify-center">
-        <div className="mx-auto w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out text-center p-8">
+      <div className="flex min-h-screen items-center justify-center bg-white">
+        <div className="mx-auto w-full max-w-md text-center p-8">
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
             <CheckCircle2 className="h-10 w-10 text-emerald-500" />
           </div>
@@ -60,109 +60,116 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-white">
       {/* Left side: Form */}
-      <div className="flex w-full flex-col justify-center px-4 py-12 sm:px-6 lg:w-1/2 lg:px-20 xl:px-24">
-        <div className="mx-auto w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
-          {/* Logo / Header */}
-          <div className="mb-8 flex items-center gap-2 text-brand">
-            <LinkIcon className="h-8 w-8" />
+      <div className="flex w-full flex-col lg:w-1/2">
+        {/* Logo pinned top-left */}
+        <div className="px-8 pt-8 sm:px-12">
+          <Link href="/" className="inline-flex items-center gap-2 text-brand">
+            <LinkIcon className="h-7 w-7" />
             <span className="text-2xl font-bold tracking-tight">LinkVault</span>
-          </div>
+          </Link>
+        </div>
 
-          <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
-            Create an account
-          </h1>
-          <p className="mb-8 text-sm text-muted-foreground">
-            Already have an account?{' '}
-            <Link
-              href="/login"
-              className="font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
-            >
-              Log in
-            </Link>
-          </p>
+        {/* Form centered vertically */}
+        <div className="flex flex-1 items-center px-8 sm:px-12 lg:px-20 xl:px-28">
+          <div className="w-full max-w-md">
+            <h1 className="mb-1 text-[28px] font-bold leading-tight tracking-tight text-foreground">
+              Create an account
+            </h1>
+            <p className="mb-10 text-sm text-muted-foreground">
+              Already have an account?{' '}
+              <Link
+                href="/login"
+                className="font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
+              >
+                Log in
+              </Link>
+            </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            {error && (
-              <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                <AlertCircle className="h-4 w-4 shrink-0" />
-                {error}
-              </div>
-            )}
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="name" className="font-semibold text-foreground">
-                Name
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                type="text"
-                required
-                minLength={2}
-                autoComplete="name"
-                className="h-11"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="font-semibold text-foreground">
-                Email
-              </Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                autoComplete="email"
-                className="h-11"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="font-semibold text-foreground">
-                Password
-              </Label>
-              <Input
-                id="password"
-                name="password"
-                type="password"
-                placeholder="Min 8 chars, 1 uppercase, 1 number"
-                required
-                minLength={8}
-                autoComplete="new-password"
-                className="h-11"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="mt-4 h-11 w-full bg-brand hover:bg-brand-500 active:scale-[0.98] transition-all text-base"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Creating account…
-                </>
-              ) : (
-                'Sign up'
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+              {error && (
+                <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4 shrink-0" />
+                  {error}
+                </div>
               )}
-            </Button>
-          </form>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="name" className="text-sm font-semibold text-foreground">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  type="text"
+                  required
+                  minLength={2}
+                  autoComplete="name"
+                  className="h-11 rounded-md border-border bg-transparent shadow-none focus-visible:border-brand focus-visible:ring-0"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+                  Email
+                </Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  className="h-11 rounded-md border-border bg-transparent shadow-none focus-visible:border-brand focus-visible:ring-0"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="password" className="text-sm font-semibold text-foreground">
+                  Password
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="Min 8 chars, 1 uppercase, 1 number"
+                  required
+                  minLength={8}
+                  autoComplete="new-password"
+                  className="h-11 rounded-md border-border bg-transparent shadow-none focus-visible:border-brand focus-visible:ring-0"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="mt-2 h-11 w-full rounded-md bg-brand hover:bg-brand-500 active:scale-[0.99] transition-all text-base font-semibold"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Creating account…
+                  </>
+                ) : (
+                  'Sign up'
+                )}
+              </Button>
+            </form>
+          </div>
         </div>
       </div>
 
-      {/* Right side: Full-bleed image */}
-      <div className="hidden lg:block lg:w-1/2 relative">
-        <Image
-          src="/signInSideBar.jpg"
-          alt="LinkVault"
-          fill
-          className="object-cover"
-          priority
-        />
+      {/* Right side: Image on soft background */}
+      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-brand-50">
+        <div className="relative w-[80%] aspect-square">
+          <Image
+            src="/signInSideBar.jpg"
+            alt="LinkVault"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
       </div>
     </div>
   )
