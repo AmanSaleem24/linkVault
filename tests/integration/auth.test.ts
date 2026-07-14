@@ -43,10 +43,10 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
         break
       } catch (e) {
         if (i === 4) throw e
-        await new Promise(r => setTimeout(r, 1000))
+        await new Promise(r => setTimeout(r, 2000))
       }
     }
-  })
+  }, 30_000)
 
   // Clean up any test users before and after
   beforeEach(async () => {
