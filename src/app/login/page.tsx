@@ -5,8 +5,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { loginAction } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { LinkIcon, Loader2, AlertCircle, MailWarning } from 'lucide-react'
 
 export default function LoginPage() {
@@ -39,11 +37,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen">
       {/* Left side: Form */}
-      <div className="flex w-full flex-col lg:w-1/2">
+      <div className="flex w-full flex-col bg-white lg:w-1/2">
         {/* Logo pinned top-left */}
-        <div className="px-8 pt-8 sm:px-12">
+        <div className="px-10 pt-10 sm:px-14">
           <Link href="/" className="inline-flex items-center gap-2 text-brand">
             <LinkIcon className="h-7 w-7" />
             <span className="text-2xl font-bold tracking-tight">LinkVault</span>
@@ -51,9 +49,9 @@ export default function LoginPage() {
         </div>
 
         {/* Form centered vertically */}
-        <div className="flex flex-1 items-center px-8 sm:px-12 lg:px-20 xl:px-28">
-          <div className="w-full max-w-md">
-            <h1 className="mb-1 text-[28px] font-bold leading-tight tracking-tight text-foreground">
+        <div className="flex flex-1 items-center px-10 sm:px-14 lg:px-20 xl:px-28">
+          <div className="w-full max-w-[420px]">
+            <h1 className="mb-1.5 text-[28px] font-bold leading-tight tracking-tight text-brand-600">
               Log in and start sharing
             </h1>
             <p className="mb-10 text-sm text-muted-foreground">
@@ -66,7 +64,7 @@ export default function LoginPage() {
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-7">
               {error && (
                 <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
@@ -81,35 +79,35 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="email" className="text-sm font-semibold text-foreground">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="email" className="text-sm font-semibold text-foreground">
                   Email
-                </Label>
-                <Input
+                </label>
+                <input
                   id="email"
                   name="email"
                   type="email"
                   required
                   autoComplete="email"
-                  className="h-11 rounded-md border-border bg-transparent shadow-none focus-visible:border-brand focus-visible:ring-0"
+                  className="h-10 w-full border-b-2 border-border bg-transparent text-base outline-none transition-colors focus:border-brand placeholder:text-muted-foreground/50"
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="password" className="text-sm font-semibold text-foreground">
+              <div className="flex flex-col gap-1">
+                <label htmlFor="password" className="text-sm font-semibold text-foreground">
                   Password
-                </Label>
-                <Input
+                </label>
+                <input
                   id="password"
                   name="password"
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="h-11 rounded-md border-border bg-transparent shadow-none focus-visible:border-brand focus-visible:ring-0"
+                  className="h-10 w-full border-b-2 border-border bg-transparent text-base outline-none transition-colors focus:border-brand placeholder:text-muted-foreground/50"
                 />
               </div>
 
-              <div className="flex justify-end">
+              <div className="flex justify-end -mt-2">
                 <Link
                   href="/forgot-password"
                   className="text-sm font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
@@ -120,7 +118,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="h-11 w-full rounded-md bg-brand hover:bg-brand-500 active:scale-[0.99] transition-all text-base font-semibold"
+                className="h-12 w-full rounded-full bg-brand hover:bg-brand-500 active:scale-[0.98] transition-all text-base font-semibold shadow-md"
                 disabled={loading}
               >
                 {loading ? (
@@ -137,17 +135,15 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Right side: Image on soft background */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center bg-brand-50">
-        <div className="relative w-[80%] aspect-square">
-          <Image
-            src="/signInSideBar.jpg"
-            alt="LinkVault"
-            fill
-            className="object-contain"
-            priority
-          />
-        </div>
+      {/* Right side: Full-bleed image on matching bg */}
+      <div className="hidden lg:block lg:w-1/2 relative bg-white">
+        <Image
+          src="/signInSideBar.jpg"
+          alt="LinkVault"
+          fill
+          className="object-contain p-8"
+          priority
+        />
       </div>
     </div>
   )
