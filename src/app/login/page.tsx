@@ -37,10 +37,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-white">
       {/* Left side: Form */}
-      <div className="flex w-full flex-col bg-white lg:w-1/2">
-        {/* Logo pinned top-left */}
+      <div className="flex w-full flex-col lg:w-1/2">
         <div className="px-10 pt-10 sm:px-14">
           <Link href="/" className="inline-flex items-center gap-2 text-brand">
             <LinkIcon className="h-7 w-7" />
@@ -48,23 +47,22 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        {/* Form centered vertically */}
-        <div className="flex flex-1 items-center px-10 sm:px-14 lg:px-20 xl:px-28">
-          <div className="w-full max-w-[420px]">
-            <h1 className="mb-1.5 text-[28px] font-bold leading-tight tracking-tight text-brand-600">
+        <div className="flex flex-1 flex-col justify-center px-10 sm:px-14 lg:px-20 xl:px-28 py-12">
+          <div className="w-full max-w-[400px]">
+            <h1 className="mb-2 text-[28px] font-bold tracking-tight text-[#2a2e30]">
               Log in and start sharing
             </h1>
-            <p className="mb-10 text-sm text-muted-foreground">
+            <p className="mb-10 text-[15px] text-[#555]">
               Don&apos;t have an account?{' '}
               <Link
                 href="/signup"
-                className="font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
+                className="text-brand hover:underline"
               >
                 Sign up
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
               {error && (
                 <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
@@ -79,8 +77,8 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <div className="flex flex-col gap-1">
-                <label htmlFor="email" className="text-sm font-semibold text-foreground">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="email" className="text-[13px] font-bold text-[#2a2e30]">
                   Email
                 </label>
                 <input
@@ -89,12 +87,12 @@ export default function LoginPage() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="h-10 w-full border-b-2 border-border bg-transparent text-base outline-none transition-colors focus:border-brand placeholder:text-muted-foreground/50"
+                  className="h-11 w-full rounded-md border border-[#c4c7c5] bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
                 />
               </div>
 
-              <div className="flex flex-col gap-1">
-                <label htmlFor="password" className="text-sm font-semibold text-foreground">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="password" className="text-[13px] font-bold text-[#2a2e30]">
                   Password
                 </label>
                 <input
@@ -103,14 +101,14 @@ export default function LoginPage() {
                   type="password"
                   required
                   autoComplete="current-password"
-                  className="h-10 w-full border-b-2 border-border bg-transparent text-base outline-none transition-colors focus:border-brand placeholder:text-muted-foreground/50"
+                  className="h-11 w-full rounded-md border border-[#c4c7c5] bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
                 />
               </div>
 
-              <div className="flex justify-end -mt-2">
+              <div className="flex justify-start mb-2">
                 <Link
                   href="/forgot-password"
-                  className="text-sm font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
+                  className="text-[13px] font-medium text-brand hover:underline"
                 >
                   Forgot your password?
                 </Link>
@@ -118,7 +116,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="h-12 w-full rounded-full bg-brand hover:bg-brand-500 active:scale-[0.98] transition-all text-base font-semibold shadow-md"
+                className="h-12 w-full rounded bg-brand hover:bg-brand-500 active:scale-[0.99] transition-all text-[15px] font-semibold text-white"
                 disabled={loading}
               >
                 {loading ? (
@@ -131,17 +129,24 @@ export default function LoginPage() {
                 )}
               </Button>
             </form>
+
+            <p className="mt-6 text-[11px] leading-relaxed text-[#555]">
+              By logging in with an account, you agree to LinkVault&apos;s{' '}
+              <a href="#" className="underline hover:text-[#2a2e30]">Terms of Service</a>,{' '}
+              <a href="#" className="underline hover:text-[#2a2e30]">Privacy Policy</a> and{' '}
+              <a href="#" className="underline hover:text-[#2a2e30]">Acceptable Use Policy</a>.
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Right side: Full-bleed image on matching bg */}
-      <div className="hidden lg:block lg:w-1/2 relative bg-white">
+      {/* Right side: Simple full-bleed image */}
+      <div className="hidden lg:block lg:w-1/2 relative h-screen">
         <Image
           src="/signInSideBar.jpg"
-          alt="LinkVault"
+          alt="LinkVault Sidebar"
           fill
-          className="object-contain p-8"
+          className="object-cover"
           priority
         />
       </div>
