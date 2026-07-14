@@ -10,18 +10,46 @@ import { LinkIcon, Loader2, AlertCircle, MailWarning } from 'lucide-react'
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [emailNotVerified, setEmailNotVerified] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setEmailNotVerified(false)
-    setLoading(true)
+    setFieldErrors({})
 
     const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    const newFieldErrors: { email?: string; password?: string } = {}
+    if (!email) {
+      newFieldErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newFieldErrors.email = 'Please enter a valid email address'
+    }
+
+    if (!password) {
+      newFieldErrors.password = 'Password is required'
+    } else if (password.length < 8) {
+      newFieldErrors.password = 'Password must be at least 8 characters'
+    } else if (!/(?=.*[A-Z])/.test(password)) {
+      newFieldErrors.password = 'Password must contain at least 1 uppercase letter'
+    } else if (!/(?=.*[0-9])/.test(password)) {
+      newFieldErrors.password = 'Password must contain at least 1 number'
+    }
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors)
+      return
+    }
+
+    setLoading(true)
+
     const data = {
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
+      email,
+      password,
     }
 
     const result = await loginAction(data)
@@ -62,7 +90,7 @@ export default function LoginPage() {
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
               {error && (
                 <div className="flex items-center gap-2 rounded-sm bg-destructive/10 px-4 py-3 text-[15px] font-medium text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
@@ -85,10 +113,12 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
-                  required
                   autoComplete="email"
-                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                  className={`h-11 w-full rounded-sm border-2 bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
+                    fieldErrors.email ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+                  }`}
                 />
+                {fieldErrors.email && <span className="text-[13px] text-red-500">{fieldErrors.email}</span>}
               </div>
 
               <div className="flex flex-col gap-2">
@@ -99,10 +129,12 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type="password"
-                  required
                   autoComplete="current-password"
-                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                  className={`h-11 w-full rounded-sm border-2 bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
+                    fieldErrors.password ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+                  }`}
                 />
+                {fieldErrors.password && <span className="text-[13px] text-red-500">{fieldErrors.password}</span>}
                 <div className="flex justify-end mt-1">
                   <Link
                     href="/forgot-password"
@@ -145,7 +177,7 @@ export default function LoginPage() {
           src="/signInSideBar.jpg"
           alt="LinkVault Sidebar"
           fill
-          className="object-contain p-8"
+          className="object-cover"
           priority
         />
       </div>

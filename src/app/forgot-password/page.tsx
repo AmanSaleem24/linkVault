@@ -19,16 +19,34 @@ import { LinkIcon, Loader2, MailCheck, AlertCircle } from 'lucide-react'
 export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [sent, setSent] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<{ email?: string }>({})
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
-    setLoading(true)
+    setFieldErrors({})
 
     const formData = new FormData(e.currentTarget)
+    const email = formData.get('email') as string
+
+    const newFieldErrors: { email?: string } = {}
+    
+    if (!email) {
+      newFieldErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newFieldErrors.email = 'Please enter a valid email address'
+    }
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors)
+      return
+    }
+
+    setLoading(true)
+
     const data = {
-      email: formData.get('email') as string,
+      email,
     }
 
     const result = await forgotPasswordAction(data)
@@ -77,7 +95,7 @@ export default function ForgotPasswordPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
             {error && (
               <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -91,9 +109,10 @@ export default function ForgotPasswordPage() {
                 id="email"
                 name="email"
                 type="email"
-                required
                 autoComplete="email"
+                className={fieldErrors.email ? 'border-red-500 focus-visible:ring-red-500' : ''}
               />
+              {fieldErrors.email && <span className="text-[13px] text-red-500">{fieldErrors.email}</span>}
             </div>
 
             <Button type="submit" className="w-full shadow-md active:scale-[0.98] transition-all" disabled={loading}>

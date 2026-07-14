@@ -10,18 +10,52 @@ import { CheckCircle2, AlertCircle, Loader2, LinkIcon } from 'lucide-react'
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<{ name?: string; email?: string; password?: string }>({})
   const [loading, setLoading] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
-    setLoading(true)
+    setFieldErrors({})
 
     const formData = new FormData(e.currentTarget)
+    const name = formData.get('name') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+
+    const newFieldErrors: { name?: string; email?: string; password?: string } = {}
+    
+    if (!name || name.length < 2) {
+      newFieldErrors.name = 'Name must be at least 2 characters'
+    }
+
+    if (!email) {
+      newFieldErrors.email = 'Email is required'
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newFieldErrors.email = 'Please enter a valid email address'
+    }
+
+    if (!password) {
+      newFieldErrors.password = 'Password is required'
+    } else if (password.length < 8) {
+      newFieldErrors.password = 'Password must be at least 8 characters'
+    } else if (!/(?=.*[A-Z])/.test(password)) {
+      newFieldErrors.password = 'Password must contain at least 1 uppercase letter'
+    } else if (!/(?=.*[0-9])/.test(password)) {
+      newFieldErrors.password = 'Password must contain at least 1 number'
+    }
+
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors)
+      return
+    }
+
+    setLoading(true)
+
     const data = {
-      name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      password: formData.get('password') as string,
+      name,
+      email,
+      password,
     }
 
     const result = await signUpAction(data)
@@ -83,7 +117,7 @@ export default function SignupPage() {
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+            <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
               {error && (
                 <div className="flex items-center gap-2 rounded-sm bg-destructive/10 px-4 py-3 text-[15px] font-medium text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
@@ -99,11 +133,12 @@ export default function SignupPage() {
                   id="name"
                   name="name"
                   type="text"
-                  required
-                  minLength={2}
                   autoComplete="name"
-                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                  className={`h-11 w-full rounded-sm border-2 bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
+                    fieldErrors.name ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+                  }`}
                 />
+                {fieldErrors.name && <span className="text-[13px] text-red-500">{fieldErrors.name}</span>}
               </div>
 
               <div className="flex flex-col gap-2">
@@ -114,10 +149,12 @@ export default function SignupPage() {
                   id="email"
                   name="email"
                   type="email"
-                  required
                   autoComplete="email"
-                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                  className={`h-11 w-full rounded-sm border-2 bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
+                    fieldErrors.email ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+                  }`}
                 />
+                {fieldErrors.email && <span className="text-[13px] text-red-500">{fieldErrors.email}</span>}
               </div>
 
               <div className="flex flex-col gap-2">
@@ -128,10 +165,10 @@ export default function SignupPage() {
                   id="password"
                   name="password"
                   type="password"
-                  required
-                  minLength={8}
                   autoComplete="new-password"
-                  className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
+                  className={`h-11 w-full rounded-sm border-2 bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
+                    fieldErrors.password ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+                  }`}
                 />
                 <div className="mt-1">
                   <span className="text-[13px] text-slate-500">Min 8 chars, 1 uppercase, 1 number</span>
@@ -170,7 +207,7 @@ export default function SignupPage() {
           src="/signInSideBar.jpg"
           alt="LinkVault Sidebar"
           fill
-          className="object-contain p-8"
+          className="object-cover"
           priority
         />
       </div>
