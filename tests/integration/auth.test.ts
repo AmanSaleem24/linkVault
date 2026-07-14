@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest'
 import { signUpAction, verifyEmailAction, forgotPasswordAction, resetPasswordAction } from '@/app/actions/auth'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
