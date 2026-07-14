@@ -2,18 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { signUpAction } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { LinkIcon, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
 
 export default function SignupPage() {
@@ -45,41 +38,52 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-100 via-brand-50 to-white dark:from-brand-600 dark:via-background dark:to-background px-4">
-        <Card className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out backdrop-blur-sm border-brand-200/50 shadow-xl shadow-brand-200/20 dark:shadow-brand-600/20">
-          <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
-              <CheckCircle2 className="h-8 w-8 text-emerald-500" />
-            </div>
-            <CardTitle className="text-xl">Check your email</CardTitle>
-            <CardDescription>
-              We&apos;ve sent a verification link to your email address. Click the link to activate your account.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="justify-center">
-            <Link href="/login">
-              <Button variant="outline">Back to login</Button>
-            </Link>
-          </CardFooter>
-        </Card>
+      <div className="flex min-h-screen bg-background items-center justify-center">
+        <div className="mx-auto w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out text-center p-8">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
+            <CheckCircle2 className="h-10 w-10 text-emerald-500" />
+          </div>
+          <h1 className="mb-4 text-3xl font-bold tracking-tight text-foreground">
+            Check your email
+          </h1>
+          <p className="mb-8 text-muted-foreground">
+            We&apos;ve sent a verification link to your email address. Click the link to activate your account.
+          </p>
+          <Link href="/login">
+            <Button variant="outline" className="w-full h-11">
+              Back to login
+            </Button>
+          </Link>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-100 via-brand-50 to-white dark:from-brand-600 dark:via-background dark:to-background px-4">
-      <Card className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out backdrop-blur-sm border-brand-200/50 shadow-xl shadow-brand-200/20 dark:shadow-brand-600/20">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
-            <LinkIcon className="h-6 w-6 text-primary-foreground" />
+    <div className="flex min-h-screen bg-background">
+      {/* Left side: Form */}
+      <div className="flex w-full flex-col justify-center px-4 py-12 sm:px-6 lg:w-1/2 lg:px-20 xl:px-24">
+        <div className="mx-auto w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-700 ease-out">
+          {/* Logo / Header */}
+          <div className="mb-8 flex items-center gap-2 text-brand">
+            <LinkIcon className="h-8 w-8" />
+            <span className="text-2xl font-bold tracking-tight">LinkVault</span>
           </div>
-          <CardTitle className="text-xl">Create your account</CardTitle>
-          <CardDescription>
-            Start shortening links with LinkVault
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+          <h1 className="mb-2 text-3xl font-bold tracking-tight text-foreground">
+            Create an account
+          </h1>
+          <p className="mb-8 text-sm text-muted-foreground">
+            Already have an account?{' '}
+            <Link
+              href="/login"
+              className="font-medium text-brand hover:text-brand-500 underline-offset-4 hover:underline transition-colors"
+            >
+              Log in
+            </Link>
+          </p>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {error && (
               <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
                 <AlertCircle className="h-4 w-4 shrink-0" />
@@ -88,32 +92,38 @@ export default function SignupPage() {
             )}
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="font-semibold text-foreground">
+                Name
+              </Label>
               <Input
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Your name"
                 required
                 minLength={2}
                 autoComplete="name"
+                className="h-11"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="font-semibold text-foreground">
+                Email
+              </Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="you@example.com"
                 required
                 autoComplete="email"
+                className="h-11"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="font-semibold text-foreground">
+                Password
+              </Label>
               <Input
                 id="password"
                 name="password"
@@ -122,28 +132,45 @@ export default function SignupPage() {
                 required
                 minLength={8}
                 autoComplete="new-password"
+                className="h-11"
               />
             </div>
 
-            <Button type="submit" className="w-full shadow-md active:scale-[0.98] transition-all" disabled={loading}>
+            <Button
+              type="submit"
+              className="mt-4 h-11 w-full bg-brand hover:bg-brand-500 active:scale-[0.98] transition-all text-base"
+              disabled={loading}
+            >
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Creating account…
                 </>
               ) : (
-                'Create account'
+                'Sign up'
               )}
             </Button>
           </form>
-        </CardContent>
-        <CardFooter className="justify-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/login" className="ml-1 font-medium text-brand hover:text-brand-500 dark:text-brand-300 dark:hover:text-brand-400 underline-offset-4 hover:underline transition-colors">
-            Sign in
-          </Link>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
+
+      {/* Right side: Image showcase */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center bg-brand-50 p-12">
+        <div className="flex w-full max-w-lg flex-col items-center animate-in fade-in zoom-in-95 duration-1000 ease-out">
+          <div className="relative aspect-square w-full">
+            <Image
+              src="/signInSideBar.jpg"
+              alt="Connect tools visualization"
+              fill
+              className="object-contain drop-shadow-xl"
+              priority
+            />
+          </div>
+          <h2 className="mt-8 text-center text-3xl font-bold tracking-tight text-brand-600">
+            Secure, fast, and reliable linking.
+          </h2>
+        </div>
+      </div>
     </div>
   )
 }
