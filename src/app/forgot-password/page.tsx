@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/40 px-4">
-        <Card className="w-full max-w-md">
+      <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-100 via-brand-50 to-white dark:from-brand-600 dark:via-background dark:to-background px-4">
+        <Card className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out backdrop-blur-sm border-brand-200/50 shadow-xl shadow-brand-200/20 dark:shadow-brand-600/20">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
               <MailCheck className="h-8 w-8 text-emerald-500" />
@@ -65,8 +65,8 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-muted/40 px-4">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-brand-100 via-brand-50 to-white dark:from-brand-600 dark:via-background dark:to-background px-4">
+      <Card className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700 ease-out backdrop-blur-sm border-brand-200/50 shadow-xl shadow-brand-200/20 dark:shadow-brand-600/20">
         <CardHeader className="text-center">
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <LinkIcon className="h-6 w-6 text-primary-foreground" />
@@ -97,7 +97,7 @@ export default function ForgotPasswordPage() {
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full shadow-md active:scale-[0.98] transition-all" disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -111,7 +111,7 @@ export default function ForgotPasswordPage() {
         </CardContent>
         <CardFooter className="justify-center text-sm text-muted-foreground">
           Remember your password?{' '}
-          <Link href="/login" className="ml-1 font-medium text-foreground underline-offset-4 hover:underline">
+          <Link href="/login" className="ml-1 font-medium text-brand hover:text-brand-500 dark:text-brand-300 dark:hover:text-brand-400 underline-offset-4 hover:underline transition-colors">
             Sign in
           </Link>
         </CardFooter>
