@@ -35,15 +35,28 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
   const testEmail = 'integration-test@example.com'
   const testPassword = 'Password1'
 
+  beforeAll(async () => {
+    // Warm up Neon database to prevent cold-start timeouts on the first test
+    for (let i = 0; i < 5; i++) {
+      try {
+        await prisma.$queryRaw`SELECT 1`
+        break
+      } catch (e) {
+        if (i === 4) throw e
+        await new Promise(r => setTimeout(r, 1000))
+      }
+    }
+  })
+
   // Clean up any test users before and after
   beforeEach(async () => {
-    await prisma.user.delete({ where: { email: testEmail } }).catch(() => {})
-    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } }).catch(() => {})
+    await prisma.user.deleteMany({ where: { email: testEmail } })
+    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } })
   })
 
   afterEach(async () => {
-    await prisma.user.delete({ where: { email: testEmail } }).catch(() => {})
-    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } }).catch(() => {})
+    await prisma.user.deleteMany({ where: { email: testEmail } })
+    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } })
   })
 
   it('should sign up a user and generate verification token', async () => {
