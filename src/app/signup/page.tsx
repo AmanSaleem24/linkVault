@@ -70,30 +70,30 @@ export default function SignupPage() {
 
         <div className="flex flex-1 flex-col justify-center px-10 sm:px-14 lg:px-20 xl:px-28 py-12">
           <div className="w-full max-w-[400px]">
-            <h1 className="mb-2 text-[28px] font-bold tracking-tight text-[#2a2e30]">
+            <h1 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">
               Create an account
             </h1>
-            <p className="mb-10 text-[15px] text-[#555]">
+            <p className="mb-10 text-[15px] text-slate-500">
               Already have an account?{' '}
               <Link
                 href="/login"
-                className="text-brand hover:underline"
+                className="font-medium text-brand hover:text-brand-500 hover:underline transition-colors"
               >
                 Log in
               </Link>
             </p>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
               {error && (
-                <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-3 py-2.5 text-sm text-destructive">
+                <div className="flex items-center gap-2 rounded-lg bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   {error}
                 </div>
               )}
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="name" className="text-[13px] font-bold text-[#2a2e30]">
-                  Name
+                <label htmlFor="name" className="text-sm font-medium text-slate-700">
+                  Full name
                 </label>
                 <input
                   id="name"
@@ -102,13 +102,14 @@ export default function SignupPage() {
                   required
                   minLength={2}
                   autoComplete="name"
-                  className="h-11 w-full rounded-md border border-[#c4c7c5] bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
+                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
+                  placeholder="Jane Doe"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label htmlFor="email" className="text-[13px] font-bold text-[#2a2e30]">
-                  Email
+                <label htmlFor="email" className="text-sm font-medium text-slate-700">
+                  Email address
                 </label>
                 <input
                   id="email"
@@ -116,12 +117,13 @@ export default function SignupPage() {
                   type="email"
                   required
                   autoComplete="email"
-                  className="h-11 w-full rounded-md border border-[#c4c7c5] bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
+                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
+                  placeholder="you@example.com"
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5 mb-2">
-                <label htmlFor="password" className="text-[13px] font-bold text-[#2a2e30]">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="password" className="text-sm font-medium text-slate-700">
                   Password
                 </label>
                 <input
@@ -132,13 +134,13 @@ export default function SignupPage() {
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="h-11 w-full rounded-md border border-[#c4c7c5] bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-brand focus:ring-1 focus:ring-brand"
+                  className="h-12 w-full rounded-lg border border-slate-200 bg-slate-50 px-4 text-[15px] text-slate-900 placeholder:text-slate-400 outline-none transition-all focus:border-brand focus:bg-white focus:ring-4 focus:ring-brand/10 shadow-sm"
                 />
               </div>
 
               <Button
                 type="submit"
-                className="h-12 w-full rounded bg-brand hover:bg-brand-500 active:scale-[0.99] transition-all text-[15px] font-semibold text-white"
+                className="mt-4 h-12 w-full rounded-lg bg-brand text-[15px] font-semibold text-white shadow-lg hover:bg-brand-500 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all"
                 disabled={loading}
               >
                 {loading ? (
