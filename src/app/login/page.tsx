@@ -145,7 +145,7 @@ export default function LoginPage() {
           src="/signInSideBar.jpg"
           alt="LinkVault Sidebar"
           fill
-          className="object-cover"
+          className="object-contain p-8"
           priority
         />
       </div>

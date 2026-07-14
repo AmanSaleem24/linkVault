@@ -170,7 +170,7 @@ export default function SignupPage() {
           src="/signInSideBar.jpg"
           alt="LinkVault Sidebar"
           fill
-          className="object-cover"
+          className="object-contain p-8"
           priority
         />
       </div>
