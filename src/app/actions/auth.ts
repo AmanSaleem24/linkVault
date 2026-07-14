@@ -35,7 +35,7 @@ export async function signUpAction(formData: unknown) {
           name,
           email,
           passwordHash,
-          emailVerified: false,
+          emailVerified: null,
         },
       })
 
@@ -89,7 +89,7 @@ export async function verifyEmailAction(token: string) {
     await prisma.$transaction([
       prisma.user.update({
         where: { email: verificationToken.identifier },
-        data: { emailVerified: true },
+        data: { emailVerified: new Date() },
       }),
       prisma.verificationToken.delete({
         where: { token },
@@ -121,6 +121,9 @@ export async function loginAction(formData: unknown) {
           if (error.cause?.err?.message === 'EMAIL_NOT_VERIFIED') {
             return { success: false, error: 'EMAIL_NOT_VERIFIED' }
           }
+          if (error.cause?.err?.message === 'OAUTH_ACCOUNT_NO_PASSWORD') {
+            return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }
+          }
           return { success: false, error: 'Invalid credentials' }
         default:
           return { success: false, error: 'Authentication failed' }
@@ -128,6 +131,10 @@ export async function loginAction(formData: unknown) {
     }
     throw error
   }
+}
+
+export async function googleSignInAction() {
+  await signIn('google', { redirectTo: '/dashboard' })
 }
 
 export async function forgotPasswordAction(formData: unknown) {

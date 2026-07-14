@@ -27,6 +27,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!user) return null
 
+        // User signed up with Google and has no password
+        if (!user.passwordHash) {
+          throw new Error('OAUTH_ACCOUNT_NO_PASSWORD')
+        }
+
         const valid = await bcrypt.compare(parsed.data.password, user.passwordHash)
         if (!valid) return null
 
@@ -34,10 +39,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error('EMAIL_NOT_VERIFIED')
         }
 
+        // image is needed for the session
+        // (Google users will have a profile picture)
+
         return {
           id: user.id,
           name: user.name,
           email: user.email,
+          image: user.image,
           role: user.role,
         }
       },

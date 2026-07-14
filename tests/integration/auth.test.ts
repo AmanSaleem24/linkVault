@@ -72,7 +72,7 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
       where: { email: testEmail },
     })
     expect(user).toBeDefined()
-    expect(user?.emailVerified).toBe(false)
+    expect(user?.emailVerified).toBeNull()
     expect(user?.name).toBe('Test User')
 
     const token = await prisma.verificationToken.findFirst({
@@ -100,7 +100,7 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
     const user = await prisma.user.findUnique({
       where: { email: testEmail },
     })
-    expect(user?.emailVerified).toBe(true)
+    expect(user?.emailVerified).toBeInstanceOf(Date)
 
     const tokenExists = await prisma.verificationToken.findFirst({
       where: { identifier: testEmail },
@@ -122,7 +122,7 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
     })
     await prisma.user.update({
       where: { email: testEmail },
-      data: { emailVerified: true },
+      data: { emailVerified: new Date() },
     })
 
     const forgotRes = await forgotPasswordAction({ email: testEmail })
