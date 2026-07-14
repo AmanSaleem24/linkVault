@@ -103,7 +103,7 @@ export default function LoginPage() {
                   autoComplete="current-password"
                   className="h-11 w-full rounded-sm border-2 border-white bg-white px-4 text-[15px] text-slate-900 outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:border-brand focus:ring-4 focus:ring-brand/10"
                 />
-                <div className="flex justify-start mt-1">
+                <div className="flex justify-end mt-1">
                   <Link
                     href="/forgot-password"
                     className="text-[14px] font-medium text-brand hover:text-brand-500 hover:underline transition-colors"
