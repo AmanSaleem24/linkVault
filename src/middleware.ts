@@ -9,9 +9,6 @@ export default auth((req: NextRequest & { auth: any }) => {
   const { pathname } = req.nextUrl
   const session = req.auth
 
-  // Extract geo info from Vercel headers and forward it
-  const country = req.headers.get('x-vercel-ip-country') ?? 'unknown'
-
   // Protect authenticated routes (route group pages)
   const isProtected = pathname.startsWith('/home') || pathname.startsWith('/link')
   if (isProtected && !session) {
@@ -27,7 +24,10 @@ export default auth((req: NextRequest & { auth: any }) => {
   const response = NextResponse.next()
 
   // Forward geo header to downstream route handlers (for click logging)
-  response.headers.set('x-country', country)
+  const country = req.headers.get('x-vercel-ip-country')
+  if (country) {
+    response.headers.set('x-country', country)
+  }
 
   return response
 })

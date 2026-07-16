@@ -31,6 +31,7 @@ export default async function DashboardLayout({
   }
 
   const user = session.user
+  const isPro = user.role === 'admin' || user.role === 'pro'
 
   return (
     <div className={`${GeistSans.variable} ${GeistMono.variable} flex h-full min-h-screen font-[family-name:var(--font-geist-sans)]`}>
@@ -61,21 +62,26 @@ export default async function DashboardLayout({
             </div>
           </div>
 
-          {/* Right side: mobile search + Upgrade + Account dropdown */}
+          {/* Right side: mobile search + Plan badge + Account dropdown */}
           <div className="flex items-center gap-3">
             <button className="flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted md:hidden">
               <Search className="size-5" />
             </button>
 
-            <Button
-              className="hidden h-10 bg-[#ECEEFE] px-5 text-[0.95rem] font-semibold text-[#2B0094] shadow-none hover:bg-[#e0e4fd] dark:bg-brand-400/20 dark:text-brand-300 md:flex"
-            >
-              Upgrade
-            </Button>
+            {!isPro ? (
+              <Button
+                className="hidden h-10 bg-[#ECEEFE] px-5 text-[0.95rem] font-semibold text-[#2B0094] shadow-none hover:bg-[#e0e4fd] dark:bg-brand-400/20 dark:text-brand-300 md:flex"
+              >
+                Upgrade
+              </Button>
+            ) : (
+              <span className="hidden rounded bg-[#ECEEFE] px-3 py-1.5 text-[0.75rem] font-bold text-[#2B0094] dark:bg-brand-400/20 dark:text-brand-300 md:flex">Pro</span>
+            )}
 
             <AccountMenu
               name={user.name ?? 'User'}
               email={user.email ?? ''}
+              isPro={isPro}
             />
           </div>
         </header>

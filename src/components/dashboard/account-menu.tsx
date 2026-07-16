@@ -24,9 +24,11 @@ import { Button } from '@/components/ui/button'
 export function AccountMenu({
   name,
   email,
+  isPro = false,
 }: {
   name: string
   email: string
+  isPro?: boolean
 }) {
   const initial = name?.charAt(0).toUpperCase() ?? email?.charAt(0).toUpperCase() ?? '?'
 
@@ -76,17 +78,19 @@ export function AccountMenu({
           <DropdownMenuLabel className="px-3 py-3">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-foreground">Free account</p>
+                <p className="text-xs font-medium text-foreground">{isPro ? 'Pro account' : 'Free account'}</p>
               </div>
-              <Button
-                size="sm"
-                className="h-7 rounded-md bg-brand-400 px-3 text-xs font-semibold text-white hover:bg-brand-500 dark:bg-brand-300 dark:text-brand-600 dark:hover:bg-brand-200"
-                onClick={() => {
-                  // Will be wired to billing/upgrade page later
-                }}
-              >
-                Upgrade
-              </Button>
+              {!isPro && (
+                <Button
+                  size="sm"
+                  className="h-7 rounded-md bg-brand-400 px-3 text-xs font-semibold text-white hover:bg-brand-500 dark:bg-brand-300 dark:text-brand-600 dark:hover:bg-brand-200"
+                  onClick={() => {
+                    // Will be wired to billing/upgrade page later
+                  }}
+                >
+                  Upgrade
+                </Button>
+              )}
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>

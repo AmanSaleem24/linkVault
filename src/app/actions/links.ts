@@ -434,3 +434,39 @@ export async function getUserUsageStatsAction() {
     return { success: false as const, error: 'Failed to fetch usage stats' }
   }
 }
+
+// ─── Alias availability check ──────────────────────────────────────────────
+
+import { RESERVED_SLUGS, SLUG_REGEX } from '@/lib/validators'
+
+export async function checkAliasAvailabilityAction(slug: string): Promise<{ available: boolean; reason?: string }> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { available: false, reason: 'You must be logged in' }
+  }
+
+  const trimmed = slug.trim().toLowerCase()
+
+  if (!trimmed) {
+    return { available: false, reason: 'Alias is empty' }
+  }
+
+  if (!SLUG_REGEX.test(trimmed)) {
+    return { available: false, reason: 'Only lowercase letters, numbers, and hyphens allowed' }
+  }
+
+  if (RESERVED_SLUGS.includes(trimmed as any)) {
+    return { available: false, reason: 'This alias is reserved' }
+  }
+
+  const existing = await prisma.link.findUnique({
+    where: { slug: trimmed },
+    select: { id: true },
+  })
+
+  if (existing) {
+    return { available: false, reason: 'This alias is already taken' }
+  }
+
+  return { available: true }
+}
