@@ -78,6 +78,7 @@ export const createLinkSchema = z.object({
     .min(new Date(), 'Expiry must be in the future')
     .optional()
     .nullable(),
+  qrCode: z.boolean().optional().default(false),
 })
 
 export const updateLinkSchema = z.object({
@@ -85,12 +86,17 @@ export const updateLinkSchema = z.object({
   url: z.string().url('Must be a valid URL').max(2048).optional(),
   alias: z
     .string()
-    .min(3)
-    .max(50)
-    .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only')
+    .min(3, 'Alias must be at least 3 characters')
+    .max(50, 'Alias must be at most 50 characters')
+    .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only (no leading/trailing hyphens)')
+    .refine(
+      (val) => !(RESERVED_SLUGS as readonly string[]).includes(val),
+      'This alias is reserved'
+    )
     .optional(),
   expiresAt: z.coerce.date().min(new Date()).optional().nullable(),
 })
+
 
 export type SignupInput = z.infer<typeof signupSchema>
 export type LoginInput = z.infer<typeof loginSchema>

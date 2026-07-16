@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -51,6 +52,7 @@ model VerificationToken {
 
 enum Role {
   user
+  pro
   admin
 }
 
@@ -124,5 +126,6 @@ model AuditLog {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
+  @@index([userId, entityType, action, createdAt])
   @@index([entityId])
 }

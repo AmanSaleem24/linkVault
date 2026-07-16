@@ -12,8 +12,8 @@ export default auth((req: NextRequest & { auth: any }) => {
   // Extract geo info from Vercel headers and forward it
   const country = req.headers.get('x-vercel-ip-country') ?? 'unknown'
 
-  // Protect dashboard routes
-  const isProtected = pathname.startsWith('/dashboard')
+  // Protect authenticated routes (route group pages)
+  const isProtected = pathname.startsWith('/home') || pathname.startsWith('/link')
   if (isProtected && !session) {
     return NextResponse.redirect(new URL('/login', req.url))
   }
@@ -21,7 +21,7 @@ export default auth((req: NextRequest & { auth: any }) => {
   // Redirect logged-in users away from auth pages
   const isAuthPage = ['/login', '/signup'].includes(pathname)
   if (isAuthPage && session) {
-    return NextResponse.redirect(new URL('/dashboard', req.url))
+    return NextResponse.redirect(new URL('/home', req.url))
   }
 
   const response = NextResponse.next()

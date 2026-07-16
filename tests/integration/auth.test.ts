@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vite
 import { signUpAction, verifyEmailAction, forgotPasswordAction, resetPasswordAction } from '@/app/actions/auth'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { Pool } from 'pg'
 
 // Mock the email sending functions to avoid actual API calls to Resend during test execution
 vi.mock('@/lib/email', () => ({
@@ -37,15 +38,18 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
 
   beforeAll(async () => {
     // Warm up Neon database to prevent cold-start timeouts on the first test
+    // We use the native pg Pool here to avoid Prisma's aggressive stdout error logging on cold start timeouts.
+    const pool = new Pool({ connectionString: process.env.DATABASE_URL })
     for (let i = 0; i < 5; i++) {
       try {
-        await prisma.$queryRaw`SELECT 1`
+        await pool.query('SELECT 1')
         break
       } catch (e) {
         if (i === 4) throw e
         await new Promise(r => setTimeout(r, 2000))
       }
     }
+    await pool.end()
   }, 30_000)
 
   // Clean up any test users before and after

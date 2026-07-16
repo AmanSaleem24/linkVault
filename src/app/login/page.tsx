@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { loginAction, googleSignInAction } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
 import { LinkIcon, Loader2, AlertCircle, MailWarning } from 'lucide-react'
 
-export default function LoginPage() {
+function LoginForm() {
   const [error, setError] = useState<string | null>(null)
   const [emailNotVerified, setEmailNotVerified] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<{ email?: string; password?: string }>({})
@@ -62,6 +63,21 @@ export default function LoginPage() {
       }
     }
     setLoading(false)
+  }
+
+  // Pre-fill error from URL (e.g., OAuthAccountNotLinked from NextAuth)
+  const searchParams = useSearchParams()
+  const urlError = searchParams.get('error')
+  
+  let displayError = error
+  if (!displayError && urlError) {
+    if (urlError === 'OAuthAccountNotLinked') {
+      displayError = 'This email is already associated with a different sign-in method.'
+    } else if (urlError === 'OAuthCallbackError') {
+      displayError = 'Authentication failed. Please try again.'
+    } else {
+      displayError = 'An unexpected error occurred. Please try again.'
+    }
   }
 
   return (
@@ -202,5 +218,13 @@ export default function LoginPage() {
         />
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <LoginForm />
+    </Suspense>
   )
 }

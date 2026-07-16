@@ -1,23 +1,29 @@
 import NextAuth from 'next-auth'
 import Credentials from 'next-auth/providers/credentials'
+import Google from 'next-auth/providers/google'
+import { customFetch } from 'next-auth'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import { loginSchema } from '@/lib/validators'
 import { authConfig } from './auth.config'
 
-import { CredentialsSignin } from 'next-auth'
-
-class OAuthAccountNotLinkedError extends CredentialsSignin {
-  code = 'OAUTH_ACCOUNT_NO_PASSWORD'
-}
+// Custom errors will be thrown as standard Error objects so we can read error.cause?.err?.message
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   adapter: PrismaAdapter(prisma),
   session: { strategy: 'jwt' },
   providers: [
-    ...authConfig.providers,
+    // Override the Google provider from authConfig with a custom fetch that
+    // allows up to 30s — prevents intermittent ConnectTimeoutError on slow networks.
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true,
+      [customFetch]: (url: Parameters<typeof fetch>[0], opts?: Parameters<typeof fetch>[1]) =>
+        fetch(url, { ...opts, signal: AbortSignal.timeout(30_000) }),
+    }),
     Credentials({
       credentials: {
         email: { label: 'Email', type: 'email' },
@@ -27,33 +33,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const parsed = loginSchema.safeParse(credentials)
         if (!parsed.success) return null
 
-        const user = await prisma.user.findUnique({
-          where: { email: parsed.data.email },
-        })
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: parsed.data.email },
+          })
 
-        if (!user) return null
+          if (!user) return null
 
-        // User signed up with Google and has no password
-        if (!user.passwordHash) {
-          throw new OAuthAccountNotLinkedError()
-        }
+          // User signed up with Google and has no password
+          if (!user.passwordHash) {
+            throw new Error('OAUTH_ACCOUNT_NO_PASSWORD')
+          }
 
-        const valid = await bcrypt.compare(parsed.data.password, user.passwordHash)
-        if (!valid) return null
+          const valid = await bcrypt.compare(parsed.data.password, user.passwordHash)
+          if (!valid) return null
 
-        if (!user.emailVerified) {
-          throw new Error('EMAIL_NOT_VERIFIED')
-        }
+          if (!user.emailVerified) {
+            throw new Error('EMAIL_NOT_VERIFIED')
+          }
 
-        // image is needed for the session
-        // (Google users will have a profile picture)
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          role: user.role,
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: user.role,
+          }
+        } catch (err: any) {
+          if (err.message === 'OAUTH_ACCOUNT_NO_PASSWORD' || err.message === 'EMAIL_NOT_VERIFIED') {
+            throw err
+          }
+          // Log unexpected errors (e.g. Neon cold-start timeout) and return null
+          // so Auth.js shows a CredentialsSignin error, not a Configuration error
+          console.error('[authorize] unexpected error:', err)
+          return null
         }
       },
     }),
@@ -68,10 +81,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token
     },
     async session({ session, token }) {
-      if (session.user && token) {
+      if (session.user && token && token.id) {
         session.user.id = token.id as string
-        // @ts-expect-error — extend session type
-        session.user.role = token.role as string
+        
+        try {
+          // Always fetch the fresh role from DB to handle upgrades without re-login
+          const dbUser = await prisma.user.findUnique({ 
+            where: { id: token.id as string }, 
+            select: { role: true } 
+          })
+          // @ts-expect-error — extend session type
+          session.user.role = dbUser?.role ?? (token.role as string)
+        } catch (err) {
+          // Fallback to JWT token role if DB query fails
+          // @ts-expect-error
+          session.user.role = token.role as string
+        }
       }
       return session
     },

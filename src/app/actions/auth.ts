@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
-import { signIn } from '@/lib/auth'
+import { signIn, signOut } from '@/lib/auth'
 import { sendVerificationEmail, sendPasswordResetEmail } from '@/lib/email'
 import { signupSchema, forgotPasswordSchema, resetPasswordSchema } from '@/lib/validators'
 import { AuthError } from 'next-auth'
@@ -17,7 +17,7 @@ export async function signUpAction(formData: unknown) {
   const { name, email, password } = result.data
 
   try {
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findFirst({
       where: { email },
     })
 
@@ -112,33 +112,43 @@ export async function loginAction(formData: unknown) {
     await signIn('credentials', {
       email,
       password,
-      redirectTo: '/dashboard',
+      redirectTo: '/home',
     })
     return { success: true }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          // Access the custom code from the thrown OAuthAccountNotLinkedError
-          if ((error as any).code === 'OAUTH_ACCOUNT_NO_PASSWORD' || (error.cause as any)?.err?.code === 'OAUTH_ACCOUNT_NO_PASSWORD') {
+        case 'CallbackRouteError': {
+          const cause = (error as any).cause?.err || (error as any).cause
+          const msg = cause?.message || error.message
+
+          if (msg === 'OAUTH_ACCOUNT_NO_PASSWORD') {
             return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }
           }
-          return { success: false, error: 'Invalid credentials' }
-        case 'CallbackRouteError':
-          if (error.cause?.err?.message === 'EMAIL_NOT_VERIFIED') {
+          if (msg === 'EMAIL_NOT_VERIFIED') {
             return { success: false, error: 'EMAIL_NOT_VERIFIED' }
           }
-          return { success: false, error: 'Invalid credentials' }
+
+          if (error.type === 'CredentialsSignin') {
+            return { success: false, error: 'Invalid email or password' }
+          }
+          return { success: false, error: 'Authentication failed. Please try again.' }
+        }
         default:
           return { success: false, error: 'Authentication failed' }
-        }
+      }
     }
     throw error
   }
 }
 
 export async function googleSignInAction() {
-  await signIn('google', { redirectTo: '/dashboard' })
+  await signIn('google', { redirectTo: '/home' })
+}
+
+export async function signOutAction() {
+  await signOut({ redirectTo: '/login' })
 }
 
 export async function forgotPasswordAction(formData: unknown) {
@@ -150,7 +160,7 @@ export async function forgotPasswordAction(formData: unknown) {
   const { email } = result.data
 
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: { email },
     })
 
