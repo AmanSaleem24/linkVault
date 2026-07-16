@@ -1,9 +1,24 @@
 import { Redis } from '@upstash/redis'
 
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-})
+// ─── Lazy Redis Client ────────────────────────────────────────────────────────
+
+let _redis: Redis | null = null
+
+/**
+ * Returns the Redis client, creating it on first call.
+ * Returns null if Upstash env vars are not configured.
+ *
+ * Redis is an optional dependency — the redirect service falls
+ * back to Postgres when Redis is unavailable.
+ */
+export function getRedis(): Redis | null {
+  if (_redis) return _redis
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  if (!url || !token) return null
+  _redis = new Redis({ url, token })
+  return _redis
+}
 
 // ─── Key helpers ──────────────────────────────────────────────────────────────
 

@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { redis, LINK_CACHE_KEY } from '@/lib/redis'
+import { getRedis, LINK_CACHE_KEY } from '@/lib/redis'
 import { generateUniqueSlug } from '@/lib/slugs'
 import { createLinkSchema, updateLinkSchema } from '@/lib/validators'
 
@@ -15,11 +15,12 @@ import { createLinkSchema, updateLinkSchema } from '@/lib/validators'
  * When a link is mutated, we delete its cache entry so the next
  * redirect fetches fresh data from Postgres.
  *
- * If Redis isn't configured yet, this silently no-ops.
+ * Redis is optional — if not configured or unavailable, this silently no-ops.
  */
 async function invalidateCache(slug: string): Promise<void> {
   try {
-    await redis.del(LINK_CACHE_KEY(slug))
+    const r = getRedis()
+    if (r) await r.del(LINK_CACHE_KEY(slug))
   } catch {
     // Redis not configured or unavailable — safe to skip
   }
