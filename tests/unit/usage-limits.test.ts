@@ -11,8 +11,11 @@ vi.mock('@/lib/auth', () => ({
 // Mock the prisma module
 vi.mock('@/lib/prisma', () => ({
   prisma: {
+    user: {
+      findUnique: vi.fn(),
+    },
     auditLog: {
-      count: vi.fn(),
+      findMany: vi.fn(),
     },
   },
 }))
@@ -35,19 +38,22 @@ describe('getUserUsageStatsAction', () => {
   it('identifies free tier users and returns usage counts', async () => {
     // @ts-ignore
     vi.mocked(auth).mockResolvedValue({ user: { id: 'user-1', role: 'user' } })
-    
-    // First call for links, second call for qr codes
     // @ts-ignore
-    vi.mocked(prisma.auditLog.count)
-      .mockResolvedValueOnce(25) // linkCount
-      .mockResolvedValueOnce(5)  // qrCount
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'user-1', role: 'user' })
+
+    // @ts-ignore
+    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([
+      { newValue: { hasQrCode: false } },
+      { newValue: { hasQrCode: false } },
+      { newValue: { hasQrCode: true } },
+    ] as any)
 
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(true)
     if (result.success) {
       expect(result.data.isPro).toBe(false)
-      expect(result.data.linkCount).toBe(25)
-      expect(result.data.qrCount).toBe(5)
+      expect(result.data.linkCount).toBe(3)
+      expect(result.data.qrCount).toBe(1)
       expect(result.data.limits).toEqual({ links: 50, qr: 10 })
     }
   })
@@ -55,9 +61,11 @@ describe('getUserUsageStatsAction', () => {
   it('identifies pro tier users', async () => {
     // @ts-ignore
     vi.mocked(auth).mockResolvedValue({ user: { id: 'pro-1', role: 'pro' } })
-    
     // @ts-ignore
-    vi.mocked(prisma.auditLog.count).mockResolvedValue(0)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'pro-1', role: 'pro' })
+
+    // @ts-ignore
+    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([] as any)
 
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(true)
@@ -69,9 +77,11 @@ describe('getUserUsageStatsAction', () => {
   it('identifies admin tier users as pro', async () => {
     // @ts-ignore
     vi.mocked(auth).mockResolvedValue({ user: { id: 'admin-1', role: 'admin' } })
-    
     // @ts-ignore
-    vi.mocked(prisma.auditLog.count).mockResolvedValue(0)
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'admin-1', role: 'admin' })
+
+    // @ts-ignore
+    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([] as any)
 
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(true)

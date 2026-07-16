@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect, useTransition } from 'react'
+import { useState, useEffect, useTransition, useRef } from 'react'
 import Link from 'next/link'
-import { Link2, Star, CheckCircle2, Globe, Sparkles, Lock, Copy, ArrowLeft, ExternalLink } from 'lucide-react'
+import { Link2, Star, CheckCircle2, Globe, Sparkles, Lock, Copy, ArrowLeft, ExternalLink, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { getUserUsageStatsAction, createLinkAction } from '@/app/actions/links'
+import { getUserUsageStatsAction, createLinkAction, checkAliasAvailabilityAction } from '@/app/actions/links'
+import { PRESET_DURATIONS, type ExpiryDuration } from '@/lib/validators'
 import { toast } from 'sonner'
 import QRCode from 'react-qr-code'
 
@@ -14,14 +15,20 @@ const ENV_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? ''
 export default function HomePage() {
   const [url, setUrl] = useState('')
   const [alias, setAlias] = useState('')
-  const [qrCode, setQrCode] = useState(true)
+  const [qrCode, setQrCode] = useState(false)
   const [expires, setExpires] = useState(false)
-  const [expiresAt, setExpiresAt] = useState('')
+  const [expiresIn, setExpiresIn] = useState<ExpiryDuration>(null)
+  const [customValue, setCustomValue] = useState('')
+  const [customUnit, setCustomUnit] = useState<'m' | 'h'>('m')
   const [stats, setStats] = useState<{ linkCount: number; qrCount: number; isPro: boolean; limits: { links: number; qr: number } } | null>(null)
+  const isPro = stats?.isPro ?? false
   const [loadingStats, setLoadingStats] = useState(true)
   const [isPending, startTransition] = useTransition()
   const [createdData, setCreatedData] = useState<{ shortUrl: string, originalUrl: string, hasQr: boolean } | null>(null)
   const [urlError, setUrlError] = useState<string | null>(null)
+  const [aliasStatus, setAliasStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
+  const [aliasError, setAliasError] = useState<string | null>(null)
+  const aliasCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   // Falls back to window.location.origin after mount so SSR and first render match.
   const [baseUrl, setBaseUrl] = useState(ENV_BASE_URL)
 
@@ -56,6 +63,40 @@ export default function HomePage() {
     }
   }
 
+  async function checkAlias(value: string) {
+    if (!value.trim()) {
+      setAliasStatus('idle')
+      setAliasError(null)
+      return
+    }
+    setAliasStatus('checking')
+    setAliasError(null)
+    const result = await checkAliasAvailabilityAction(value)
+    if (result.available) {
+      setAliasStatus('available')
+    } else {
+      setAliasStatus('taken')
+      setAliasError(result.reason || 'Alias not available')
+    }
+  }
+
+  function getExpiryLabel(value: ExpiryDuration): string {
+    if (value === null) return 'No expiry'
+    if (typeof value === 'number') return `${value} minute${value > 1 ? 's' : ''}`
+    const match = value.match(/^(\d+)(m|h|d|w|mo)$/)
+    if (!match) return 'No expiry'
+    const num = Number(match[1])
+    const unit = match[2]
+    switch (unit) {
+      case 'm': return `${num} minute${num > 1 ? 's' : ''}`
+      case 'h': return `${num} hour${num > 1 ? 's' : ''}`
+      case 'd': return `${num} day${num > 1 ? 's' : ''}`
+      case 'w': return `${num} week${num > 1 ? 's' : ''}`
+      case 'mo': return `${num} month${num > 1 ? 's' : ''}`
+      default: return 'No expiry'
+    }
+  }
+
   async function handleCreate() {
     const err = validateUrl(url)
     if (err) {
@@ -63,12 +104,16 @@ export default function HomePage() {
       return
     }
 
+    const resolvedExpiresIn = expires
+      ? (expiresIn === 'custom' ? (customValue ? (customUnit === 'm' ? Number(customValue) : Number(customValue) * 60) : null) : expiresIn)
+      : null
+
     startTransition(async () => {
       const res = await createLinkAction({
         url,
         alias: alias || undefined,
         qrCode: qrCode,
-        expiresAt: expires && expiresAt ? expiresAt : undefined,
+        expiresIn: resolvedExpiresIn,
       })
 
       if (res.success && res.data) {
@@ -80,8 +125,10 @@ export default function HomePage() {
         })
         setUrl('')
         setAlias('')
-        setExpiresAt('')
+        setExpiresIn(null)
+        setCustomValue('')
         setExpires(false)
+        setQrCode(false)
         await loadStats() // Refresh usage stats
       } else {
         toast.error(res.error || 'Failed to create link')
@@ -89,8 +136,8 @@ export default function HomePage() {
     })
   }
 
-  const isLinkLimitReached = stats && !stats.isPro && stats.linkCount >= stats.limits.links
-  const isQrLimitReached = stats && !stats.isPro && stats.qrCount >= stats.limits.qr
+  const isLinkLimitReached = !!(stats && !stats.isPro && stats.linkCount >= stats.limits.links)
+  const isQrLimitReached = !!(stats && !stats.isPro && stats.qrCount >= stats.limits.qr)
 
   return (
     <div className="mx-4 mb-12 mt-6 max-w-6xl sm:mx-8 md:mx-12 xl:mx-auto xl:mt-10">
@@ -114,7 +161,7 @@ export default function HomePage() {
           </div>
 
           {/* Usage Stats (Free Tier) */}
-          {!loadingStats && stats && !stats.isPro && (
+          {stats && !isPro && (
             <div className="mb-8 flex flex-col gap-4 rounded-xl border border-slate-200 bg-slate-50 p-5">
               <div className="flex items-center justify-between">
                 <span className="text-[0.85rem] font-semibold text-slate-700">Monthly Usage</span>
@@ -205,87 +252,95 @@ export default function HomePage() {
                     type="text"
                     placeholder="my-portfolio"
                     value={alias}
-                    onChange={(e) => setAlias(e.target.value)}
+                    onChange={(e) => {
+                      setAlias(e.target.value)
+                      if (aliasStatus !== 'idle') setAliasStatus('idle')
+                    }}
+                    onBlur={() => checkAlias(alias)}
                     disabled={isLinkLimitReached || false}
                     className="w-full h-full rounded-r-xl border border-slate-200 bg-white px-3 text-[0.95rem] text-slate-900 placeholder:text-slate-400 transition-colors hover:border-slate-300 focus:border-[#2B0094] focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
-                  {alias.length > 0 && (
+                  {alias.length > 0 && aliasStatus !== 'taken' && (
                     <CheckCircle2 className="absolute right-3 top-1/2 size-4.5 -translate-y-1/2 text-green-500" strokeWidth={2.5} />
                   )}
                 </div>
+                {aliasStatus === 'checking' && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[0.8rem] text-slate-500">
+                    <Loader2 className="size-3 animate-spin" /> Checking availability...
+                  </p>
+                )}
+                {aliasStatus === 'available' && alias.length > 0 && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[0.8rem] font-medium text-green-600">
+                    <CheckCircle2 className="size-3.5" /> This alias is available
+                  </p>
+                )}
+                {aliasStatus === 'taken' && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[0.8rem] font-medium text-red-500">
+                    <XCircle className="size-3.5" /> {aliasError}
+                  </p>
+                )}
               </div>
             </div>
-            
+
             <div className="space-y-3.5">
               {/* QR Code Toggle */}
-              <label className={`group flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${isQrLimitReached ? 'opacity-70' : 'hover:-translate-y-[1px] hover:border-slate-300 hover:shadow-md'}`}>
+              <label className={`flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${isPro || !isQrLimitReached ? 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md' : 'opacity-75'}`}>
                 <div className="flex items-center gap-3.5">
                   <input
                     type="checkbox"
                     checked={qrCode}
-                    disabled={isQrLimitReached || isLinkLimitReached || false}
                     onChange={(e) => setQrCode(e.target.checked)}
+                    disabled={loadingStats || (isPro && isLinkLimitReached) || (!isPro && isQrLimitReached)}
                     className="size-4.5 rounded border-slate-300 accent-[#2B0094] transition-transform group-active:scale-95 disabled:cursor-not-allowed"
                   />
                   <span className="text-[0.95rem] font-medium text-slate-800">Generate QR Code</span>
                 </div>
-                {isQrLimitReached ? (
-                  <span className="flex items-center gap-1 rounded bg-slate-100 px-2 py-1 text-[0.75rem] font-bold text-slate-500">
-                    <Lock className="size-3" /> LIMIT REACHED
-                  </span>
-                ) : (
-                  <span className="rounded bg-slate-100 px-2 py-1 text-[0.75rem] font-semibold text-slate-500">Free</span>
+                {!isPro && isQrLimitReached && (
+                  <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500">
+                      <Lock className="size-3.5" /> Upgrade to Pro
+                    </span>
                 )}
               </label>
 
-              {/* Expiration Date Toggle */}
-              <div className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${!stats?.isPro ? 'opacity-80' : 'hover:-translate-y-[1px] hover:border-slate-300 hover:shadow-md'}`}>
-                <label className={`group flex items-center justify-between ${!stats?.isPro ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                  <div className="flex items-center gap-3.5">
-                    <input
-                      type="checkbox"
-                      checked={expires}
-                      onChange={(e) => setExpires(e.target.checked)}
-                      disabled={!stats?.isPro || loadingStats}
-                      className="size-4.5 rounded border-slate-300 accent-[#2B0094] transition-transform group-active:scale-95 disabled:cursor-not-allowed"
-                    />
-                    <span className="text-[0.95rem] font-medium text-slate-800">Expiration Date</span>
-                  </div>
-                  <div className="flex items-center gap-1 rounded border border-[#2B0094]/10 bg-[#ECEEFE] px-2 py-1 text-[0.75rem] font-bold text-[#2B0094] shadow-sm">
-                    <Sparkles className="size-3 text-[#2B0094]" /> PRO
-                  </div>
-                </label>
-                
-                {expires && (
-                  <div className="ml-[2.1rem] mt-4">
-                    <label className="mb-1.5 block text-[0.8rem] font-medium text-slate-500">
-                      Expires On
-                    </label>
-                    <input 
-                      type="date" 
-                      value={expiresAt}
-                      onChange={(e) => setExpiresAt(e.target.value)}
-                      min={new Date().toISOString().split('T')[0]}
-                      disabled={!stats?.isPro || loadingStats}
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-[0.95rem] text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto" 
-                    />
-                  </div>
+              {/* Link Expiration */}
+              <label className={`flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${isPro ? 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md' : 'opacity-75'}`}>
+                <div className="flex items-center gap-3.5">
+                  <input
+                    type="checkbox"
+                    checked={isPro ? expires : false}
+                    onChange={(e) => isPro && setExpires(e.target.checked)}
+                    disabled={!isPro || loadingStats}
+                    readOnly={!isPro}
+                    className="size-4.5 rounded border-slate-300 accent-[#2B0094] transition-transform group-active:scale-95 disabled:cursor-not-allowed"
+                  />
+                  <span className="text-[0.95rem] font-medium text-slate-800">Link Expiration</span>
+                </div>
+                {!isPro ? (
+                  <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500">
+                    <Lock className="size-3.5" /> Upgrade to Pro
+                  </span>
+                ) : null}
+              </label>
+
+              {/* Click Analytics */}
+              <label className={`flex cursor-pointer items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${isPro ? 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md' : 'opacity-75'}`}>
+                <div className="flex items-center gap-3.5">
+                  <input
+                    type="checkbox"
+                    checked={isPro}
+                    disabled
+                    className="size-4.5 rounded border-slate-300 accent-[#2B0094] cursor-default"
+                  />
+                  <span className="text-[0.95rem] font-medium text-slate-800">Click Analytics</span>
+                </div>
+                {!isPro ? (
+                  <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500">
+                    <Lock className="size-3.5" /> Upgrade to Pro
+                  </span>
+                ) : (
+                  <span className="rounded bg-slate-100 px-2 py-1 text-[0.75rem] font-semibold text-slate-500">Active</span>
                 )}
-              </div>
-              {/* Click Analytics (Static Up-sell) */}
-              <div className={`rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-all ${!stats?.isPro ? 'opacity-80' : 'hover:-translate-y-[1px] hover:border-slate-300 hover:shadow-md'}`}>
-                <label className={`group flex items-center justify-between ${!stats?.isPro ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
-                  <div className="flex items-center gap-3.5">
-                    <div className={`flex size-4.5 items-center justify-center rounded ${!stats?.isPro ? 'bg-slate-100' : 'bg-[#2B0094]/10'}`}>
-                      <Lock className={`size-3 ${!stats?.isPro ? 'text-slate-400' : 'text-[#2B0094]'}`} strokeWidth={2.5} />
-                    </div>
-                    <span className="text-[0.95rem] font-medium text-slate-800">Click Analytics</span>
-                  </div>
-                  <div className="flex items-center gap-1 rounded border border-[#2B0094]/10 bg-[#ECEEFE] px-2 py-1 text-[0.75rem] font-bold text-[#2B0094] shadow-sm">
-                    <Sparkles className="size-3 text-[#2B0094]" /> PRO
-                  </div>
-                </label>
-              </div>
+              </label>
             </div>
           </div>
 
@@ -408,7 +463,7 @@ export default function HomePage() {
                   {expires && (
                     <li className="flex items-center gap-3">
                       <CheckCircle2 className="size-4.5 text-green-500" strokeWidth={2.5} />
-                      Expires on date
+                      Expires: {getExpiryLabel(expiresIn)}
                     </li>
                   )}
                   <li className="flex items-center gap-3 text-slate-400">

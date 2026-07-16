@@ -61,42 +61,97 @@ export const RESERVED_SLUGS = [
   'favicon.ico',
 ] as const
 
-export const createLinkSchema = z.object({
-  url: z.string().url('Must be a valid URL').max(2048, 'URL is too long'),
-  alias: z
-    .string()
-    .min(3, 'Alias must be at least 3 characters')
-    .max(50, 'Alias must be at most 50 characters')
-    .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only (no leading/trailing hyphens)')
-    .refine(
-      (val) => !(RESERVED_SLUGS as readonly string[]).includes(val),
-      'This alias is reserved'
-    )
-    .optional(),
-  expiresAt: z.coerce
-    .date()
-    .min(new Date(), 'Expiry must be in the future')
-    .optional()
-    .nullable(),
-  qrCode: z.boolean().optional().default(false),
-})
+export const createLinkSchema = z
+  .object({
+    url: z.string().url('Must be a valid URL').max(2048, 'URL is too long'),
+    alias: z
+      .string()
+      .min(3, 'Alias must be at least 3 characters')
+      .max(50, 'Alias must be at most 50 characters')
+      .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only (no leading/trailing hyphens)')
+      .refine(
+        (val) => !(RESERVED_SLUGS as readonly string[]).includes(val),
+        'This alias is reserved'
+      )
+      .optional(),
+    expiresIn: z.union([z.number().int().positive(), z.string(), z.null()]).optional().nullable(),
+    qrCode: z.boolean().optional().default(false),
+  })
+  .transform((data) => ({
+    url: data.url,
+    alias: data.alias,
+    expiresAt: data.expiresIn !== undefined && data.expiresIn !== null ? resolveExpiry(data.expiresIn as ExpiryDuration) : undefined,
+    qrCode: data.qrCode,
+  }))
 
-export const updateLinkSchema = z.object({
-  id: z.string().cuid(),
-  url: z.string().url('Must be a valid URL').max(2048).optional(),
-  alias: z
-    .string()
-    .min(3, 'Alias must be at least 3 characters')
-    .max(50, 'Alias must be at most 50 characters')
-    .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only (no leading/trailing hyphens)')
-    .refine(
-      (val) => !(RESERVED_SLUGS as readonly string[]).includes(val),
-      'This alias is reserved'
-    )
-    .optional(),
-  expiresAt: z.coerce.date().min(new Date()).optional().nullable(),
-})
+export const updateLinkSchema = z
+  .object({
+    id: z.string().cuid(),
+    url: z.string().url('Must be a valid URL').optional(),
+    alias: z
+      .string()
+      .min(3, 'Alias must be at least 3 characters')
+      .max(50, 'Alias must be at most 50 characters')
+      .regex(SLUG_REGEX, 'Letters, numbers, and hyphens only (no leading/trailing hyphens)')
+      .refine(
+        (val) => !(RESERVED_SLUGS as readonly string[]).includes(val),
+        'This alias is reserved'
+      )
+      .optional(),
+    expiresIn: z.union([z.number().int().positive(), z.string(), z.null()]).optional().nullable(),
+  })
+  .transform((data) => ({
+    id: data.id,
+    url: data.url,
+    alias: data.alias,
+    expiresAt: data.expiresIn !== undefined && data.expiresIn !== null ? resolveExpiry(data.expiresIn as ExpiryDuration) : undefined,
+  }))
 
+// ─── Expiry duration helpers ─────────────────────────────────────────────────
+
+export type ExpiryDuration = `${number}m` | `${number}h` | `${number}d` | `${number}w` | `${number}mo` | number | 'custom' | null
+
+export const PRESET_DURATIONS: { label: string; value: ExpiryDuration }[] = [
+  { label: 'No expiry', value: null },
+  { label: '15 minutes', value: '15m' },
+  { label: '1 hour', value: '1h' },
+  { label: '3 hours', value: '3h' },
+  { label: '12 hours', value: '12h' },
+  { label: '1 day', value: '1d' },
+  { label: '3 days', value: '3d' },
+  { label: '1 week', value: '1w' },
+  { label: '1 month', value: '1mo' },
+]
+
+export function resolveExpiry(input: ExpiryDuration): Date | null {
+  if (input === null) return null
+
+  // Custom: plain number = minutes
+  if (typeof input === 'number') {
+    return new Date(Date.now() + input * 60 * 1000)
+  }
+
+  const match = input.match(/^(\d+)(m|h|d|w|mo)$/)
+  if (!match) return null
+
+  const value = Number(match[1])
+  const unit = match[2]
+
+  switch (unit) {
+    case 'm':
+      return new Date(Date.now() + value * 60 * 1000)
+    case 'h':
+      return new Date(Date.now() + value * 60 * 60 * 1000)
+    case 'd':
+      return new Date(Date.now() + value * 24 * 60 * 60 * 1000)
+    case 'w':
+      return new Date(Date.now() + value * 7 * 24 * 60 * 60 * 1000)
+    case 'mo':
+      return new Date(Date.now() + value * 30 * 24 * 60 * 60 * 1000)
+    default:
+      return null
+  }
+}
 
 export type SignupInput = z.infer<typeof signupSchema>
 export type LoginInput = z.infer<typeof loginSchema>
