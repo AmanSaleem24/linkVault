@@ -46,11 +46,31 @@ export function encodeCursor(createdAt: Date, id: string): string {
 /**
  * Decode a pagination cursor from base64.
  */
-export function decodeCursor(cursor: string): { createdAt: Date; id: string } | null {
+export function decodeCursor(cursor?: string): { createdAt: Date; id: string } | null {
+  if (!cursor) return null
   try {
     const { createdAt, id } = JSON.parse(Buffer.from(cursor, 'base64url').toString('utf8'))
     return { createdAt: new Date(createdAt), id }
   } catch {
     return null
+  }
+}
+
+/**
+ * Build the WHERE clause for cursor-based pagination.
+ * Uses a composite condition: (createdAt, id) < (cursor.createdAt, cursor.id)
+ * This ensures stable ordering even when multiple rows share the same createdAt.
+ */
+export function cursorWhere(cursor: { createdAt: Date; id: string }) {
+  return {
+    OR: [
+      { createdAt: { lt: cursor.createdAt } },
+      {
+        AND: [
+          { createdAt: cursor.createdAt },
+          { id: { lt: cursor.id } },
+        ],
+      },
+    ],
   }
 }

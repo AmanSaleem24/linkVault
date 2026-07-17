@@ -2,10 +2,129 @@
 
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { RESERVED_SLUGS, SLUG_REGEX } from '@/lib/validators'
+import { RESERVED_SLUGS, SLUG_REGEX, type LinkStatus } from '@/lib/validators'
 import { FREE_TIER_LIMITS } from '@/lib/config'
 
-// ─── Get User Links ───────────────────────────────────────────────────────────
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export type SortField = 'createdAt' | 'originalUrl' | 'slug' | 'status' | 'clickCount'
+export type StatusFilter = 'all' | 'active' | 'disabled' | 'expired'
+
+export interface LinksListParams {
+  cursor?: string
+  limit?: number
+  search?: string
+  status?: StatusFilter
+  sortBy?: SortField
+  sortOrder?: 'asc' | 'desc'
+  dateFrom?: string
+  dateTo?: string
+}
+
+export interface PaginatedLinksResult {
+  success: true
+  data: {
+    links: Array<{
+      id: string
+      originalUrl: string
+      slug: string
+      status: LinkStatus
+      clickCount: number
+      expiresAt: string | null
+      createdAt: string
+    }>
+    nextCursor: string | null
+    hasMore: boolean
+    totalCount: number
+  }
+}
+
+export type LinksResult = PaginatedLinksResult | { success: false; error: string }
+
+// ─── Get Links (paginated) ────────────────────────────────────────────────────
+
+export async function getLinksAction(params: LinksListParams = {}): Promise<LinksResult> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'You must be logged in' }
+  }
+
+  const {
+    cursor,
+    limit = 20,
+    search,
+    status,
+    sortBy = 'createdAt',
+    sortOrder = 'desc',
+    dateFrom,
+    dateTo,
+  } = params
+
+  try {
+    const where: Record<string, unknown> = { userId: session.user.id }
+
+    if (search) {
+      where.OR = [
+        { originalUrl: { contains: search, mode: 'insensitive' } },
+        { slug: { contains: search, mode: 'insensitive' } },
+      ]
+    }
+
+    if (status && status !== 'all') {
+      where.status = status
+    }
+
+    if (dateFrom || dateTo) {
+      const createdAt: Record<string, string> = {}
+      if (dateFrom) createdAt.gte = new Date(dateFrom).toISOString()
+      if (dateTo) {
+        const end = new Date(dateTo)
+        end.setHours(23, 59, 59, 999)
+        createdAt.lte = end.toISOString()
+      }
+      where.createdAt = createdAt
+    }
+
+    const orderBy: Record<string, string> = {}
+    orderBy[sortBy] = sortOrder
+
+    const fetchLimit = limit + 1
+    const links = await prisma.link.findMany({
+      where,
+      orderBy,
+      take: fetchLimit,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    })
+
+    const hasMore = links.length > limit
+    const pageLinks = hasMore ? links.slice(0, -1) : links
+    const last = pageLinks[pageLinks.length - 1]
+    const nextCursor = hasMore && last ? last.id : null
+
+    return {
+      success: true,
+      data: {
+        links: pageLinks.map(l => ({
+          id: l.id,
+          originalUrl: l.originalUrl,
+          slug: l.slug,
+          status: l.status as LinkStatus,
+          clickCount: l.clickCount,
+          expiresAt: l.expiresAt?.toISOString() ?? null,
+          createdAt: l.createdAt.toISOString(),
+        })),
+        nextCursor,
+        hasMore,
+        totalCount: pageLinks.length,
+      },
+    }
+  } catch (error) {
+    console.error('Get links error:', error)
+    return { success: false as const, error: 'Failed to fetch links' }
+  }
+}
+
+// ─── Get User Links (non-paginated, for backward compat) ──────────────────────
 
 export async function getUserLinksAction() {
   // 1. Authenticate

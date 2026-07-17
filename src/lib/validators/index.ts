@@ -111,6 +111,8 @@ export const updateLinkSchema = z
 
 export type ExpiryDuration = `${number}m` | `${number}h` | `${number}d` | `${number}w` | `${number}mo` | number | 'custom' | null
 
+export type LinkStatus = 'active' | 'disabled' | 'expired'
+
 export const PRESET_DURATIONS: { label: string; value: ExpiryDuration }[] = [
   { label: 'No expiry', value: null },
   { label: '15 minutes', value: '15m' },
