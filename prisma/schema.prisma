@@ -1,16 +1,10 @@
-// LinkVault — Prisma Schema
-// Docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
 }
-
-// ─── Auth.js required tables ──────────────────────────────────────────────────
 
 model Account {
   id                String  @id @default(cuid())
@@ -25,8 +19,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,8 +29,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -48,35 +40,20 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-// ─── App models ───────────────────────────────────────────────────────────────
-
-enum Role {
-  user
-  pro
-  admin
-}
-
-enum LinkStatus {
-  active
-  disabled
-  expired
-}
-
 model User {
-  id             String    @id @default(cuid())
-  name           String
-  email          String    @unique
-  emailVerified  DateTime?
-  image          String?
-  passwordHash   String?
-  role           Role      @default(user)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  accounts  Account[]
-  sessions  Session[]
-  links     Link[]
-  auditLogs AuditLog[]
+  id            String     @id @default(cuid())
+  name          String
+  email         String     @unique
+  passwordHash  String?
+  role          Role       @default(user)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  image         String?
+  emailVerified DateTime?
+  accounts      Account[]
+  auditLogs     AuditLog[]
+  links         Link[]
+  sessions      Session[]
 }
 
 model Link {
@@ -89,9 +66,8 @@ model Link {
   expiresAt   DateTime?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
-
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clicks Click[]
+  clicks      Click[]
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status, createdAt])
   @@index([slug])
@@ -107,8 +83,7 @@ model Click {
   referrer  String?
   ip        String?
   clickedAt DateTime @default(now())
-
-  link Link @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 
   @@index([linkId, clickedAt])
 }
@@ -118,14 +93,25 @@ model AuditLog {
   userId        String
   entityType    String   @default("link")
   entityId      String
-  action        String   // create | update | delete | disable | enable
+  action        String
   previousValue Json?
   newValue      Json?
   createdAt     DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([userId, entityType, action, createdAt])
   @@index([entityId])
+}
+
+enum Role {
+  user
+  admin
+  pro
+}
+
+enum LinkStatus {
+  active
+  disabled
+  expired
 }

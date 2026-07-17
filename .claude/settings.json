@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc *)",
+      "Bash(npx vitest *)",
+      "mcp__Neon__get_database_tables",
+      "mcp__Neon__list_projects",
+      "mcp__Neon__run_sql",
+      "mcp__Neon__search",
+      "Bash(xargs -I {} psql {} -c \"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position;\")",
+      "Bash(node -e ' *)",
+      "Bash(pnpm prisma *)"
+    ]
+  }
+}
