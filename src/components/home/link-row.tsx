@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Copy, Eye, Pencil, Trash2, ToggleLeft, ToggleRight, BarChart2, MoreHorizontal, ExternalLink, Globe, CornerDownRight, Calendar, Lock } from 'lucide-react'
+import { Copy, Eye, Pencil, Trash2, ToggleLeft, ToggleRight, BarChart2, MoreHorizontal, ExternalLink, Globe, CornerDownRight, Calendar, Lock, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { type LinkStatus } from '@/lib/validators'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { ShareDialog } from '@/components/dashboard/share-dialog'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -116,6 +117,18 @@ export function LinkRow({
 
         {/* Action icons */}
         <div className="flex shrink-0 items-center gap-0.5">
+          <ShareDialog 
+            url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : `https://linkvault.io/${link.slug}`}
+            title={getLinkTitle(link.originalUrl)}
+          >
+            <button
+              title="Share"
+              className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Share2 className="size-4" />
+            </button>
+          </ShareDialog>
           <button
             onClick={onEdit}
             title="Edit"
@@ -245,6 +258,7 @@ export function LinkRow({
             Click data
           </span>
         )}
+
 
         {/* Date pill */}
         <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[0.75rem] font-medium text-slate-600">

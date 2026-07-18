@@ -185,14 +185,12 @@ export async function getClickAnalyticsAction(linkId: string): Promise<{
       return { success: false as const, error: 'Link not found' }
     }
 
-    const [clicksResult, uniqueResult] = await Promise.all([
-      prisma.click.count({ where: { linkId } }),
-      prisma.click.groupBy({
-        by: ['ip'],
-        where: { linkId },
-        _count: { ip: true },
-      }),
-    ])
+    const clicksResult = await prisma.click.count({ where: { linkId } })
+    const uniqueResult = await prisma.click.groupBy({
+      by: ['ip'],
+      where: { linkId },
+      _count: { ip: true },
+    })
 
     const topCountryResult = await prisma.click.groupBy({
       by: ['country'],
@@ -223,7 +221,8 @@ export async function getClickAnalyticsAction(linkId: string): Promise<{
           : null,
       },
     }
-  } catch {
+  } catch (error) {
+    console.error('getClickAnalyticsAction error:', error)
     return { success: false as const, error: 'Failed to fetch analytics' }
   }
 }
@@ -296,17 +295,25 @@ export async function getLocationsAction(linkId: string): Promise<{
       by: ['country'],
       where: { linkId },
       _count: { country: true },
-      orderBy: { _count: { country: 'desc' } },
-      take: 20,
     })
 
-    const total = grouped.reduce((sum, g) => sum + g._count.country, 0)
+    const merged = new Map<string, number>()
+    let total = 0
+    for (const g of grouped) {
+      const name = formatCountry(g.country)
+      const count = g._count.country
+      merged.set(name, (merged.get(name) || 0) + count)
+      total += count
+    }
 
-    const data: CountryData[] = grouped.map(g => ({
-      name: formatCountry(g.country),
-      count: g._count.country,
-      percentage: total > 0 ? Math.round((g._count.country / total) * 100) : 0,
-    }))
+    const data: CountryData[] = Array.from(merged.entries())
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
 
     return { success: true, data }
   } catch {
@@ -340,19 +347,27 @@ export async function getReferrersAction(linkId: string): Promise<{
 
     const grouped = await prisma.click.groupBy({
       by: ['referrer'],
-      where: { linkId, referrer: { not: null } },
+      where: { linkId },
       _count: { referrer: true },
-      orderBy: { _count: { referrer: 'desc' } },
-      take: 10,
     })
 
-    const total = grouped.reduce((sum, g) => sum + g._count.referrer, 0)
+    const merged = new Map<string, number>()
+    let total = 0
+    for (const g of grouped) {
+      const name = formatReferrer(g.referrer ?? 'Direct')
+      const count = g._count.referrer
+      merged.set(name, (merged.get(name) || 0) + count)
+      total += count
+    }
 
-    const data: ReferrerData[] = grouped.map(g => ({
-      name: formatReferrer(g.referrer ?? 'Direct'),
-      count: g._count.referrer,
-      percentage: total > 0 ? Math.round((g._count.referrer / total) * 100) : 0,
-    }))
+    const data: ReferrerData[] = Array.from(merged.entries())
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
 
     return { success: true, data }
   } catch {
@@ -388,16 +403,25 @@ export async function getDevicesAction(linkId: string): Promise<{
       by: ['device'],
       where: { linkId },
       _count: { device: true },
-      orderBy: { _count: { device: 'desc' } },
     })
 
-    const total = grouped.reduce((sum, g) => sum + g._count.device, 0)
+    const merged = new Map<string, number>()
+    let total = 0
+    for (const g of grouped) {
+      const name = formatDevice(g.device)
+      const count = g._count.device
+      merged.set(name, (merged.get(name) || 0) + count)
+      total += count
+    }
 
-    const data: DeviceData[] = grouped.map(g => ({
-      name: formatDevice(g.device),
-      count: g._count.device,
-      percentage: total > 0 ? Math.round((g._count.device / total) * 100) : 0,
-    }))
+    const data: DeviceData[] = Array.from(merged.entries())
+      .map(([name, count]) => ({
+        name,
+        count,
+        percentage: total > 0 ? Math.round((count / total) * 100) : 0,
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10)
 
     return { success: true, data }
   } catch {

@@ -25,6 +25,7 @@ import {
   type DateRange,
 } from '@/app/actions/links.analytics'
 import { Button } from '@/components/ui/button'
+import { ShareDialog } from '@/components/dashboard/share-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,31 +33,9 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import { DateFilterPopover, type DateFilter } from '@/components/home/date-filter-popover'
 
 // ─── Preset ranges (computed once on mount) ────────────────────────────────────
-
-function makeRange(id: string, days: number, label: string): DateRange {
-  const to = new Date()
-  const from = new Date(to)
-  from.setUTCDate(from.getUTCDate() - days)
-  from.setUTCHours(0, 0, 0, 0)
-  to.setUTCHours(23, 59, 59, 999)
-  return { id, from, to, label }
-}
-
-function useDateRanges() {
-  const [ranges, setRanges] = useState<DateRange[]>([])
-
-  useEffect(() => {
-    setRanges([
-      makeRange('7d', 7, 'Last 7 days'),
-      makeRange('30d', 30, 'Last 30 days'),
-      makeRange('90d', 90, 'Last 90 days'),
-    ])
-  }, [])
-
-  return ranges
-}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -140,406 +119,6 @@ function StatCard({ label, value, icon: Icon, isPro, isLocked }: {
       ) : (
         <p className="text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       )}
-    </div>
-  )
-}
-
-// ─── Styled Date Range Dropdown ───────────────────────────────────────────────
-
-function DateRangeDropdown({ ranges, selected, onChange, onCustom }: {
-  ranges: DateRange[]
-  selected: DateRange
-  onChange: (r: DateRange) => void
-  onCustom: () => void
-}) {
-  const [viewDate, setViewDate] = useState(new Date(selected.from))
-
-  const daysInMonth = new Date(viewDate.getUTCFullYear(), viewDate.getUTCMonth() + 1, 0).getUTCDate()
-  const firstDay = new Date(viewDate.getUTCFullYear(), viewDate.getUTCMonth(), 1).getUTCDay()
-  const today = new Date()
-  const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
-
-  const monthLabel = viewDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
-
-  const goPrev = () => {
-    const d = new Date(viewDate)
-    d.setUTCMonth(d.getUTCMonth() - 1)
-    setViewDate(d)
-  }
-  const goNext = () => {
-    const d = new Date(viewDate)
-    d.setUTCMonth(d.getUTCMonth() + 1)
-    setViewDate(d)
-  }
-
-  const selectDate = (day: number) => {
-    const clicked = new Date(Date.UTC(viewDate.getUTCFullYear(), viewDate.getUTCMonth(), day))
-
-    // Find which range this date falls into
-    const match = ranges.find(r => {
-      const from = new Date(r.from); from.setUTCHours(0,0,0,0)
-      const to = new Date(r.to); to.setUTCHours(23,59,59,999)
-      return clicked >= from && clicked <= to
-    })
-
-    if (match) {
-      onChange(match)
-    } else {
-      // Clicked outside any preset range — open custom picker
-      onCustom()
-    }
-  }
-
-  const isInRange = (day: number) => {
-    const d = new Date(Date.UTC(viewDate.getUTCFullYear(), viewDate.getUTCMonth(), day))
-    const from = new Date(selected.from); from.setUTCHours(0,0,0,0)
-    const to = new Date(selected.to); to.setUTCHours(23,59,59,999)
-    return d >= from && d <= to
-  }
-
-  const isSelected = (day: number) => {
-    const d = new Date(Date.UTC(viewDate.getUTCFullYear(), viewDate.getUTCMonth(), day))
-    const from = new Date(selected.from); from.setUTCHours(0,0,0,0)
-    return d.getTime() === from.getTime()
-  }
-
-  const isToday = (day: number) =>
-    viewDate.getUTCMonth() === today.getUTCMonth() &&
-    viewDate.getUTCFullYear() === today.getUTCFullYear() &&
-    day === today.getUTCDate()
-
-  const cells: (number | null)[] = []
-  for (let i = 0; i < firstDay; i++) cells.push(null)
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-
-  const dayAbbr = ['Su','Mo','Tu','We','Th','Fr','Sa']
-
-  return (
-    <DropdownMenuContent align="start" className="w-72 rounded-2xl border border-slate-200 bg-white p-0 shadow-xl shadow-slate-200/50 ring-1 ring-slate-200/60 z-50 overflow-hidden">
-      {/* Calendar header */}
-      <div className="flex items-center justify-between px-4 pt-4 pb-2">
-        <button
-          type="button"
-          onClick={goPrev}
-          className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-all duration-150 hover:bg-slate-100 hover:text-slate-900 active:scale-90"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M10 3L5 8L10 13" />
-          </svg>
-        </button>
-        <span className="text-sm font-bold text-slate-900 tracking-tight">{monthLabel}</span>
-        <button
-          type="button"
-          onClick={goNext}
-          className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-all duration-150 hover:bg-slate-100 hover:text-slate-900 active:scale-90"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 3L11 8L6 13" />
-          </svg>
-        </button>
-      </div>
-
-      {/* Day headers */}
-      <div className="grid grid-cols-7 px-4">
-        {dayAbbr.map(d => (
-          <div key={d} className="flex items-center justify-center py-1.5">
-            <span className="text-[0.65rem] font-semibold text-slate-400">{d}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Day grid */}
-      <div className="grid grid-cols-7 px-4 pb-2">
-        {cells.map((day, i) => (
-          <div key={i} className="flex items-center justify-center py-0.5">
-            {day !== null && (
-              <button
-                type="button"
-                onClick={() => selectDate(day)}
-                className={`
-                  flex size-8 items-center justify-center rounded-lg text-[0.8rem] font-medium
-                  transition-all duration-150 cursor-pointer
-                  ${isSelected(day)
-                    ? 'bg-brand-400 text-white shadow-md shadow-brand-400/30'
-                    : isInRange(day)
-                      ? 'text-brand-400 font-semibold bg-brand-400/10'
-                      : 'text-slate-600 hover:bg-slate-100 active:scale-90'
-                  }
-                  ${isToday(day) && !isSelected(day) ? 'ring-1 ring-brand-400/30' : ''}
-                `}
-              >
-                {day}
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* Quick-select ranges */}
-      <div className="mx-4 mb-3 flex gap-1.5">
-        {ranges.map(r => (
-          <button
-            key={r.id}
-            onClick={() => onChange(r)}
-            className={`
-              flex-1 rounded-lg py-2 text-center text-[0.75rem] font-semibold transition-all
-              ${r.id === selected.id
-                ? 'bg-brand-400 text-white shadow-sm'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }
-            `}
-          >
-            {r.id === '7d' ? '7d' : r.id === '30d' ? '30d' : r.id === '90d' ? '90d' : 'All'}
-          </button>
-        ))}
-      </div>
-
-      {/* Custom range link */}
-      <button
-        type="button"
-        onClick={onCustom}
-        className="mx-4 mb-4 flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-slate-300 py-2.5 text-xs font-semibold text-slate-600 transition-all hover:border-brand-400 hover:text-brand-400 hover:bg-brand-400/5"
-      >
-        <Calendar className="size-3.5" />
-        Custom date range
-      </button>
-    </DropdownMenuContent>
-  )
-}
-
-// ─── Calendar Picker ──────────────────────────────────────────────────────────
-
-function CalendarPicker({ value, onChange, minDate, maxDate, selecting }: {
-  value: Date
-  onChange: (d: Date) => void
-  minDate?: Date
-  maxDate?: Date
-  selecting?: 'from' | 'to'
-}) {
-  const [viewMonth, setViewMonth] = useState(value.getUTCMonth())
-  const [viewYear, setViewYear] = useState(value.getUTCFullYear())
-
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getUTCDate()
-  const firstDay = new Date(viewYear, viewMonth, 1).getUTCDay()
-  const today = new Date()
-
-  const isCurrentMonth = today.getUTCMonth() === viewMonth && today.getUTCFullYear() === viewYear
-  const todayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
-  const isToday = (day: number) => isCurrentMonth && day === today.getUTCDate()
-
-  const monthLabel = new Date(viewYear, viewMonth, 1).toLocaleString('en-US', { month: 'long', year: 'numeric' })
-
-  const goPrev = () => {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1) }
-    else setViewMonth(m => m - 1)
-  }
-  const goNext = () => {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1) }
-    else setViewMonth(m => m + 1)
-  }
-
-  const selectDate = (day: number) => {
-    const d = new Date(Date.UTC(viewYear, viewMonth, day))
-    d.setUTCHours(0, 0, 0, 0)
-    onChange(d)
-  }
-
-  const isSelected = (day: number) =>
-    value.getUTCDate() === day &&
-    value.getUTCMonth() === viewMonth &&
-    value.getUTCFullYear() === viewYear
-
-  const isDisabled = (day: number) => {
-    const d = new Date(Date.UTC(viewYear, viewMonth, day))
-    if (minDate) { const md = new Date(minDate); md.setUTCHours(0,0,0,0); if (d < md) return true }
-    if (maxDate) { const md = new Date(maxDate); md.setUTCHours(0,0,0,0); if (d > md) return true }
-    return false
-  }
-
-  const cells: (number | null)[] = []
-  for (let i = 0; i < firstDay; i++) cells.push(null)
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d)
-
-  const dayAbbr = ['Su','Mo','Tu','We','Th','Fr','Sa']
-
-  return (
-    <div className="w-full select-none">
-      {/* Month navigation */}
-      <div className="mb-4 flex items-center justify-between">
-        <button
-          type="button"
-          onClick={goPrev}
-          className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="rotate-180">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-        <span className="text-sm font-semibold text-slate-900 tracking-tight">{monthLabel}</span>
-        <button
-          type="button"
-          onClick={goNext}
-          className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-all hover:bg-slate-100 hover:text-slate-900 active:scale-95"
-        >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M6 3L11 8L6 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </button>
-      </div>
-
-      {/* Day headers */}
-      <div className="mb-1 grid grid-cols-7">
-        {dayAbbr.map(d => (
-          <div key={d} className="flex items-center justify-center py-1.5">
-            <span className="text-[0.65rem] font-semibold text-slate-400">{d}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* Day grid */}
-      <div className="grid grid-cols-7 gap-y-0.5">
-        {cells.map((day, i) => (
-          <div key={i} className="flex items-center justify-center py-0.5">
-            {day !== null && (
-              <button
-                type="button"
-                onClick={() => !isDisabled(day) && selectDate(day)}
-                disabled={isDisabled(day)}
-                className={`
-                  flex size-8 items-center justify-center rounded-lg text-[0.8rem] font-medium
-                  transition-all duration-150 cursor-pointer
-                  ${isSelected(day)
-                    ? 'bg-brand-400 text-white shadow-sm shadow-brand-400/25 scale-105'
-                    : isDisabled(day)
-                      ? 'text-slate-300 cursor-not-allowed'
-                      : isToday(day)
-                        ? 'text-brand-400 font-semibold bg-brand-400/8'
-                        : 'text-slate-700 hover:bg-slate-100 active:scale-95'
-                  }
-                `}
-              >
-                {day}
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
-// ─── Custom Range Calendar Modal ──────────────────────────────────────────────
-
-function CustomRangeModal({ onClose, onApply }: {
-  onClose: () => void
-  onApply: (from: Date, to: Date) => void
-}) {
-  const today = new Date()
-  const [fromDate, setFromDate] = useState<Date>(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 6)))
-  const [toDate, setToDate] = useState<Date>(new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate())))
-  const [selecting, setSelecting] = useState<'from' | 'to'>('from')
-  const [fromView, setFromView] = useState({ m: fromDate.getUTCMonth(), y: fromDate.getUTCFullYear() })
-  const [toView, setToView] = useState({ m: toDate.getUTCMonth(), y: toDate.getUTCFullYear() })
-
-  const formatDisplay = (d: Date) =>
-    d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-
-  const handleApply = () => {
-    if (fromDate > toDate) return
-    onApply(fromDate, toDate)
-    onClose()
-  }
-
-  const handleClear = () => {
-    const t = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()))
-    const f = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate() - 6))
-    setFromDate(f)
-    setToDate(t)
-    setFromView({ m: f.getUTCMonth(), y: f.getUTCFullYear() })
-    setToView({ m: t.getUTCMonth(), y: t.getUTCFullYear() })
-    setSelecting('from')
-  }
-
-  return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-      <div className="fixed inset-0 bg-slate-900/20 backdrop-blur-[2px]" onClick={onClose} />
-      <div className="relative z-10 flex w-full max-w-xl flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl shadow-slate-300/40">
-        {/* Header */}
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h3 className="text-lg font-bold text-slate-900">Select date range</h3>
-            <p className="mt-0.5 text-xs text-slate-500">
-              {formatDisplay(fromDate)} – {formatDisplay(toDate)}
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
-          >
-            <ChevronDown className="size-5 rotate-45" />
-          </button>
-        </div>
-
-        {/* Calendars */}
-        <div className="flex flex-col sm:flex-row gap-6">
-          {/* From calendar */}
-          <div
-            onClick={() => setSelecting('from')}
-            className={`flex-1 rounded-xl border-2 p-4 cursor-pointer transition-all ${
-              selecting === 'from' ? 'border-brand-400 bg-brand-400/5' : 'border-slate-200 hover:border-slate-300'
-            }`}
-          >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">From</p>
-            <CalendarPicker
-              value={fromDate}
-              onChange={(d) => { setFromDate(d); setFromView({ m: d.getUTCMonth(), y: d.getUTCFullYear() }) }}
-              minDate={undefined}
-              maxDate={toDate}
-            />
-          </div>
-
-          {/* To calendar */}
-          <div
-            onClick={() => setSelecting('to')}
-            className={`flex-1 rounded-xl border-2 p-4 cursor-pointer transition-all ${
-              selecting === 'to' ? 'border-brand-400 bg-brand-400/5' : 'border-slate-200 hover:border-slate-300'
-            }`}
-          >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500 text-center">To</p>
-            <CalendarPicker
-              value={toDate}
-              onChange={(d) => { setToDate(d); setToView({ m: d.getUTCMonth(), y: d.getUTCFullYear() }) }}
-              minDate={fromDate}
-              maxDate={undefined}
-            />
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-          <button
-            onClick={handleClear}
-            className="text-sm font-medium text-slate-500 hover:text-slate-700 transition-colors"
-          >
-            Reset
-          </button>
-          <div className="flex gap-2">
-            <button
-              onClick={onClose}
-              className="h-9 rounded-xl border border-slate-200 px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleApply}
-              disabled={fromDate > toDate}
-              className="h-9 rounded-xl bg-brand-400 px-5 text-sm font-semibold text-white shadow-sm hover:bg-brand-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              Apply
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }
@@ -650,7 +229,7 @@ function SegmentChart({ data, colors, title }: { data: SegmentRow[]; colors: str
 
       <div className="flex-1 w-full space-y-2.5">
         {data.map((d, i) => (
-          <div key={d.name} className="flex items-center justify-between">
+          <div key={`${d.name}-${i}`} className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <span className="size-3 rounded-sm shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
               <span className="text-sm font-medium text-slate-700">{d.name}</span>
@@ -670,14 +249,17 @@ export default function LinkAnalyticsPage() {
   const router = useRouter()
   const linkId = params.id as string
 
-  const dateRanges = useDateRanges()
+  const [dateFilter, setDateFilter] = useState<DateFilter>(() => {
+    const to = new Date()
+    const from = new Date(to)
+    from.setDate(from.getDate() - 30)
+    return { preset: 'Last 30 days', from: from.toISOString(), to: to.toISOString() }
+  })
   const [isPro, setIsPro] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [link, setLink] = useState<LinkDetailData | null>(null)
   const [analytics, setAnalytics] = useState<ClickAnalytics | null>(null)
   const [timeSeries, setTimeSeries] = useState<TimeSeriesPoint[]>([])
-  const [selectedRange, setSelectedRange] = useState<DateRange | null>(null)
-  const [showCustomCalendar, setShowCustomCalendar] = useState(false)
   const [locations, setLocations] = useState<LocationRow[]>([])
   const [referrers, setReferrers] = useState<SegmentRow[]>([])
   const [devices, setDevices] = useState<SegmentRow[]>([])
@@ -689,18 +271,17 @@ export default function LinkAnalyticsPage() {
     })
   }, [])
 
-  // Set default range once ranges are computed
-  useEffect(() => {
-    if (dateRanges.length > 0 && !selectedRange) {
-      setSelectedRange(dateRanges.find(r => r.id === '30d') ?? dateRanges[0])
-    }
-  }, [dateRanges, selectedRange])
-
   // Load all data
-  const loadAll = useCallback(async (range: DateRange) => {
-    if (!range) return
+  const loadAll = useCallback(async (filter: DateFilter) => {
+    if (!filter.from || !filter.to) return
     setIsLoading(true)
     try {
+      const range: DateRange = {
+        id: filter.preset ?? 'custom',
+        from: new Date(filter.from),
+        to: new Date(filter.to),
+        label: filter.preset ?? 'Custom',
+      }
       const [linkRes, analyticsRes, tsRes, locRes, refRes, devRes] = await Promise.all([
         getLinkDetailAction(linkId),
         getClickAnalyticsAction(linkId),
@@ -730,8 +311,8 @@ export default function LinkAnalyticsPage() {
   }, [linkId, router])
 
   useEffect(() => {
-    if (selectedRange) loadAll(selectedRange)
-  }, [selectedRange, loadAll])
+    if (dateFilter.from && dateFilter.to) loadAll(dateFilter)
+  }, [dateFilter, loadAll])
 
   // Handlers
   const handleCopy = useCallback(() => {
@@ -739,38 +320,12 @@ export default function LinkAnalyticsPage() {
     copyToClipboard(`${window.location.origin}/${link.slug}`, 'Short link copied!')
   }, [link])
 
-  const handleShare = useCallback(async () => {
-    if (!link) return
-    const url = `${window.location.origin}/${link.slug}`
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: getLinkTitle(link.originalUrl), url })
-      } else {
-        copyToClipboard(url, 'Link copied for sharing!')
-      }
-    } catch {
-      // User cancelled share
-    }
-  }, [link])
-
   const handleUpgrade = useCallback(() => {
     toast.info('Upgrade flow coming soon!')
   }, [])
 
-  const handleCustomRange = useCallback((from: Date, to: Date) => {
-    const formatD = (d: Date) =>
-      d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-    const label = `${formatD(from)} – ${formatD(to)}`
-    setSelectedRange({
-      id: 'custom',
-      from,
-      to,
-      label,
-    })
-  }, [])
-
   // Loading state
-  if (isLoading || !link || !selectedRange) {
+  if (isLoading || !link) {
     return (
       <div className="global-content py-8">
         <div className="animate-pulse space-y-6">
@@ -860,14 +415,18 @@ export default function LinkAnalyticsPage() {
                 <Pencil className="size-4" />
               </button>
 
-              <button
-                onClick={handleShare}
-                title="Share"
-                className="inline-flex items-center gap-2 h-9 rounded-md bg-slate-100 px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200"
+              <ShareDialog
+                url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : ''}
+                title={getLinkTitle(link.originalUrl)}
               >
-                <Share2 className="size-4" />
-                <span className="hidden sm:inline">Share</span>
-              </button>
+                <button
+                  title="Share"
+                  className="inline-flex items-center gap-2 h-9 rounded-md bg-slate-100 px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 cursor-pointer"
+                >
+                  <Share2 className="size-4" />
+                  <span className="hidden sm:inline">Share</span>
+                </button>
+              </ShareDialog>
             </div>
           </div>
         </div>
@@ -939,22 +498,20 @@ export default function LinkAnalyticsPage() {
         </div>
 
         <div className="mb-5">
-          <DropdownMenu>
-            <DropdownMenuTrigger className="inline-flex items-center gap-2 h-10 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-brand-400/20">
-              <Calendar className="size-4 text-slate-500" />
-              <span>{selectedRange?.label ?? 'Select range'}</span>
-              <span className="text-xs text-slate-400 hidden sm:inline">
-                ({selectedRange ? `${selectedRange.from.toLocaleDateString('en-US', {month:'short',day:'numeric'})} – ${selectedRange.to.toLocaleDateString('en-US', {month:'short',day:'numeric'})}` : ''})
-              </span>
-              <ChevronDown className="size-4 text-slate-400 ml-1" />
-            </DropdownMenuTrigger>
-            <DateRangeDropdown
-              ranges={dateRanges}
-              selected={selectedRange!}
-              onChange={setSelectedRange}
-              onCustom={() => setShowCustomCalendar(true)}
-            />
-          </DropdownMenu>
+          <DateFilterPopover
+            dateFrom={dateFilter.from}
+            dateTo={dateFilter.to}
+            activeLabel={dateFilter.preset ?? (dateFilter.from && dateFilter.to ? 'Custom' : null)}
+            onApply={(from, to, preset) => {
+              setDateFilter({ preset: preset ?? null, from, to })
+            }}
+            onClear={() => {
+              const to = new Date()
+              const from = new Date(to)
+              from.setDate(from.getDate() - 30)
+              setDateFilter({ preset: 'Last 30 days', from: from.toISOString(), to: to.toISOString() })
+            }}
+          />
         </div>
 
         <div className="h-56 w-full">
@@ -979,7 +536,7 @@ export default function LinkAnalyticsPage() {
                   tickLine={false}
                   axisLine={false}
                 />
-                <Tooltip content={<ChartTooltip />} />
+                <Tooltip content={<ChartTooltip />} cursor={{ fill: 'transparent' }} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={32}>
                   {timeSeries.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.count > 0 ? '#06b6d4' : '#e2e8f0'} />
@@ -996,13 +553,6 @@ export default function LinkAnalyticsPage() {
         </div>
       </div>
 
-      {/* ── Custom Calendar Modal ────────────────────────────────────────── */}
-      {showCustomCalendar && (
-        <CustomRangeModal
-          onClose={() => setShowCustomCalendar(false)}
-          onApply={handleCustomRange}
-        />
-      )}
 
       {/* ── Locations ────────────────────────────────────────────────────── */}
       <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mb-6">
