@@ -9,7 +9,10 @@
       "mcp__Neon__search",
       "Bash(xargs -I {} psql {} -c \"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = 'users' ORDER BY ordinal_position;\")",
       "Bash(node -e ' *)",
-      "Bash(pnpm prisma *)"
+      "Bash(pnpm prisma *)",
+      "Bash(pnpm build *)",
+      "Bash(pnpm add *)",
+      "Bash(npx next *)"
     ]
   }
 }
