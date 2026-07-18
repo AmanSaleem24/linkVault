@@ -83,10 +83,10 @@ function LoginForm() {
 
   return (
     <AuthShell>
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">
+      <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-slate-900">
         Log in and start sharing
       </h1>
-      <p className="mb-10 text-[15px] text-slate-500">
+      <p className="mb-10 text-base text-slate-500">
         Don&apos;t have an account?{' '}
         <Link href="/signup" className="font-medium text-brand hover:text-brand-500 hover:underline transition-colors">
           Sign up

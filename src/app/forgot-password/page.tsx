@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
             <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
               <MailCheck className="h-8 w-8 text-emerald-500" />
             </div>
-            <CardTitle className="text-xl">Check your email</CardTitle>
+            <CardTitle className="text-3xl font-extrabold tracking-tight">Check your email</CardTitle>
             <CardDescription>
               If an account exists with that email, we&apos;ve sent a password reset link. The link expires in 15 minutes.
             </CardDescription>
@@ -89,7 +89,7 @@ export default function ForgotPasswordPage() {
           <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
             <LinkIcon className="h-6 w-6 text-primary-foreground" />
           </div>
-          <CardTitle className="text-xl">Reset your password</CardTitle>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">Reset your password</CardTitle>
           <CardDescription>
             Enter your email and we&apos;ll send you a reset link.
           </CardDescription>

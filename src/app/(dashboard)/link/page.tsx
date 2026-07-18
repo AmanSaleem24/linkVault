@@ -33,12 +33,12 @@ export default function AllLinksPage() {
   } = useLinks()
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className="global-content py-8">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-[1.6rem] font-bold tracking-tight text-slate-900">All Links</h1>
-          <p className="mt-1.5 text-[0.875rem] text-slate-500">
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">All Links</h1>
+          <p className="mt-1.5 text-base text-slate-500">
             {totalCount} link{totalCount !== 1 ? 's' : ''} total
           </p>
         </div>

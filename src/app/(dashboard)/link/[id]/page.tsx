@@ -100,9 +100,9 @@ function LockedSection({ children, isPro, onUpgradeClick }: {
   onUpgradeClick: () => void
 }) {
   return (
-    <div className={`relative rounded-2xl border border-slate-200 bg-white p-6 shadow-sm ${isPro ? '' : 'overflow-hidden'}`}>
+    <div className={`relative ${isPro ? '' : 'overflow-hidden'}`}>
       {!isPro && (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-2xl bg-white/80 backdrop-blur-[1px]">
+        <div className="absolute inset-[-16px] z-10 flex flex-col items-center justify-center rounded-xl bg-white/80 backdrop-blur-[1px]">
           <button
             onClick={onUpgradeClick}
             className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 transition-colors"
@@ -129,16 +129,16 @@ function StatCard({ label, value, icon: Icon, isPro, isLocked }: {
   isLocked?: boolean
 }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-500 mb-2">
-        <Icon className="size-4" />
-        <span className="text-xs font-medium uppercase tracking-wider">{label}</span>
-        {isLocked && !isPro && <Lock className="size-3 text-slate-400 ml-auto" />}
+    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+      <div className="flex items-center gap-2 text-slate-500 mb-3">
+        <Icon className="size-5" />
+        <span className="text-sm font-medium uppercase tracking-wider">{label}</span>
+        {isLocked && !isPro && <Lock className="size-4 text-slate-400 ml-auto" />}
       </div>
       {isLocked && !isPro ? (
-        <div className="h-8 w-20 rounded-md bg-slate-200/70 blur-[3px]" />
+        <div className="h-10 w-24 rounded-md bg-slate-200/70 blur-[3px]" />
       ) : (
-        <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+        <p className="text-3xl font-bold tracking-tight text-slate-900">{value}</p>
       )}
     </div>
   )
@@ -467,7 +467,7 @@ function CustomRangeModal({ onClose, onApply }: {
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-900">Select date range</h3>
+            <h3 className="text-lg font-bold text-slate-900">Select date range</h3>
             <p className="mt-0.5 text-xs text-slate-500">
               {formatDisplay(fromDate)} – {formatDisplay(toDate)}
             </p>
@@ -606,15 +606,15 @@ function SegmentChart({ data, colors, title }: { data: SegmentRow[]; colors: str
   const total = data.reduce((s, d) => s + d.count, 0)
   if (total === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-[150px] text-slate-400">
+      <div className="flex flex-col items-center justify-center h-[240px] text-slate-400">
         <p className="text-sm font-medium">No data yet</p>
         <p className="text-xs mt-1">Clicks will appear here</p>
       </div>
     )
   }
 
-  const size = 150
-  const strokeWidth = 14
+  const size = 240
+  const strokeWidth = 22
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   let offset = 0
@@ -629,7 +629,7 @@ function SegmentChart({ data, colors, title }: { data: SegmentRow[]; colors: str
   })
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-6">
+    <div className="flex flex-col sm:flex-row items-center gap-16">
       <div className="shrink-0">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
           <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#f1f5f9" strokeWidth={strokeWidth} />
@@ -772,7 +772,7 @@ export default function LinkAnalyticsPage() {
   // Loading state
   if (isLoading || !link || !selectedRange) {
     return (
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+      <div className="global-content py-8">
         <div className="animate-pulse space-y-6">
           <div className="h-8 w-40 rounded bg-slate-200" />
           <div className="h-40 rounded-2xl bg-slate-200" />
@@ -796,7 +796,7 @@ export default function LinkAnalyticsPage() {
   const statusStyle = statusColors[link.status] ?? statusColors.active
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
+    <div className="global-content py-8">
       {/* ── Back Link ──────────────────────────────────────────────────────── */}
       <button
         onClick={() => router.push('/link')}
@@ -808,29 +808,29 @@ export default function LinkAnalyticsPage() {
 
       {/* ── Link Info Card ─────────────────────────────────────────────────── */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm mb-8">
-        <div className="p-6">
+        <div className="p-8">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-5">
               <FaviconImg url={link.originalUrl} />
               <div className="flex-1">
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight tracking-tight mb-4">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-5">
                   {getLinkTitle(link.originalUrl) || link.originalUrl}
                 </h1>
 
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-[15px] text-indigo-700">{shortUrl.replace(/^https?:\/\//, '')}</span>
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bold text-[18px] text-indigo-700">{shortUrl.replace(/^https?:\/\//, '')}</span>
                     <button
                       onClick={handleCopy}
-                      className="shrink-0 rounded p-1 text-indigo-600/70 hover:bg-indigo-50 hover:text-indigo-800 transition-colors"
+                      className="shrink-0 rounded p-1.5 text-indigo-600/70 hover:bg-indigo-50 hover:text-indigo-800 transition-colors"
                       title="Copy short link"
                     >
-                      <Copy className="size-4" />
+                      <Copy className="size-5" />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[13px] text-slate-500">
-                    <CornerDownRight className="size-3.5" />
+                  <div className="flex items-center gap-2 text-[15px] text-slate-500">
+                    <CornerDownRight className="size-4" />
                     <span className="truncate">{link.originalUrl}</span>
                   </div>
                 </div>
@@ -917,7 +917,7 @@ export default function LinkAnalyticsPage() {
       {/* ── Engagements Over Time ────────────────────────────────────────── */}
       <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h2 className="text-lg font-bold text-slate-900">Engagements over time</h2>
+          <h2 className="text-xl font-bold text-slate-900">Engagements over time</h2>
           <div className="flex items-center gap-2.5">
             <button
               onClick={handleUpgrade}
@@ -1007,7 +1007,7 @@ export default function LinkAnalyticsPage() {
       {/* ── Locations ────────────────────────────────────────────────────── */}
       <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mb-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-slate-900">Locations</h2>
+          <h2 className="text-xl font-bold text-slate-900">Locations</h2>
           <div className="flex items-center gap-3">
             {!isPro && (
               <button
@@ -1038,7 +1038,7 @@ export default function LinkAnalyticsPage() {
       <div className="grid gap-6 md:grid-cols-2 mb-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-slate-900">Referrers</h2>
+            <h2 className="text-xl font-bold text-slate-900">Referrers</h2>
             {!isPro && (
               <button
                 onClick={handleUpgrade}
@@ -1061,7 +1061,7 @@ export default function LinkAnalyticsPage() {
 
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-lg font-bold text-slate-900">Devices</h2>
+            <h2 className="text-xl font-bold text-slate-900">Devices</h2>
             {!isPro && (
               <button
                 onClick={handleUpgrade}

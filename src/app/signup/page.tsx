@@ -76,10 +76,10 @@ export default function SignupPage() {
           <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-emerald-500/10">
             <CheckCircle2 className="h-10 w-10 text-emerald-500" />
           </div>
-          <h1 className="mb-4 text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-slate-900">
             Check your email
           </h1>
-          <p className="mb-8 text-[#555]">
+          <p className="mb-8 text-base text-[#555]">
             We&apos;ve sent a verification link to your email address. Click the link to activate your account.
           </p>
           <Link href="/login">
@@ -94,10 +94,10 @@ export default function SignupPage() {
 
   return (
     <AuthShell>
-      <h1 className="mb-2 text-3xl font-bold tracking-tight text-slate-900">
+      <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-slate-900">
         Create an account
       </h1>
-      <p className="mb-10 text-[15px] text-slate-500">
+      <p className="mb-10 text-base text-slate-500">
         Already have an account?{' '}
         <Link href="/login" className="font-medium text-brand hover:text-brand-500 hover:underline transition-colors">
           Log in

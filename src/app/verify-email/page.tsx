@@ -50,7 +50,7 @@ function VerifyEmailContent() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
-          <CardTitle className="text-xl">Verifying your email…</CardTitle>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">Verifying your email…</CardTitle>
           <CardDescription>
             Please wait while we confirm your email address.
           </CardDescription>
@@ -66,7 +66,7 @@ function VerifyEmailContent() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
             <CheckCircle2 className="h-8 w-8 text-emerald-500" />
           </div>
-          <CardTitle className="text-xl">Email verified!</CardTitle>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">Email verified!</CardTitle>
           <CardDescription>
             Your account is now active. You can sign in to start using LinkVault.
           </CardDescription>
@@ -86,7 +86,7 @@ function VerifyEmailContent() {
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
           <XCircle className="h-8 w-8 text-destructive" />
         </div>
-        <CardTitle className="text-xl">Verification failed</CardTitle>
+        <CardTitle className="text-3xl font-extrabold tracking-tight">Verification failed</CardTitle>
         <CardDescription>
           {errorMessage}
         </CardDescription>
@@ -113,7 +113,7 @@ export default function VerifyEmailPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-              <CardTitle className="text-xl">Loading…</CardTitle>
+              <CardTitle className="text-3xl font-extrabold tracking-tight">Loading…</CardTitle>
             </CardHeader>
           </Card>
         }

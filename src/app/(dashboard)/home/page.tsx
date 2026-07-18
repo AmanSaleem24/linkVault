@@ -54,7 +54,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="mx-4 mb-12 mt-6 max-w-6xl sm:mx-8 md:mx-12 xl:mx-auto xl:mt-10">
+    <div className="global-content mb-12 mt-6">
       <div className="grid gap-8 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_360px] lg:items-start">
 
         {/* ── Left Column: Form Card ── */}
@@ -65,10 +65,10 @@ export default function HomePage() {
               <Link2 className="size-5" strokeWidth={2} />
             </div>
             <div>
-              <h1 className="text-[1.4rem] font-semibold tracking-tight text-slate-900">
+              <h1 className="text-3xl font-bold tracking-tight text-slate-900">
                 Create Short Link
               </h1>
-              <p className="mt-1 text-[0.95rem] font-medium text-slate-500">
+              <p className="mt-1.5 text-base font-medium text-slate-500">
                 Transform long URLs into clean, shareable links.
               </p>
             </div>

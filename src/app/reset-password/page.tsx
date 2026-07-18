@@ -33,7 +33,7 @@ function ResetPasswordContent() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
             <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
-          <CardTitle className="text-xl">Invalid reset link</CardTitle>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">Invalid reset link</CardTitle>
           <CardDescription>
             This password reset link is invalid or missing. Please request a new one.
           </CardDescription>
@@ -54,7 +54,7 @@ function ResetPasswordContent() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10">
             <CheckCircle2 className="h-8 w-8 text-emerald-500" />
           </div>
-          <CardTitle className="text-xl">Password reset!</CardTitle>
+          <CardTitle className="text-3xl font-extrabold tracking-tight">Password reset!</CardTitle>
           <CardDescription>
             Your password has been updated successfully. You can now sign in with your new password.
           </CardDescription>
@@ -96,7 +96,7 @@ function ResetPasswordContent() {
         <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-xl bg-primary">
           <LinkIcon className="h-6 w-6 text-primary-foreground" />
         </div>
-        <CardTitle className="text-xl">Set new password</CardTitle>
+        <CardTitle className="text-3xl font-extrabold tracking-tight">Set new password</CardTitle>
         <CardDescription>
           Enter your new password below.
         </CardDescription>
@@ -165,7 +165,7 @@ export default function ResetPasswordPage() {
               <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
-              <CardTitle className="text-xl">Loading…</CardTitle>
+              <CardTitle className="text-3xl font-extrabold tracking-tight">Loading…</CardTitle>
             </CardHeader>
           </Card>
         }

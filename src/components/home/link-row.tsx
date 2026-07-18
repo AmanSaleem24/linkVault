@@ -110,7 +110,7 @@ export function LinkRow({
         {!isCompact && <FaviconImg url={link.originalUrl} />}
 
         {/* Title */}
-        <span className="flex-1 truncate text-[0.9rem] font-semibold text-slate-900">
+        <span className="flex-1 truncate text-base font-semibold text-slate-900">
           {getLinkTitle(link.originalUrl)}
         </span>
 
@@ -207,7 +207,7 @@ export function LinkRow({
           href={link.originalUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 font-mono text-[0.82rem] font-semibold text-brand-500 hover:underline transition-colors truncate"
+          className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand-500 hover:underline transition-colors truncate"
         >
           {typeof window !== 'undefined' ? `${window.location.host}/${link.slug}` : link.slug}
         </a>
@@ -223,7 +223,7 @@ export function LinkRow({
       {/* Row 3: destination URL */}
       <div className="mt-1.5 flex items-center gap-1.5 pl-9">
         <CornerDownRight className="size-3.5 shrink-0 text-slate-500" />
-        <span className="truncate text-[0.82rem] text-slate-600">
+        <span className="truncate text-sm text-slate-600">
           {truncateUrl(link.originalUrl)}
         </span>
       </div>
