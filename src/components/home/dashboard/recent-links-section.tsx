@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Copy, CheckCheck, ExternalLink, Lock, Globe } from 'lucide-react'
 import { toast } from 'sonner'
@@ -141,16 +141,11 @@ function RecentLinkItem({
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export function RecentLinksSection({ links, isPro }: RecentLinksSectionProps) {
-  const [baseUrl, setBaseUrl] = useState(
-    typeof window !== 'undefined'
-      ? process.env.NEXT_PUBLIC_BASE_URL || window.location.origin
-      : ''
-  )
+  const [baseUrl, setBaseUrl] = useState('')
 
-  // Resolve on mount for SSR safety
-  if (typeof window !== 'undefined' && !baseUrl) {
+  useEffect(() => {
     setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || window.location.origin)
-  }
+  }, [])
 
   return (
     <div>
