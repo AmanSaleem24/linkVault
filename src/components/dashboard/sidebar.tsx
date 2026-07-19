@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, FileText, FolderOpen, Globe, Blocks } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, FileText, FolderOpen, Globe, Blocks, History } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -25,6 +25,7 @@ const navItems: NavItem[] = [
   { href: '/link', label: 'Links', icon: Link2 },
   { href: '/qr', label: 'QR Codes', icon: QrCode, disabled: true, badge: 'Try it' },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/audit', label: 'Activity', icon: History, divider: true },
   { href: '/domains', label: 'Custom domains', icon: Globe, disabled: true },
   { href: '/settings', label: 'Settings', icon: Settings, disabled: true, divider: true },
 ]

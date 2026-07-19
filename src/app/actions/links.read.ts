@@ -295,3 +295,80 @@ export async function checkAliasAvailabilityAction(slug: string): Promise<{ avai
 
   return { available: true }
 }
+
+// ─── Get Audit Log ─────────────────────────────────────────────────────────
+
+export interface AuditLogEntry {
+  id: string
+  action: string
+  entityType: string
+  entityId: string
+  previousValue: Record<string, unknown> | null
+  newValue: Record<string, unknown> | null
+  createdAt: string
+  linkSlug: string | null
+  linkUrl: string | null
+}
+
+export interface AuditLogResult {
+  success: true
+  data: {
+    logs: AuditLogEntry[]
+    totalCount: number
+  }
+}
+
+export async function getAuditLogAction(): Promise<AuditLogResult | { success: false; error: string }> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'You must be logged in' }
+  }
+
+  try {
+    const logs = await prisma.auditLog.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 100,
+      include: {
+        // We don't have a direct relation, so we'll fetch link data separately
+      },
+    })
+
+    // Get all unique entityIds to fetch link details
+    const entityIds = logs.map(l => l.entityId).filter(Boolean)
+    const links = entityIds.length > 0
+      ? await prisma.link.findMany({
+          where: { id: { in: entityIds as string[] } },
+          select: { id: true, slug: true, originalUrl: true },
+        })
+      : []
+
+    const linkMap = new Map(links.map(l => [l.id, l]))
+
+    const formatted = logs.map(log => {
+      const link = linkMap.get(log.entityId)
+      return {
+        id: log.id,
+        action: log.action,
+        entityType: log.entityType,
+        entityId: log.entityId,
+        previousValue: log.previousValue as Record<string, unknown> | null,
+        newValue: log.newValue as Record<string, unknown> | null,
+        createdAt: log.createdAt.toISOString(),
+        linkSlug: link?.slug ?? null,
+        linkUrl: link?.originalUrl ?? null,
+      }
+    })
+
+    return {
+      success: true,
+      data: {
+        logs: formatted,
+        totalCount: logs.length,
+      },
+    }
+  } catch (error) {
+    console.error('Get audit log error:', error)
+    return { success: false as const, error: 'Failed to fetch audit log' }
+  }
+}
