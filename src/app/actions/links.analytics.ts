@@ -3,8 +3,20 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { type LinkStatus } from '@/lib/validators'
+import {
+  formatCountry,
+  formatReferrer,
+  formatDevice,
+  formatBrowser,
+  fillTimeSeries,
+  toRankedRows,
+  type DateRange,
+  type TimeSeriesPoint,
+} from '@/lib/analytics-helpers'
+export type { DateRange, TimeSeriesPoint } from '@/lib/analytics-helpers'
+import type { SegmentRow } from '@/components/dashboard/charts/types'
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types (re-exported for barrel file & consumers) ─────────────────────────
 
 export interface LinkDetailData {
   id: string
@@ -24,90 +36,9 @@ export interface ClickAnalytics {
   topDevice: { name: string; count: number } | null
 }
 
-export interface TimeSeriesPoint {
-  date: string
-  count: number
-}
-
-export interface CountryData {
-  name: string
-  count: number
-  percentage: number
-}
-
-export interface ReferrerData {
-  name: string
-  count: number
-  percentage: number
-}
-
-export interface DeviceData {
-  name: string
-  count: number
-  percentage: number
-}
-
-export interface DateRange {
-  id: string
-  from: Date
-  to: Date
-  label: string
-}
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const COUNTRY_NAMES: Record<string, string> = {
-  US: 'United States', GB: 'United Kingdom', CA: 'Canada', DE: 'Germany',
-  FR: 'France', AU: 'Australia', IN: 'India', JP: 'Japan', BR: 'Brazil',
-  NL: 'Netherlands', ES: 'Spain', IT: 'Italy', MX: 'Mexico', SE: 'Sweden',
-  NO: 'Norway', DK: 'Denmark', FI: 'Finland', PL: 'Poland', RU: 'Russia',
-  CN: 'China', KR: 'South Korea', SG: 'Singapore', NZ: 'New Zealand',
-  IE: 'Ireland', BE: 'Belgium', AT: 'Austria', CH: 'Switzerland',
-  PT: 'Portugal', GR: 'Greece', CZ: 'Czech Republic', RO: 'Romania',
-  HU: 'Hungary', UA: 'Ukraine', TR: 'Turkey', IL: 'Israel', ZA: 'South Africa',
-  AE: 'United Arab Emirates', AR: 'Argentina', CL: 'Chile', CO: 'Colombia',
-  PH: 'Philippines', TH: 'Thailand', VN: 'Vietnam', ID: 'Indonesia',
-  MY: 'Malaysia', HK: 'Hong Kong', TW: 'Taiwan', PK: 'Pakistan',
-  BD: 'Bangladesh', NG: 'Nigeria', EG: 'Egypt', KE: 'Kenya',
-}
-
-function formatCountry(code: string | null): string {
-  if (!code) return 'Unknown'
-  return COUNTRY_NAMES[code.toUpperCase()] ?? code.toUpperCase()
-}
-
-function formatReferrer(referrer: string | null): string {
-  if (!referrer) return 'Direct'
-  try {
-    const u = new URL(referrer)
-    return u.hostname.replace(/^www\./, '')
-  } catch {
-    return referrer.slice(0, 40)
-  }
-}
-
-function formatDevice(device: string): string {
-  const map: Record<string, string> = {
-    desktop: 'Desktop', mobile: 'Mobile', tablet: 'Tablet',
-  }
-  return map[device] ?? device.charAt(0).toUpperCase() + device.slice(1)
-}
-
-function fillTimeSeries(raw: Array<{ clickedAt: string }>, range: DateRange): TimeSeriesPoint[] {
-  const days: TimeSeriesPoint[] = []
-  const cursor = new Date(range.from)
-  while (cursor <= range.to) {
-    const key = cursor.toISOString().slice(0, 10)
-    days.push({ date: key, count: 0 })
-    cursor.setUTCDate(cursor.getUTCDate() + 1)
-  }
-  for (const row of raw) {
-    const key = row.clickedAt.slice(0, 10)
-    const found = days.find(d => d.date === key)
-    if (found) found.count++
-  }
-  return days
-}
+export type CountryData = SegmentRow
+export type ReferrerData = SegmentRow
+export type DeviceData = SegmentRow
 
 // ─── Get Link Detail ──────────────────────────────────────────────────────────
 
@@ -426,5 +357,373 @@ export async function getDevicesAction(linkId: string): Promise<{
     return { success: true, data }
   } catch {
     return { success: false as const, error: 'Failed to fetch devices' }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Account-wide analytics (aggregated across all of the user's links)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
+async function requireUserId(): Promise<{ userId: string } | { error: string }> {
+  const session = await auth()
+  if (!session?.user?.id) return { error: 'Not authenticated' }
+  return { userId: session.user.id }
+}
+
+async function getUserLinkIds(userId: string): Promise<string[]> {
+  const links = await prisma.link.findMany({
+    where: { userId },
+    select: { id: true },
+  })
+  return links.map((l) => l.id)
+}
+
+// ─── 1. Account analytics summary ─────────────────────────────────────────────
+
+export interface AccountAnalyticsData {
+  totalClicks: number
+  totalLinks: number
+  activeLinks: number
+  disabledLinks: number
+  expiredLinks: number
+  uniqueVisitors: number
+  topCountry: { name: string; count: number } | null
+  topDevice: { name: string; count: number } | null
+  topReferrer: { name: string; count: number } | null
+}
+
+export async function getAccountAnalyticsAction(): Promise<
+  { success: true; data: AccountAnalyticsData } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const [statusCounts, linkIds] = await Promise.all([
+      prisma.link.groupBy({
+        by: ['status'],
+        where: { userId },
+        _count: { status: true },
+      }),
+      getUserLinkIds(userId),
+    ])
+
+    const counts: Record<string, number> = { active: 0, disabled: 0, expired: 0 }
+    for (const g of statusCounts) {
+      counts[g.status] = g._count.status
+    }
+
+    if (linkIds.length === 0) {
+      return {
+        success: true,
+        data: {
+          totalClicks: 0,
+          totalLinks: 0,
+          activeLinks: counts.active,
+          disabledLinks: counts.disabled,
+          expiredLinks: counts.expired,
+          uniqueVisitors: 0,
+          topCountry: null,
+          topDevice: null,
+          topReferrer: null,
+        },
+      }
+    }
+
+    const [totalClicks, uniqueIpRows, topCountryGroup, topDeviceGroup, topReferrerGroup] =
+      await Promise.all([
+        prisma.click.count({ where: { linkId: { in: linkIds } } }),
+        prisma.click.findMany({
+          where: { linkId: { in: linkIds } },
+          select: { ip: true },
+          distinct: ['ip'],
+        }),
+        prisma.click.groupBy({
+          by: ['country'],
+          where: { linkId: { in: linkIds } },
+          _count: { country: true },
+          orderBy: { _count: { country: 'desc' } },
+          take: 1,
+        }),
+        prisma.click.groupBy({
+          by: ['device'],
+          where: { linkId: { in: linkIds } },
+          _count: { device: true },
+          orderBy: { _count: { device: 'desc' } },
+          take: 1,
+        }),
+        prisma.click.groupBy({
+          by: ['referrer'],
+          where: { linkId: { in: linkIds } },
+          _count: { referrer: true },
+          orderBy: { _count: { referrer: 'desc' } },
+          take: 1,
+        }),
+      ])
+
+    return {
+      success: true,
+      data: {
+        totalClicks,
+        totalLinks: counts.active + counts.disabled + counts.expired,
+        activeLinks: counts.active,
+        disabledLinks: counts.disabled,
+        expiredLinks: counts.expired,
+        uniqueVisitors: uniqueIpRows.filter((r) => r.ip).length,
+        topCountry: topCountryGroup[0]
+          ? {
+              name: formatCountry(topCountryGroup[0].country),
+              count: topCountryGroup[0]._count.country,
+            }
+          : null,
+        topDevice: topDeviceGroup[0]
+          ? {
+              name: formatDevice(topDeviceGroup[0].device),
+              count: topDeviceGroup[0]._count.device,
+            }
+          : null,
+        topReferrer: topReferrerGroup[0]
+          ? {
+              name: formatReferrer(topReferrerGroup[0].referrer),
+              count: topReferrerGroup[0]._count.referrer,
+            }
+          : null,
+      },
+    }
+  } catch (err) {
+    console.error('[getAccountAnalyticsAction]', err)
+    return { success: false, error: 'Failed to fetch analytics' }
+  }
+}
+
+// ─── 2. Account time series ───────────────────────────────────────────────────
+
+export async function getAccountTimeSeriesAction(
+  range: DateRange
+): Promise<
+  { success: true; data: Array<{ date: string; count: number }> } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const linkIds = await getUserLinkIds(userId)
+    if (linkIds.length === 0) return { success: true, data: fillTimeSeries([], range) }
+
+    const clicks = await prisma.click.findMany({
+      where: {
+        linkId: { in: linkIds },
+        clickedAt: { gte: range.from, lte: range.to },
+      },
+      select: { clickedAt: true },
+    })
+
+    return { success: true, data: fillTimeSeries(clicks, range) }
+  } catch (err) {
+    console.error('[getAccountTimeSeriesAction]', err)
+    return { success: false, error: 'Failed to fetch time series' }
+  }
+}
+
+// ─── 3. Top performing links ──────────────────────────────────────────────────
+
+export interface TopLinkRow {
+  id: string
+  slug: string
+  originalUrl: string
+  clickCount: number
+  status: 'active' | 'disabled' | 'expired'
+}
+
+export async function getAccountTopLinksAction(
+  limit = 10
+): Promise<
+  { success: true; data: TopLinkRow[] } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const links = await prisma.link.findMany({
+      where: { userId },
+      orderBy: { clickCount: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        slug: true,
+        originalUrl: true,
+        clickCount: true,
+        status: true,
+      },
+    })
+
+    return {
+      success: true,
+      data: links.map((l) => ({
+        ...l,
+        status: l.status as TopLinkRow['status'],
+      })),
+    }
+  } catch (err) {
+    console.error('[getAccountTopLinksAction]', err)
+    return { success: false, error: 'Failed to fetch top links' }
+  }
+}
+
+// ─── 4. Top locations ─────────────────────────────────────────────────────────
+
+export async function getAccountLocationsAction(): Promise<
+  {
+    success: true
+    data: Array<{ name: string; count: number; percentage: number }>
+  } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const linkIds = await getUserLinkIds(userId)
+    if (linkIds.length === 0) return { success: true, data: [] }
+
+    const groups = await prisma.click.groupBy({
+      by: ['country'],
+      where: { linkId: { in: linkIds } },
+      _count: { country: true },
+    })
+
+    const rows = toRankedRows(
+      groups.map((g) => ({ key: g.country, count: g._count.country })),
+      formatCountry
+    )
+    return { success: true, data: rows }
+  } catch (err) {
+    console.error('[getAccountLocationsAction]', err)
+    return { success: false, error: 'Failed to fetch locations' }
+  }
+}
+
+// ─── 5. Top referrers ─────────────────────────────────────────────────────────
+
+export async function getAccountReferrersAction(): Promise<
+  {
+    success: true
+    data: Array<{ name: string; count: number; percentage: number }>
+  } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const linkIds = await getUserLinkIds(userId)
+    if (linkIds.length === 0) return { success: true, data: [] }
+
+    const groups = await prisma.click.groupBy({
+      by: ['referrer'],
+      where: { linkId: { in: linkIds } },
+      _count: { referrer: true },
+    })
+
+    const rows = toRankedRows(
+      groups.map((g) => ({ key: g.referrer ?? 'Direct', count: g._count.referrer })),
+      formatReferrer
+    )
+    return { success: true, data: rows }
+  } catch (err) {
+    console.error('[getAccountReferrersAction]', err)
+    return { success: false, error: 'Failed to fetch referrers' }
+  }
+}
+
+// ─── 6. Top devices + browsers ────────────────────────────────────────────────
+
+export async function getAccountDevicesAction(): Promise<
+  {
+    success: true
+    data: {
+      devices: Array<{ name: string; count: number; percentage: number }>
+      browsers: Array<{ name: string; count: number; percentage: number }>
+    }
+  } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const linkIds = await getUserLinkIds(userId)
+    if (linkIds.length === 0) return { success: true, data: { devices: [], browsers: [] } }
+
+    const [deviceGroups, browserGroups] = await Promise.all([
+      prisma.click.groupBy({
+        by: ['device'],
+        where: { linkId: { in: linkIds } },
+        _count: { device: true },
+      }),
+      prisma.click.groupBy({
+        by: ['browser'],
+        where: { linkId: { in: linkIds } },
+        _count: { browser: true },
+      }),
+    ])
+
+    return {
+      success: true,
+      data: {
+        devices: toRankedRows(
+          deviceGroups.map((g) => ({ key: g.device, count: g._count.device })),
+          formatDevice
+        ),
+        browsers: toRankedRows(
+          browserGroups.map((g) => ({ key: g.browser, count: g._count.browser })),
+          formatBrowser
+        ),
+      },
+    }
+  } catch (err) {
+    console.error('[getAccountDevicesAction]', err)
+    return { success: false, error: 'Failed to fetch devices' }
+  }
+}
+
+// ─── 7. Link status breakdown ─────────────────────────────────────────────────
+
+export async function getAccountStatusBreakdownAction(): Promise<
+  {
+    success: true
+    data: Array<{ name: string; count: number; percentage: number }>
+  } | { success: false; error: string }
+> {
+  const authResult = await requireUserId()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const groups = await prisma.link.groupBy({
+      by: ['status'],
+      where: { userId },
+      _count: { status: true },
+    })
+
+    const labels: Record<string, string> = {
+      active: 'Active',
+      disabled: 'Disabled',
+      expired: 'Expired',
+    }
+
+    const rows = toRankedRows(
+      groups.map((g) => ({ key: g.status, count: g._count.status })),
+      (key) => labels[key] ?? key
+    )
+    return { success: true, data: rows }
+  } catch (err) {
+    console.error('[getAccountStatusBreakdownAction]', err)
+    return { success: false, error: 'Failed to fetch status breakdown' }
   }
 }

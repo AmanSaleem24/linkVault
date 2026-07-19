@@ -18,6 +18,7 @@ export default function AllLinksPage() {
     hasMore,
     isPro,
     viewMode,
+    setViewMode,
     search,
     searchInput,
     handleSearchChange,
@@ -61,6 +62,8 @@ export default function AllLinksPage() {
         onDateChange={setDateFilter}
         sort={sort}
         onSortChange={setSort}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       {/* Link List */}

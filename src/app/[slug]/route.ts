@@ -160,11 +160,19 @@ export async function GET(
     })
   }
 
-  if (!record || record.status === 'disabled' || (record.expiresAt && record.expiresAt < now)) {
+  if (!record) {
     return new NextResponse(LINKVAULT_404, {
       status: 404,
       headers: { 'content-type': 'text/html' },
     })
+  }
+
+  if (record.status === 'disabled') {
+    return NextResponse.redirect(new URL(`/disabled/${slug}`, request.url))
+  }
+
+  if (record.expiresAt && record.expiresAt < now) {
+    return NextResponse.redirect(new URL(`/expired/${slug}`, request.url))
   }
 
   // ── Cache the result ──────────────────────────────────────────────────────

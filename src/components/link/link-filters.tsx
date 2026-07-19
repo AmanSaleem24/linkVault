@@ -1,4 +1,4 @@
-import { Search } from 'lucide-react'
+import { Search, LayoutList, LayoutGrid } from 'lucide-react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { DateFilterPopover, type DateFilter } from '@/components/home/date-filter-popover'
 import { SortDropdown, type SortState } from '@/components/home/sort-dropdown'
@@ -20,6 +20,8 @@ interface LinkFiltersProps {
   onDateChange: (filter: DateFilter) => void
   sort: SortState
   onSortChange: (sort: SortState) => void
+  viewMode: 'list' | 'compact'
+  onViewModeChange: (mode: 'list' | 'compact') => void
 }
 
 export function LinkFilters({
@@ -31,6 +33,8 @@ export function LinkFilters({
   onDateChange,
   sort,
   onSortChange,
+  viewMode,
+  onViewModeChange,
 }: LinkFiltersProps) {
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -90,6 +94,24 @@ export function LinkFilters({
           sort={sort}
           onSort={onSortChange}
         />
+
+        {/* View Mode Toggle */}
+        <div className="ml-2 flex items-center rounded-lg border border-slate-200 bg-white p-0.5 shadow-sm">
+          <button
+            onClick={() => onViewModeChange('list')}
+            className={`flex size-8 items-center justify-center rounded-md transition-colors ${viewMode === 'list' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'}`}
+            title="List View"
+          >
+            <LayoutList className="size-4" />
+          </button>
+          <button
+            onClick={() => onViewModeChange('compact')}
+            className={`flex size-8 items-center justify-center rounded-md transition-colors ${viewMode === 'compact' ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-700 hover:bg-slate-50'}`}
+            title="Compact View"
+          >
+            <LayoutGrid className="size-4" />
+          </button>
+        </div>
       </div>
     </div>
   )

@@ -48,6 +48,7 @@ function mockRedisNull() {
 
 function makeRequest(headers: Record<string, string> = {}): NextRequest {
   return {
+    url: 'http://localhost:3000/test-link',
     headers: {
       get: (name: string) => headers[name.toLowerCase()] ?? null,
     },
@@ -198,7 +199,7 @@ describe('GET redirect handler', () => {
     expect(response.status).toBe(404)
   })
 
-  it('returns 404 for disabled link', async () => {
+  it('redirects to /disabled for disabled links', async () => {
     mockRedisNull()
     mockPrisma.link.findUnique.mockResolvedValue({
       id: 'link-1',
@@ -210,10 +211,11 @@ describe('GET redirect handler', () => {
     const response = await GET(makeRequest(), { params })
 
     expect(response).toBeInstanceOf(NextResponse)
-    expect(response.status).toBe(404)
+    expect(response.status).toBe(307)
+    expect(response.headers.get('location')).toBe('http://localhost:3000/disabled/test-link')
   })
 
-  it('returns 404 for expired link', async () => {
+  it('redirects to /expired for expired links', async () => {
     mockRedisNull()
     mockPrisma.link.findUnique.mockResolvedValue({
       id: 'link-1',
@@ -225,7 +227,8 @@ describe('GET redirect handler', () => {
     const response = await GET(makeRequest(), { params })
 
     expect(response).toBeInstanceOf(NextResponse)
-    expect(response.status).toBe(404)
+    expect(response.status).toBe(307)
+    expect(response.headers.get('location')).toBe('http://localhost:3000/expired/test-link')
   })
 
   // ── Reserved slugs ────────────────────────────────────────────────────────

@@ -24,7 +24,7 @@ const navItems: NavItem[] = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/link', label: 'Links', icon: Link2 },
   { href: '/qr', label: 'QR Codes', icon: QrCode, disabled: true, badge: 'Try it' },
-  { href: '/analytics', label: 'Analytics', icon: BarChart3, disabled: true, badge: 'Try it' },
+  { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/domains', label: 'Custom domains', icon: Globe, disabled: true },
   { href: '/settings', label: 'Settings', icon: Settings, disabled: true, divider: true },
 ]

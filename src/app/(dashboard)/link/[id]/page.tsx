@@ -4,12 +4,11 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  ChevronLeft, ArrowLeft, Globe, Copy, Pencil, Share2, Tag, Lock,
+  ChevronLeft, Globe, Copy, Pencil, Share2, Tag, Lock,
   BarChart3, Sparkles, MoreHorizontal, CornerDownRight,
-  ChevronDown, Calendar,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { copyToClipboard, truncateUrl, getLinkTitle } from '@/components/link/link-helpers'
+import { copyToClipboard, getLinkTitle } from '@/components/link/link-helpers'
 import { getUserRoleAction } from '@/app/actions/user.getRole'
 import {
   getLinkDetailAction,
@@ -34,213 +33,17 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { DateFilterPopover, type DateFilter } from '@/components/home/date-filter-popover'
-
-// ─── Preset ranges (computed once on mount) ────────────────────────────────────
+import { StatCard } from '@/components/dashboard/charts/stat-card'
+import { SegmentChart } from '@/components/dashboard/charts/segment-chart'
+import { LocationsTable } from '@/components/dashboard/charts/locations-table'
+import { LockedSection } from '@/components/dashboard/charts/locked-section'
+import { ChartTooltip } from '@/components/dashboard/charts/chart-tooltip'
+import { FaviconImg } from '@/components/dashboard/charts/favicon-img'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type LocationRow = { name: string; count: number; percentage: number }
 type SegmentRow = { name: string; count: number; percentage: number }
-
-const CHART_COLORS = ['#3D52A0', '#14b8a6', '#f97316', '#3b82f6', '#ef4444', '#8b5cf6', '#10b981', '#f59e0b']
-
-// ─── Favicon ──────────────────────────────────────────────────────────────────
-
-function FaviconImg({ url }: { url: string }) {
-  const [errored, setErrored] = useState(false)
-  let hostname = ''
-  try { hostname = new URL(url).hostname } catch { /* ignore */ }
-
-  if (!hostname || errored) {
-    return (
-      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-slate-100 text-slate-400">
-        <Globe className="size-6" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-white border border-slate-200 overflow-hidden shadow-sm">
-      <img
-        src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-        alt={hostname}
-        className="size-6 object-contain"
-        onError={() => setErrored(true)}
-      />
-    </div>
-  )
-}
-
-// ─── Locked Section Wrapper ───────────────────────────────────────────────────
-
-function LockedSection({ children, isPro, onUpgradeClick }: {
-  children: React.ReactNode
-  isPro: boolean
-  onUpgradeClick: () => void
-}) {
-  return (
-    <div className={`relative ${isPro ? '' : 'overflow-hidden'}`}>
-      {!isPro && (
-        <div className="absolute inset-[-16px] z-10 flex flex-col items-center justify-center rounded-xl bg-white/80 backdrop-blur-[1px]">
-          <button
-            onClick={onUpgradeClick}
-            className="flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-lg hover:bg-slate-800 transition-colors"
-          >
-            <Lock className="size-4" />
-            Upgrade
-          </button>
-        </div>
-      )}
-      <div className={isPro ? '' : 'blur-sm pointer-events-none select-none'}>
-        {children}
-      </div>
-    </div>
-  )
-}
-
-// ─── Stat Card ────────────────────────────────────────────────────────────────
-
-function StatCard({ label, value, icon: Icon, isPro, isLocked }: {
-  label: string
-  value: string
-  icon: React.ElementType
-  isPro: boolean
-  isLocked?: boolean
-}) {
-  return (
-    <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-500 mb-3">
-        <Icon className="size-5" />
-        <span className="text-sm font-medium uppercase tracking-wider">{label}</span>
-        {isLocked && !isPro && <Lock className="size-4 text-slate-400 ml-auto" />}
-      </div>
-      {isLocked && !isPro ? (
-        <div className="h-10 w-24 rounded-md bg-slate-200/70 blur-[3px]" />
-      ) : (
-        <p className="text-3xl font-bold tracking-tight text-slate-900">{value}</p>
-      )}
-    </div>
-  )
-}
-
-// ─── Custom Tooltip ──────────────────────────────────────────────────────────
-
-function ChartTooltip({ active, payload, label }: any) {
-  if (!active || !payload?.length) return null
-  const dateObj = new Date(label + 'T00:00:00')
-  const dateStr = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  return (
-    <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 shadow-lg">
-      <p className="text-xs font-medium text-slate-500 mb-0.5">{dateStr}</p>
-      <p className="text-sm font-bold text-slate-900">
-        {payload[0]?.value} {payload[0]?.value === 1 ? 'click' : 'clicks'}
-      </p>
-    </div>
-  )
-}
-
-// ─── Locations Table ──────────────────────────────────────────────────────────
-
-function LocationsTable({ data }: { data: LocationRow[] }) {
-  const maxCount = data[0]?.count ?? 1
-
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-slate-100">
-            <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 w-10">#</th>
-            <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Country</th>
-            <th className="pb-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 w-24">Volume</th>
-            <th className="pb-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-400 w-16">Clicks</th>
-            <th className="pb-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-400 w-14">%</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, i) => (
-            <tr key={row.name} className="border-b border-slate-50 last:border-0">
-              <td className="py-3 text-sm font-medium text-slate-400">{i + 1}</td>
-              <td className="py-3 text-sm font-semibold text-slate-800">{row.name}</td>
-              <td className="py-3 pr-4">
-                <div className="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-[#8b5cf6] transition-all"
-                    style={{ width: `${(row.count / maxCount) * 100}%` }}
-                  />
-                </div>
-              </td>
-              <td className="py-3 text-right text-sm font-medium text-slate-700">{row.count.toLocaleString()}</td>
-              <td className="py-3 text-right text-sm font-medium text-slate-500">{row.percentage}%</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
-// ─── Segment Donut + Legend ───────────────────────────────────────────────────
-
-function SegmentChart({ data, colors, title }: { data: SegmentRow[]; colors: string[]; title: string }) {
-  const total = data.reduce((s, d) => s + d.count, 0)
-  if (total === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[240px] text-slate-400">
-        <p className="text-sm font-medium">No data yet</p>
-        <p className="text-xs mt-1">Clicks will appear here</p>
-      </div>
-    )
-  }
-
-  const size = 240
-  const strokeWidth = 22
-  const radius = (size - strokeWidth) / 2
-  const circumference = 2 * Math.PI * radius
-  let offset = 0
-
-  const segments = data.map((d, i) => {
-    const fraction = d.count / total
-    const dash = fraction * circumference
-    const gap = circumference - dash
-    const segment = { ...d, color: colors[i % colors.length], dash, gap, offset }
-    offset += dash
-    return segment
-  })
-
-  return (
-    <div className="flex flex-col sm:flex-row items-center gap-16">
-      <div className="shrink-0">
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transform -rotate-90">
-          <circle cx={size / 2} cy={size / 2} r={radius} fill="none" stroke="#f1f5f9" strokeWidth={strokeWidth} />
-          {segments.map((seg, i) => (
-            <circle
-              key={i}
-              cx={size / 2} cy={size / 2} r={radius}
-              fill="none"
-              stroke={seg.color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={`${seg.dash} ${seg.gap}`}
-              strokeDashoffset={-seg.offset}
-              strokeLinecap="butt"
-            />
-          ))}
-        </svg>
-      </div>
-
-      <div className="flex-1 w-full space-y-2.5">
-        {data.map((d, i) => (
-          <div key={`${d.name}-${i}`} className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className="size-3 rounded-sm shrink-0" style={{ backgroundColor: colors[i % colors.length] }} />
-              <span className="text-sm font-medium text-slate-700">{d.name}</span>
-            </div>
-            <span className="text-sm font-semibold text-slate-900">{d.count.toLocaleString()}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
@@ -277,10 +80,8 @@ export default function LinkAnalyticsPage() {
     setIsLoading(true)
     try {
       const range: DateRange = {
-        id: filter.preset ?? 'custom',
         from: new Date(filter.from),
         to: new Date(filter.to),
-        label: filter.preset ?? 'Custom',
       }
       const [linkRes, analyticsRes, tsRes, locRes, refRes, devRes] = await Promise.all([
         getLinkDetailAction(linkId),
@@ -447,27 +248,27 @@ export default function LinkAnalyticsPage() {
         <StatCard
           label="Total Clicks"
           value={analytics?.totalClicks.toLocaleString() ?? '0'}
-          icon={BarChart3}
+          icon="bar-chart-3"
           isPro={isPro}
         />
         <StatCard
           label="Unique Visitors"
           value={isPro ? (analytics?.uniqueVisitors.toLocaleString() ?? '0') : '—'}
-          icon={Globe}
+          icon="globe-2"
           isPro={isPro}
           isLocked
         />
         <StatCard
           label="Top Location"
           value={isPro ? (analytics?.topCountry?.name ?? '—') : '—'}
-          icon={Globe}
+          icon="globe-2"
           isPro={isPro}
           isLocked
         />
         <StatCard
           label="Top Device"
           value={isPro ? (analytics?.topDevice?.name ?? '—') : '—'}
-          icon={Globe}
+          icon="globe-2"
           isPro={isPro}
           isLocked
         />
@@ -577,7 +378,7 @@ export default function LinkAnalyticsPage() {
 
         <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
           {locations.length > 0 ? (
-            <LocationsTable data={locations} />
+            <LocationsTable title="Locations" data={locations} />
           ) : (
             <p className="text-center text-sm text-slate-400 py-6">No location data yet</p>
           )}

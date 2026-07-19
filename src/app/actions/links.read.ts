@@ -61,17 +61,33 @@ export async function getLinksAction(params: LinksListParams = {}): Promise<Link
   } = params
 
   try {
-    const where: Record<string, unknown> = { userId: session.user.id }
+    const where: any = { userId: session.user.id }
 
     if (search) {
-      where.OR = [
-        { originalUrl: { contains: search, mode: 'insensitive' } },
-        { slug: { contains: search, mode: 'insensitive' } },
-      ]
+      where.AND = where.AND || []
+      where.AND.push({
+        OR: [
+          { originalUrl: { contains: search, mode: 'insensitive' } },
+          { slug: { contains: search, mode: 'insensitive' } },
+        ]
+      })
     }
 
     if (status && status !== 'all') {
-      where.status = status
+      if (status === 'expired') {
+        where.expiresAt = { lt: new Date() }
+      } else if (status === 'active') {
+        where.status = 'active'
+        where.AND = where.AND || []
+        where.AND.push({
+          OR: [
+            { expiresAt: null },
+            { expiresAt: { gte: new Date() } },
+          ]
+        })
+      } else {
+        where.status = status
+      }
     }
 
     if (dateFrom || dateTo) {
@@ -89,12 +105,15 @@ export async function getLinksAction(params: LinksListParams = {}): Promise<Link
     orderBy[sortBy] = sortOrder
 
     const fetchLimit = limit + 1
+
+    // Run sequentially to avoid exhausting Neon's serverless connection pool
     const links = await prisma.link.findMany({
       where,
       orderBy,
       take: fetchLimit,
       ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     })
+    const totalCount = await prisma.link.count({ where })
 
     const hasMore = links.length > limit
     const pageLinks = hasMore ? links.slice(0, -1) : links
@@ -115,7 +134,7 @@ export async function getLinksAction(params: LinksListParams = {}): Promise<Link
         })),
         nextCursor,
         hasMore,
-        totalCount: pageLinks.length,
+        totalCount,
       },
     }
   } catch (error) {
