@@ -132,7 +132,7 @@ export default function AllLinksPage() {
             </p>
             {!search && statusFilter === 'all' && !dateFilter.from && !dateFilter.to && (
               <Button
-                onClick={() => router.push('/home')}
+                onClick={() => router.push('/links/new')}
                 className="mt-5 h-9 gap-1.5 bg-[#3D52A0] px-4 text-[0.875rem] font-semibold text-white hover:bg-brand-500 rounded-lg"
               >
                 <Plus className="size-4" />

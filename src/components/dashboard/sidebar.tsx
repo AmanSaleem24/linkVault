@@ -73,19 +73,22 @@ export function Sidebar() {
       {/* ── Create new button ──────────────────────────────────────────── */}
       <div className={`pb-6 pt-2 ${collapsed ? 'px-2' : 'px-4'}`}>
         {collapsed ? (
-          <Button
-            size="icon"
-            className="mx-auto flex size-10 rounded-md bg-[#2B0094] text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
-            title="Create new"
-          >
-            <Plus className="size-5" />
-          </Button>
+          <Link href="/links/new" title="Create new">
+            <Button
+              size="icon"
+              className="mx-auto flex size-10 rounded-md bg-[#2B0094] text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
+            >
+              <Plus className="size-5" />
+            </Button>
+          </Link>
         ) : (
-          <Button
-            className="h-10 w-full rounded-md bg-[#2B0094] text-[0.95rem] font-semibold text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
-          >
-            Create new
-          </Button>
+          <Link href="/links/new" className="block">
+            <Button
+              className="h-10 w-full rounded-md bg-[#2B0094] text-[0.95rem] font-semibold text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
+            >
+              Create new
+            </Button>
+          </Link>
         )}
       </div>
 
@@ -147,6 +150,24 @@ export function Sidebar() {
           )
         })}
       </nav>
+
+      {/* Cmd+K hint */}
+      {!collapsed && (
+        <div className="px-3 pb-3">
+          <button
+            onClick={() => {
+              // Dispatch a custom event to open the palette
+              window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true }))
+            }}
+            className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+          >
+            <span>Command palette</span>
+            <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[0.65rem] font-semibold text-slate-400">
+              ⌘K
+            </kbd>
+          </button>
+        </div>
+      )}
     </aside>
   )
 }
