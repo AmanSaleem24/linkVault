@@ -1,15 +1,44 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Link as LinkIcon, Loader2, Plus } from 'lucide-react'
+import { Link as LinkIcon, Loader2, Plus, Download } from 'lucide-react'
 import { LinkRow } from '@/components/home/link-row'
 import { useLinks } from '@/components/link/use-links'
 import { LinkFilters } from '@/components/link/link-filters'
 import { copyToClipboard, truncateUrl, getLinkTitle } from '@/components/link/link-helpers'
+import { exportLinksAction } from '@/app/actions/links.read'
+import { toast } from 'sonner'
 
 export default function AllLinksPage() {
   const router = useRouter()
+  const [isExporting, setIsExporting] = useState(false)
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const result = await exportLinksAction()
+      if (result.success) {
+        const blob = new Blob([result.csv], { type: 'text/csv;charset=utf-8;' })
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `linkvault-export-${new Date().toISOString().split('T')[0]}.csv`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        toast.success('CSV exported successfully')
+      } else {
+        toast.error(result.error)
+      }
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   const {
     isLoading,
@@ -44,11 +73,17 @@ export default function AllLinksPage() {
           </p>
         </div>
         <Button
-          onClick={() => router.push('/home')}
-          className="h-10 gap-2 bg-[#3D52A0] px-5 text-[0.875rem] font-semibold text-white shadow-sm hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-[#3D52A0]/40 rounded-lg"
+          onClick={handleExport}
+          disabled={isExporting || isLoading}
+          variant="outline"
+          className="h-10 gap-2 bg-[#3D52A0] px-5 text-[0.875rem] font-semibold text-white shadow-sm hover:bg-brand-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#3D52A0]/40 rounded-lg"
         >
-          <Plus className="size-4" />
-          Create link
+          {isExporting ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <Download className="size-4" />
+          )}
+          Download CSV
         </Button>
       </div>
 

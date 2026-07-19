@@ -226,6 +226,42 @@ export async function getUserUsageStatsAction() {
   }
 }
 
+// ─── Export Links as CSV ─────────────────────────────────────────────────────
+
+export async function exportLinksAction(): Promise<{ success: true; csv: string } | { success: false; error: string }> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'You must be logged in' }
+  }
+
+  try {
+    const links = await prisma.link.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        slug: true,
+        originalUrl: true,
+        status: true,
+        clickCount: true,
+        createdAt: true,
+      },
+    })
+
+    const header = 'Slug,Original URL,Status,Clicks,Created At\n'
+    const rows = links.map(l => {
+      const escapedUrl = `"${l.originalUrl.replace(/"/g, '""')}"`
+      const date = l.createdAt.toISOString()
+      return `${l.slug},${escapedUrl},${l.status},${l.clickCount},${date}`
+    })
+    const csv = header + rows.join('\n')
+
+    return { success: true, csv }
+  } catch (error) {
+    console.error('Export links error:', error)
+    return { success: false as const, error: 'Failed to export links' }
+  }
+}
+
 // ─── Alias availability check ──────────────────────────────────────────────
 
 export async function checkAliasAvailabilityAction(slug: string): Promise<{ available: boolean; reason?: string }> {
