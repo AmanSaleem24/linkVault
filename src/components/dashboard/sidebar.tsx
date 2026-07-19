@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, FileText, FolderOpen, Globe, Blocks, History } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, FileText, FolderOpen, Globe, Blocks, History, Lock } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
   { href: '/settings', label: 'Settings', icon: Settings, disabled: true, divider: true },
 ]
 
-export function Sidebar() {
+export function Sidebar({ isPro = false }: { isPro?: boolean }) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -98,14 +98,15 @@ export function Sidebar() {
         {navItems.map((item, index) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon
+          const isLocked = item.href === '/audit' && !isPro
 
           return (
             <div key={item.href}>
               {item.divider && (
                 <div className="mx-2 my-3 h-px bg-sidebar-border" />
               )}
-              
-              {item.disabled ? (
+
+              {item.disabled || isLocked ? (
                 <span
                   title={collapsed ? item.label : undefined}
                   className={`
@@ -121,6 +122,9 @@ export function Sidebar() {
                         <span className="ml-auto text-[0.7rem] font-medium text-slate-500">
                           {item.badge}
                         </span>
+                      )}
+                      {isLocked && (
+                        <Lock className="ml-auto size-3.5 text-slate-400" />
                       )}
                     </>
                   )}

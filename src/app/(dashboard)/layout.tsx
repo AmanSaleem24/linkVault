@@ -37,7 +37,7 @@ export default async function DashboardLayout({
   return (
     <div className={`${GeistSans.variable} ${GeistMono.variable} flex h-full min-h-screen font-[family-name:var(--font-geist-sans)]`}>
       {/* ── Sidebar (client component for active-link highlighting) ──────── */}
-      <Sidebar />
+      <Sidebar isPro={isPro} />
 
       {/* ── Main area ───────────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden">

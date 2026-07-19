@@ -315,27 +315,84 @@ export interface AuditLogResult {
   data: {
     logs: AuditLogEntry[]
     totalCount: number
+    nextCursor: string | null
   }
 }
 
-export async function getAuditLogAction(): Promise<AuditLogResult | { success: false; error: string }> {
+export interface AuditLogParams {
+  isPro: boolean
+  limit?: number
+  cursor?: string
+}
+
+export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLogResult | { success: false; error: string }> {
   const session = await auth()
   if (!session?.user?.id) {
     return { success: false as const, error: 'You must be logged in' }
   }
 
+  const { isPro: isProParam, limit = 20, cursor } = params
+
+  // If isPro not provided, resolve from session
+  let isPro = isProParam
+  if (isPro === undefined) {
+    const dbUser = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    })
+    isPro = dbUser?.role === 'admin' || dbUser?.role === 'pro'
+  }
+
+  // Server-side gate: no data for free users
+  if (!isPro) {
+    return {
+      success: true,
+      data: { logs: [], totalCount: 0, nextCursor: null },
+    }
+  }
+
   try {
-    const logs = await prisma.auditLog.findMany({
+    const fetchLimit = limit + 1 // fetch one extra to detect hasMore
+
+    let logs: Array<{ id: string; entityId: string; action: string; entityType: string; previousValue: Json; newValue: Json; createdAt: Date }>
+
+    if (cursor) {
+      // Cursor-based: skip the cursor row, fetch next page
+      const cursorLog = await prisma.auditLog.findUnique({
+        where: { id: cursor },
+        select: { createdAt: true },
+      })
+      if (!cursorLog) {
+        return { success: true, data: { logs: [], totalCount: 0, nextCursor: null } }
+      }
+      logs = await prisma.auditLog.findMany({
+        where: {
+          userId: session.user.id,
+          createdAt: { lt: cursorLog.createdAt },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: fetchLimit,
+      })
+    } else {
+      // First page: newest first
+      logs = await prisma.auditLog.findMany({
+        where: { userId: session.user.id },
+        orderBy: { createdAt: 'desc' },
+        take: fetchLimit,
+      })
+    }
+
+    const hasMore = logs.length > limit
+    const pageLogs = hasMore ? logs.slice(0, -1) : logs
+    const nextCursor = hasMore && pageLogs.length > 0 ? pageLogs[pageLogs.length - 1].id : null
+
+    // Get total count for display
+    const totalCount = await prisma.auditLog.count({
       where: { userId: session.user.id },
-      orderBy: { createdAt: 'desc' },
-      take: 100,
-      include: {
-        // We don't have a direct relation, so we'll fetch link data separately
-      },
     })
 
-    // Get all unique entityIds to fetch link details
-    const entityIds = logs.map(l => l.entityId).filter(Boolean)
+    // Resolve link metadata
+    const entityIds = [...new Set(pageLogs.map(l => l.entityId).filter(Boolean))]
     const links = entityIds.length > 0
       ? await prisma.link.findMany({
           where: { id: { in: entityIds as string[] } },
@@ -345,7 +402,7 @@ export async function getAuditLogAction(): Promise<AuditLogResult | { success: f
 
     const linkMap = new Map(links.map(l => [l.id, l]))
 
-    const formatted = logs.map(log => {
+    const formatted = pageLogs.map(log => {
       const link = linkMap.get(log.entityId)
       return {
         id: log.id,
@@ -364,7 +421,8 @@ export async function getAuditLogAction(): Promise<AuditLogResult | { success: f
       success: true,
       data: {
         logs: formatted,
-        totalCount: logs.length,
+        totalCount,
+        nextCursor,
       },
     }
   } catch (error) {
