@@ -11,14 +11,14 @@ export default async function AuditLogPage() {
   if (!isPro) {
     return (
       <LockedPage
-        title="Activity Log"
-        description="Track every action taken on your links — who created, updated, or deleted them and when. Available for Pro users."
+        title="Activity Log is Pro only"
+        description="Upgrade to LinkVault Pro to track every action taken on your links — who created, updated, or deleted them and when."
       />
     )
   }
 
   // Pro: fetch initial batch of audit logs
-  const result = await getAuditLogAction({ limit: 20 })
+  const result = await getAuditLogAction({ isPro: true, limit: 20 })
 
   if (!result.success) {
     return (

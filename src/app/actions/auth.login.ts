@@ -2,12 +2,18 @@
 
 import { signIn, signOut } from '@/lib/auth'
 import { AuthError } from 'next-auth'
+import { loginSchema } from '@/lib/validators'
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 
 export async function loginAction(formData: unknown) {
+  const parsed = loginSchema.safeParse(formData)
+  if (!parsed.success) {
+    return { success: false, error: 'Invalid email or password' }
+  }
+  const { email, password } = parsed.data
+
   try {
-    const { email, password } = formData as any
     await signIn('credentials', {
       email,
       password,
@@ -19,8 +25,8 @@ export async function loginAction(formData: unknown) {
       switch (error.type) {
         case 'CredentialsSignin':
         case 'CallbackRouteError': {
-          const cause = (error as any).cause?.err || (error as any).cause
-          const msg = cause?.message || error.message
+          const cause = error.cause as { err?: { message?: string }; message?: string } | undefined
+          const msg = cause?.err?.message || cause?.message || error.message
 
           if (msg === 'OAUTH_ACCOUNT_NO_PASSWORD') {
             return { success: false, error: 'This email is linked to a Google account. Please sign in with Google.' }

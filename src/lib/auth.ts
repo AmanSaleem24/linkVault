@@ -59,10 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             image: user.image,
             role: user.role,
           }
-        } catch (err: any) {
-          if (err.message === 'OAUTH_ACCOUNT_NO_PASSWORD' || err.message === 'EMAIL_NOT_VERIFIED') {
-            throw err
-          }
+        } catch (err) {
           // Log unexpected errors (e.g. Neon cold-start timeout) and return null
           // so Auth.js shows a CredentialsSignin error, not a Configuration error
           console.error('[authorize] unexpected error:', err)
@@ -76,7 +73,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
-        token.role = (user as any).role
+        token.role = (user as { role?: string }).role ?? token.role
       }
       return token
     },
@@ -92,9 +89,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           })
           // @ts-expect-error — extend session type
           session.user.role = dbUser?.role ?? (token.role as string)
-        } catch (err) {
+        } catch {
           // Fallback to JWT token role if DB query fails
-          // @ts-expect-error
+          // @ts-expect-error session.user.role is read-only in type but assigned here
           session.user.role = token.role as string
         }
       }

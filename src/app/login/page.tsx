@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { loginAction, googleSignInAction } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
-import { LinkIcon, Loader2, AlertCircle, MailWarning } from 'lucide-react'
+import { Loader2, AlertCircle, MailWarning } from 'lucide-react'
 import { AuthShell } from '@/components/auth/auth-shell'
 import { AuthField } from '@/components/auth/auth-field'
 

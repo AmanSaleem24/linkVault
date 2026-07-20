@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { signUpAction, googleSignInAction } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
-import { CheckCircle2, AlertCircle, Loader2, LinkIcon } from 'lucide-react'
+import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react'
 import { AuthShell } from '@/components/auth/auth-shell'
 import { AuthField } from '@/components/auth/auth-field'
 

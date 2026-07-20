@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, FileText, FolderOpen, Globe, Blocks, History, Lock } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Lock, Globe } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -95,7 +95,7 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
 
       {/* ── Navigation ─────────────────────────────────────────────────── */}
       <nav className={`flex flex-1 flex-col gap-1 ${collapsed ? 'px-2' : 'px-3'}`}>
-        {navItems.map((item, index) => {
+        {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon
           const isLocked = item.href === '/audit' && !isPro
@@ -106,7 +106,7 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
                 <div className="mx-2 my-3 h-px bg-sidebar-border" />
               )}
 
-              {item.disabled || isLocked ? (
+              {item.disabled ? (
                 <span
                   title={collapsed ? item.label : undefined}
                   className={`
@@ -122,9 +122,6 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
                         <span className="ml-auto text-[0.7rem] font-medium text-slate-500">
                           {item.badge}
                         </span>
-                      )}
-                      {isLocked && (
-                        <Lock className="ml-auto size-3.5 text-slate-400" />
                       )}
                     </>
                   )}
@@ -148,7 +145,16 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
                     <span className="absolute left-0 top-1/2 h-[60%] w-1 -translate-y-1/2 rounded-r-full bg-[#2B0094] dark:bg-brand-300" />
                   )}
                   <Icon className="size-5 shrink-0" />
-                  {!collapsed && <span>{item.label}</span>}
+                  {!collapsed && (
+                    <>
+                      <span>{item.label}</span>
+                      {item.badge && (
+                        <span className="ml-auto text-[0.7rem] font-medium text-slate-500">
+                          {item.badge}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </Link>
               )}
             </div>

@@ -1,12 +1,4 @@
 import {
-  BarChart3,
-  MousePointerClick,
-  Link2,
-  Users,
-  Globe2,
-  Smartphone,
-} from 'lucide-react'
-import {
   getAccountAnalyticsAction,
   getAccountTimeSeriesAction,
   getAccountTopLinksAction,
@@ -20,15 +12,27 @@ import { SegmentChart } from '@/components/dashboard/charts/segment-chart'
 import { LocationsTable } from '@/components/dashboard/charts/locations-table'
 import { FaviconImg } from '@/components/dashboard/charts/favicon-img'
 import { TimeSeriesChart } from './time-series-chart'
-import { getUserRoleAction } from '@/app/actions/user.getRole'
 import { rangeFromDays } from '@/lib/analytics-helpers'
+import { auth } from '@/lib/auth'
+import { LockedPage } from '@/components/dashboard/locked-page'
 
 const SEGMENT_COLORS = ['#3D52A0', '#14b8a6', '#f97316', '#8b5cf6', '#ef4444']
 const STATUS_COLORS = ['#14b8a6', '#94a3b8', '#f87171']
 
 export default async function AnalyticsPage() {
+  const session = await auth()
+  const role = session?.user?.role as string | undefined
+
+  if (role !== 'pro' && role !== 'admin') {
+    return (
+      <LockedPage
+        title="Analytics are Pro only"
+        description="Upgrade to LinkVault Pro to unlock advanced analytics, click trends, referrer tracking, and device breakdowns for all your links."
+      />
+    )
+  }
+
   const range = rangeFromDays(30)
-  const { isPro } = await getUserRoleAction()
 
   const [summary, timeSeries, topLinks, locations, referrers, devices, statusBreakdown] =
     await Promise.all([
