@@ -59,6 +59,17 @@ export async function createLinkAction(input: unknown) {
     if (qrCode && qrCount >= limits.qr) {
       return { success: false as const, error: `You have reached your monthly limit of ${limits.qr} QR codes. Please upgrade to Pro.` }
     }
+    
+    // Gatekeep Pro features
+    if (alias) {
+      return { success: false as const, error: 'Custom aliases are a Pro feature.' }
+    }
+    if (expiresAt !== undefined && expiresAt !== null) {
+      return { success: false as const, error: 'Link expiration is a Pro feature.' }
+    }
+    if (utmSource || utmMedium || utmCampaign) {
+      return { success: false as const, error: 'Custom UTM tags are a Pro feature.' }
+    }
   }
 
   try {

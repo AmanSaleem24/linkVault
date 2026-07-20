@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { updateLinkSchema } from '@/lib/validators'
 import { invalidateCache } from './links.create'
+import { getCurrentUserSubscription, isPro } from '@/lib/plan'
 
 // ─── Update Link ──────────────────────────────────────────────────────────────
 
@@ -41,6 +42,22 @@ export async function updateLinkAction(input: unknown) {
       const taken = await prisma.link.findUnique({ where: { slug: alias } })
       if (taken) {
         return { success: false as const, error: 'This alias is already taken' }
+      }
+    }
+
+    // 5.5. Enforce Pro limits
+    const subscription = await getCurrentUserSubscription()
+    const isUserPro = session.user.role === 'admin' || isPro(subscription)
+
+    if (!isUserPro) {
+      if (alias !== undefined && alias !== existing.slug) {
+        return { success: false as const, error: 'Custom aliases are a Pro feature.' }
+      }
+      
+      const existingExpires = existing.expiresAt ? existing.expiresAt.getTime() : null
+      const newExpires = expiresAt ? expiresAt.getTime() : null
+      if (expiresAt !== undefined && newExpires !== existingExpires) {
+        return { success: false as const, error: 'Link expiration is a Pro feature.' }
       }
     }
 

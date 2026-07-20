@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { updateProfileSchema, updatePasswordSchema, updateDefaultsSchema } from '@/lib/validators'
 import bcrypt from 'bcryptjs'
 import { revalidatePath } from 'next/cache'
+import { getCurrentUserSubscription, isPro } from '@/lib/plan'
 
 export async function updateProfileAction(data: { name: string; email: string }) {
   const session = await auth()
@@ -108,6 +109,13 @@ export async function updateDefaultsAction(data: unknown) {
   const { defaultUtmSource, defaultUtmMedium, defaultUtmCampaign, defaultExpiresIn } = parsed.data
 
   try {
+    const subscription = await getCurrentUserSubscription()
+    const isUserPro = session.user.role === 'admin' || isPro(subscription)
+
+    if (!isUserPro) {
+      return { success: false, error: 'Link defaults are a Pro feature' }
+    }
+
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
