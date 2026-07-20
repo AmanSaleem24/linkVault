@@ -82,13 +82,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = token.id as string
         
         try {
-          // Always fetch the fresh role from DB to handle upgrades without re-login
+          // Always fetch fresh data from DB to handle upgrades and profile updates without re-login
           const dbUser = await prisma.user.findUnique({ 
             where: { id: token.id as string }, 
-            select: { role: true } 
+            select: { role: true, name: true, email: true } 
           })
-          // @ts-expect-error — extend session type
-          session.user.role = dbUser?.role ?? (token.role as string)
+          if (dbUser) {
+            // @ts-expect-error — extend session type
+            session.user.role = dbUser.role
+            session.user.name = dbUser.name
+            session.user.email = dbUser.email
+          } else {
+            // Fallback to JWT token
+            // @ts-expect-error session.user.role is read-only in type but assigned here
+            session.user.role = token.role as string
+          }
         } catch {
           // Fallback to JWT token role if DB query fails
           // @ts-expect-error session.user.role is read-only in type but assigned here

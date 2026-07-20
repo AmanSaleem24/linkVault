@@ -28,7 +28,7 @@ const navItems: NavItem[] = [
   { href: '/audit', label: 'Activity', icon: History, divider: true },
   { href: '/domains', label: 'Custom domains', icon: Globe },
   { href: '/billing', label: 'Billing', icon: CreditCard, divider: true },
-  { href: '/settings', label: 'Settings', icon: Settings, disabled: true },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 export function Sidebar({ isPro = false }: { isPro?: boolean }) {

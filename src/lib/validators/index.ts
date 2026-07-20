@@ -38,6 +38,36 @@ export const resetPasswordSchema = z
     path: ['confirmPassword'],
   })
 
+// ─── Settings schemas ──────────────────────────────────────────────────────────
+
+export const updateProfileSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters').max(100),
+  email: z.string().email('Must be a valid email').toLowerCase(),
+})
+
+export const updatePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(100)
+      .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+      .regex(/[0-9]/, 'Must contain at least one number'),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: 'Passwords do not match',
+    path: ['confirmPassword'],
+  })
+
+export const updateDefaultsSchema = z.object({
+  defaultUtmSource: z.string().max(100, 'Source too long').optional().nullable(),
+  defaultUtmMedium: z.string().max(100, 'Medium too long').optional().nullable(),
+  defaultUtmCampaign: z.string().max(100, 'Campaign too long').optional().nullable(),
+  defaultExpiresIn: z.string().max(50, 'Invalid preset').optional().nullable(),
+})
+
 // ─── Link schemas ─────────────────────────────────────────────────────────────
 
 export const SLUG_REGEX = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/

@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getRedis, LINK_CACHE_KEY } from '@/lib/redis'
 import { generateUniqueSlug } from '@/lib/slugs'
-import { createLinkSchema } from '@/lib/validators'
+import { createLinkSchema, resolveExpiry, type ExpiryDuration } from '@/lib/validators'
 import { getUserUsageStatsAction } from './links.read'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -80,14 +80,48 @@ export async function createLinkAction(input: unknown) {
       })
     }
 
+    // 4.5 Apply UTM Defaults and Default Expiry if Pro
+    let finalUrl = url
+    let finalExpiresAt = expiresAt
+    if (isPro) {
+      const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { defaultUtmSource: true, defaultUtmMedium: true, defaultUtmCampaign: true, defaultExpiresIn: true }
+      })
+      if (user) {
+        if (user.defaultUtmSource || user.defaultUtmMedium || user.defaultUtmCampaign) {
+          try {
+            const urlObj = new URL(url)
+            if (user.defaultUtmSource && !urlObj.searchParams.has('utm_source')) {
+              urlObj.searchParams.set('utm_source', user.defaultUtmSource)
+            }
+            if (user.defaultUtmMedium && !urlObj.searchParams.has('utm_medium')) {
+              urlObj.searchParams.set('utm_medium', user.defaultUtmMedium)
+            }
+            if (user.defaultUtmCampaign && !urlObj.searchParams.has('utm_campaign')) {
+              urlObj.searchParams.set('utm_campaign', user.defaultUtmCampaign)
+            }
+            finalUrl = urlObj.toString()
+          } catch (e) {
+            // If URL parsing fails for some reason, silently fall back to original
+          }
+        }
+        
+        // If the user didn't explicitly set an expiry for this link, apply the default
+        if (finalExpiresAt === undefined && user.defaultExpiresIn) {
+          finalExpiresAt = resolveExpiry(user.defaultExpiresIn as ExpiryDuration) ?? undefined
+        }
+      }
+    }
+
     // 5. Create the link + audit log in a single transaction
     const link = await prisma.$transaction(async (tx) => {
       const created = await tx.link.create({
         data: {
           userId,
-          originalUrl: url,
+          originalUrl: finalUrl,
           slug,
-          expiresAt: expiresAt ?? null,
+          expiresAt: finalExpiresAt ?? null,
         },
       })
 
@@ -110,9 +144,9 @@ export async function createLinkAction(input: unknown) {
           entityId: created.id,
           action: 'create',
           newValue: {
-            originalUrl: url,
+            originalUrl: finalUrl,
             slug,
-            expiresAt: expiresAt?.toISOString() ?? null,
+            expiresAt: finalExpiresAt?.toISOString() ?? null,
             hasQrCode: qrCode ?? false,
           },
         },

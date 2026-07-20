@@ -57,6 +57,10 @@ model User {
   sessions        Session[]
   subscription    Subscription?
   qrCodes         QrCode[]
+  defaultUtmSource     String?
+  defaultUtmMedium     String?
+  defaultUtmCampaign   String?
+  defaultExpiresIn     String?
 }
 
 model Subscription {
