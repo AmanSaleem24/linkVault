@@ -26,7 +26,7 @@ const navItems: NavItem[] = [
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/qr', label: 'QR Codes', icon: QrCode },
   { href: '/audit', label: 'Activity', icon: History, divider: true },
-  { href: '/domains', label: 'Custom domains', icon: Globe, disabled: true },
+  { href: '/domains', label: 'Custom domains', icon: Globe },
   { href: '/billing', label: 'Billing', icon: CreditCard, divider: true },
   { href: '/settings', label: 'Settings', icon: Settings, disabled: true },
 ]
