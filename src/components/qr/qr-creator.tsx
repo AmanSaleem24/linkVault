@@ -42,6 +42,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
   const [fgColor, setFgColor] = useState('#000000')
   const [bgColor, setBgColor] = useState('#ffffff')
   const [style, setStyle] = useState<'squares' | 'dots'>('squares')
+  const [isPreviewExpanded, setIsPreviewExpanded] = useState(false)
 
   useEffect(() => {
     Promise.all([getUserLinksAction(), getQrCodes()]).then(([linksRes, qrRes]) => {
@@ -424,7 +425,12 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
         {/* Right: Live Preview */}
         <div className="lg:col-span-2">
           <div className="sticky top-8 flex flex-col items-center justify-center rounded-3xl border border-slate-200 bg-slate-50 py-16 shadow-inner dark:border-border dark:bg-muted/30">
-            <div className="rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-100 transition-all dark:bg-white dark:ring-0">
+            <button
+              onClick={() => setIsPreviewExpanded(true)}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-2xl dark:bg-white dark:ring-0"
+              title="Click to enlarge"
+            >
+              <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
               <QRCode
                 value={previewUrl}
                 size={220}
@@ -433,12 +439,34 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                 qrStyle={style}
                 eyeRadius={style === 'dots' ? 10 : 0}
               />
-            </div>
-            <p className="mt-8 rounded-full bg-slate-200/50 px-4 py-1.5 text-sm font-medium text-slate-500 dark:bg-muted dark:text-muted-foreground">Live Preview</p>
+            </button>
+            <p className="mt-8 rounded-full bg-slate-200/50 px-4 py-1.5 text-sm font-medium text-slate-500 dark:bg-muted dark:text-muted-foreground">Click to enlarge</p>
           </div>
         </div>
         
       </div>
+
+      {/* Expanded Modal Lightbox */}
+      {isPreviewExpanded && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 backdrop-blur-md transition-all animate-in fade-in duration-200"
+          onClick={() => setIsPreviewExpanded(false)}
+        >
+          <div 
+            className="rounded-[2.5rem] bg-white p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <QRCode
+              value={previewUrl}
+              size={Math.min(480, typeof window !== 'undefined' ? window.innerWidth - 64 : 480)}
+              fgColor={fgColor}
+              bgColor={bgColor}
+              qrStyle={style}
+              eyeRadius={style === 'dots' ? 10 : 0}
+            />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

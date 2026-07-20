@@ -88,7 +88,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             select: { role: true, name: true, email: true } 
           })
           if (dbUser) {
-            // @ts-expect-error — extend session type
             session.user.role = dbUser.role
             session.user.name = dbUser.name
             session.user.email = dbUser.email

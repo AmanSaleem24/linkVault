@@ -6,14 +6,18 @@ type LocationsTableProps = {
   title: string
   data: LocationRow[]
   emptyLabel?: string
+  action?: React.ReactNode
 }
 
-export function LocationsTable({ title, data, emptyLabel = 'No data yet' }: LocationsTableProps) {
+export function LocationsTable({ title, data, emptyLabel = 'No data yet', action }: LocationsTableProps) {
   const maxCount = data[0]?.count ?? 1
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <h3 className="text-sm font-semibold text-slate-700 mb-4">{title}</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-slate-700">{title}</h3>
+        {action && <div>{action}</div>}
+      </div>
 
       {data.length === 0 ? (
         <p className="text-sm text-slate-400 py-8 text-center">{emptyLabel}</p>

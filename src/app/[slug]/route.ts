@@ -95,6 +95,11 @@ export async function GET(
     undefined
   const ua = parseUserAgent(userAgent)
 
+  // Parse UTM parameters
+  const utmSource = request.nextUrl.searchParams.get('utm_source') ?? undefined
+  const utmMedium = request.nextUrl.searchParams.get('utm_medium') ?? undefined
+  const utmCampaign = request.nextUrl.searchParams.get('utm_campaign') ?? undefined
+
   const redis = getRedis()
   const now = new Date()
 
@@ -126,6 +131,9 @@ export async function GET(
                   country: normalizedCountry,
                   referrer: referer ?? undefined,
                   ip: ip ?? undefined,
+                  utmSource,
+                  utmMedium,
+                  utmCampaign,
                 },
               })
               await prisma.link.update({
@@ -202,6 +210,9 @@ export async function GET(
           country: normalizedCountry,
           referrer: referer ?? undefined,
           ip: ip ?? undefined,
+          utmSource,
+          utmMedium,
+          utmCampaign,
         },
       })
       await prisma.link.update({

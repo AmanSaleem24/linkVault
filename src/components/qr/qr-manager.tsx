@@ -2,12 +2,19 @@
 
 import { useState } from 'react'
 import { QRCode } from 'react-qrcode-logo'
-import { Plus, Download, Trash2, QrCode as QrCodeIcon, Loader2, Globe } from 'lucide-react'
+import { Plus, Download, Trash2, QrCode as QrCodeIcon, Loader2, Globe, FileImage, FileText, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { deleteQrCode } from '@/app/actions/qr'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { jsPDF } from 'jspdf'
 
 interface QrManagerProps {
   qrCodes: Array<{
@@ -25,19 +32,33 @@ interface QrManagerProps {
 
 export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [expandedQr, setExpandedQr] = useState<string | null>(null)
   const router = useRouter()
 
   const limit = qrLimit
   const usage = qrCodes.length
   const reachedLimit = !isPro && usage >= limit
 
-  const downloadImage = (id: string, name: string) => {
+  const downloadImage = (id: string, name: string, format: 'png' | 'jpeg' | 'pdf') => {
     const canvas = document.getElementById(`qr-${id}`) as HTMLCanvasElement | null
     if (!canvas) return
-    const url = canvas.toDataURL('image/png')
+
+    if (format === 'pdf') {
+      const imgData = canvas.toDataURL('image/png')
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'px',
+        format: [canvas.width, canvas.height]
+      })
+      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width, canvas.height)
+      pdf.save(`qr-${name}.pdf`)
+      return
+    }
+
+    const url = canvas.toDataURL(`image/${format}`, 1.0)
     const a = document.createElement('a')
     a.href = url
-    a.download = `qr-${name}.png`
+    a.download = `qr-${name}.${format === 'jpeg' ? 'jpg' : format}`
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
@@ -135,7 +156,12 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                 className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-border dark:bg-card"
               >
                 <div className="flex items-center justify-center bg-slate-50 p-8 dark:bg-muted/30">
-                  <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 dark:bg-white dark:ring-0">
+                  <button 
+                    onClick={() => setExpandedQr(qr.id)}
+                    className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-xl dark:bg-white dark:ring-0"
+                    title="Click to enlarge"
+                  >
+                    <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
                     <QRCode
                       id={`qr-${qr.id}`}
                       value={qrUrl}
@@ -145,7 +171,7 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                       qrStyle={qr.style as 'squares' | 'dots'}
                       eyeRadius={qr.style === 'dots' ? 10 : 0}
                     />
-                  </div>
+                  </button>
                 </div>
 
                 <div className="flex flex-1 flex-col justify-between p-5">
@@ -175,15 +201,37 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                       {isRaw ? 'No tracking' : `${qr.link!.clickCount} scans`}
                     </span>
                     <div className="flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="size-8"
-                        onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw')}
-                        title="Download PNG"
-                      >
-                        <Download className="size-4 text-slate-500" />
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger 
+                          className="flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:hover:bg-muted"
+                          title="Download"
+                        >
+                          <Download className="size-4 text-slate-500" />
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 shadow-xl ring-1 ring-slate-100 dark:bg-card dark:ring-border">
+                          <DropdownMenuItem 
+                            onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'png')}
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                          >
+                            <ImageIcon className="size-4 text-brand-500 dark:text-brand-400" />
+                            Download PNG
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'jpeg')}
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                          >
+                            <FileImage className="size-4 text-emerald-500 dark:text-emerald-400" />
+                            Download JPEG
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'pdf')}
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                          >
+                            <FileText className="size-4 text-amber-500 dark:text-amber-400" />
+                            Download PDF
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -206,6 +254,34 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
           })}
         </div>
       )}
+
+      {/* Expanded Modal Lightbox */}
+      {expandedQr && (() => {
+        const qr = qrCodes.find(q => q.id === expandedQr)
+        if (!qr) return null
+        const qrUrl = qr.link ? `${appUrl}/${qr.link.slug}` : (qr.rawUrl || '')
+        
+        return (
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/20 backdrop-blur-md transition-all animate-in fade-in duration-200"
+            onClick={() => setExpandedQr(null)}
+          >
+            <div 
+              className="rounded-[2.5rem] bg-white p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <QRCode
+                value={qrUrl}
+                size={Math.min(480, typeof window !== 'undefined' ? window.innerWidth - 64 : 480)}
+                fgColor={qr.color}
+                bgColor={qr.bgColor}
+                qrStyle={qr.style as 'squares' | 'dots'}
+                eyeRadius={qr.style === 'dots' ? 10 : 0}
+              />
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }

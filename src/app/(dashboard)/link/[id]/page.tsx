@@ -18,6 +18,7 @@ import {
   getLocationsAction,
   getReferrersAction,
   getDevicesAction,
+  getUtmAction,
   type LinkDetailData,
   type ClickAnalytics,
   type TimeSeriesPoint,
@@ -64,6 +65,11 @@ export default function LinkAnalyticsPage() {
   const [locations, setLocations] = useState<LocationRow[]>([])
   const [referrers, setReferrers] = useState<SegmentRow[]>([])
   const [devices, setDevices] = useState<SegmentRow[]>([])
+  const [utm, setUtm] = useState<{
+    sources: SegmentRow[]
+    mediums: SegmentRow[]
+    campaigns: SegmentRow[]
+  } | null>(null)
 
   // Check pro status
   useEffect(() => {
@@ -81,13 +87,14 @@ export default function LinkAnalyticsPage() {
         from: new Date(filter.from),
         to: new Date(filter.to),
       }
-      const [linkRes, analyticsRes, tsRes, locRes, refRes, devRes] = await Promise.all([
+      const [linkRes, analyticsRes, tsRes, locRes, refRes, devRes, utmRes] = await Promise.all([
         getLinkDetailAction(linkId),
         getClickAnalyticsAction(linkId),
         getTimeSeriesAction(linkId, range),
         getLocationsAction(linkId),
         getReferrersAction(linkId),
         getDevicesAction(linkId),
+        getUtmAction(linkId),
       ])
 
       if (!linkRes.success) {
@@ -102,6 +109,7 @@ export default function LinkAnalyticsPage() {
       if (locRes.success) setLocations(locRes.data)
       if (refRes.success) setReferrers(refRes.data)
       if (devRes.success) setDevices(devRes.data)
+      if (utmRes.success) setUtm(utmRes.data)
     } catch {
       toast.error('Failed to load analytics')
     } finally {
@@ -351,83 +359,68 @@ export default function LinkAnalyticsPage() {
 
 
       {/* ── Locations ────────────────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mb-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-slate-900">Locations</h2>
-          <div className="flex items-center gap-3">
-            {!isPro && (
-              <button
-                onClick={handleUpgrade}
-                className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-slate-700 transition-colors"
-              >
-                <Lock className="size-3.5" />
-                Upgrade
-              </button>
-            )}
-            <div className="flex items-center rounded-full bg-slate-100 p-1">
-              <button className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-700 shadow-sm">Countries</button>
-              <button className="rounded-full px-3 py-1 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors">Cities</button>
-            </div>
-          </div>
-        </div>
-
+      <div className="mb-6">
         <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
-          {locations.length > 0 ? (
-            <LocationsTable title="Locations" data={locations} />
-          ) : (
-            <p className="text-center text-sm text-slate-400 py-6">No location data yet</p>
-          )}
+          <LocationsTable 
+            title="Locations" 
+            data={locations} 
+            action={
+              <div className="flex items-center rounded-full bg-slate-100 p-1">
+                <button className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-700 shadow-sm">Countries</button>
+                <button className="rounded-full px-3 py-1 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors">Cities</button>
+              </div>
+            }
+          />
         </LockedSection>
       </div>
 
       {/* ── Referrers + Devices ──────────────────────────────────────────── */}
       <div className="grid gap-6 md:grid-cols-2 mb-6">
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900">Referrers</h2>
-            {!isPro && (
-              <button
-                onClick={handleUpgrade}
-                className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-slate-700 transition-colors"
-              >
-                <Lock className="size-3.5" />
-                Upgrade
-              </button>
-            )}
-          </div>
-
+        <div className="h-full">
           <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
             <SegmentChart
               data={referrers}
-              colors={['#f97316', '#06b6d4', '#8b5cf6', '#e2e8f0']}
+              colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
               title="Referrers"
             />
           </LockedSection>
         </div>
 
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-slate-900">Devices</h2>
-            {!isPro && (
-              <button
-                onClick={handleUpgrade}
-                className="inline-flex items-center gap-1.5 rounded-full bg-slate-800 px-3.5 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-slate-700 transition-colors"
-              >
-                <Lock className="size-3.5" />
-                Upgrade
-              </button>
-            )}
-          </div>
-
+        <div className="h-full">
           <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
             <SegmentChart
               data={devices}
-              colors={['#f97316', '#06b6d4', '#8b5cf6', '#e2e8f0']}
+              colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
               title="Devices"
             />
           </LockedSection>
         </div>
       </div>
+
+      {/* ── UTM Tracking ─────────────────────────────────────────────────── */}
+      {utm && (
+        <div className="grid gap-6 md:grid-cols-2 mb-6">
+          <div className="h-full">
+            <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
+              <SegmentChart
+                data={utm.campaigns}
+                colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+                title="Top Campaigns"
+              />
+            </LockedSection>
+          </div>
+
+          <div className="h-full">
+            <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
+              <SegmentChart
+                data={utm.sources}
+                colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+                title="Top Sources"
+              />
+            </LockedSection>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

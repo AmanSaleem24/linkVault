@@ -2,7 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CommandOverlay, CommandGroup, CommandItem } from '@/components/ui/command'
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandSeparator,
+} from '@/components/ui/command'
 import {
   Home,
   Link2,
@@ -73,72 +81,80 @@ export function CommandPalette() {
   if (!open) return null
 
   return (
-    <CommandOverlay onClose={() => setOpen(false)}>
-      {/* Actions */}
-      <CommandGroup heading="Actions">
-        <CommandItem onSelect={() => handleNavigate('/link?create=true')}>
-          <Plus className="size-4 text-slate-400" />
-          <span>Create new link</span>
-        </CommandItem>
-        <CommandItem onSelect={() => handleNavigate('/analytics')}>
-          <BarChart3 className="size-4 text-slate-400" />
-          <span>View analytics</span>
-        </CommandItem>
-        <CommandItem onSelect={() => handleNavigate('/link')}>
-          <Download className="size-4 text-slate-400" />
-          <span>Download CSV</span>
-        </CommandItem>
-      </CommandGroup>
-
-      {/* Navigation */}
-      <CommandGroup heading="Navigation">
-        <CommandItem onSelect={() => handleNavigate('/home')}>
-          <Home className="size-4 text-slate-400" />
-          <span>Home</span>
-        </CommandItem>
-        <CommandItem onSelect={() => handleNavigate('/link')}>
-          <Link2 className="size-4 text-slate-400" />
-          <span>All Links</span>
-        </CommandItem>
-        <CommandItem onSelect={() => handleNavigate('/analytics')}>
-          <BarChart3 className="size-4 text-slate-400" />
-          <span>Analytics</span>
-        </CommandItem>
-        <CommandItem onSelect={() => handleNavigate('/audit')}>
-          <History className="size-4 text-slate-400" />
-          <span>Activity log</span>
-        </CommandItem>
-      </CommandGroup>
-
-      {/* Recent links */}
-      {!isLoadingLinks && recentLinks.length > 0 && (
-        <CommandGroup heading="Recent Links">
-          {recentLinks.map((link) => (
-            <CommandItem
-              key={link.id}
-              onSelect={() => handleNavigate(`/link/${link.id}`)}
-            >
-              <Search className="size-4 text-slate-400" />
-              <span className="truncate">/{link.slug}</span>
-              <span className="ml-auto text-xs text-slate-400 truncate max-w-50">
-                {link.originalUrl}
-              </span>
-            </CommandItem>
-          ))}
+    <CommandDialog open={open} onOpenChange={setOpen} className="sm:max-w-2xl">
+      <CommandInput placeholder="Type a command or search..." />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        
+        <CommandGroup heading="Actions">
+          <CommandItem onSelect={() => handleNavigate('/link?create=true')}>
+            <Plus className="mr-2 size-4 text-brand-500" />
+            <span>Create new link</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleNavigate('/analytics')}>
+            <BarChart3 className="mr-2 size-4 text-emerald-500" />
+            <span>View analytics</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleNavigate('/link')}>
+            <Download className="mr-2 size-4 text-sky-500" />
+            <span>Download CSV</span>
+          </CommandItem>
         </CommandGroup>
-      )}
 
-      {/* Settings */}
-      <CommandGroup heading="Account">
-        <CommandItem onSelect={() => handleNavigate('/settings')}>
-          <Settings className="size-4 text-slate-400" />
-          <span>Settings</span>
-        </CommandItem>
-        <CommandItem onSelect={handleSignOut}>
-          <LogOut className="size-4 text-slate-400" />
-          <span>Sign out</span>
-        </CommandItem>
-      </CommandGroup>
-    </CommandOverlay>
+        <CommandSeparator />
+
+        <CommandGroup heading="Navigation">
+          <CommandItem onSelect={() => handleNavigate('/home')}>
+            <Home className="mr-2 size-4 text-violet-500" />
+            <span>Home</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleNavigate('/link')}>
+            <Link2 className="mr-2 size-4 text-brand-500" />
+            <span>All Links</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleNavigate('/analytics')}>
+            <BarChart3 className="mr-2 size-4 text-emerald-500" />
+            <span>Analytics</span>
+          </CommandItem>
+          <CommandItem onSelect={() => handleNavigate('/audit')}>
+            <History className="mr-2 size-4 text-amber-500" />
+            <span>Activity log</span>
+          </CommandItem>
+        </CommandGroup>
+
+        {!isLoadingLinks && recentLinks.length > 0 && (
+          <>
+            <CommandSeparator />
+            <CommandGroup heading="Recent Links">
+              {recentLinks.map((link) => (
+                <CommandItem
+                  key={link.id}
+                  onSelect={() => handleNavigate(`/link/${link.id}`)}
+                >
+                  <Search className="mr-2 size-4 text-indigo-500" />
+                  <span className="truncate">/{link.slug}</span>
+                  <span className="ml-auto text-xs text-slate-400 truncate max-w-[200px]">
+                    {link.originalUrl}
+                  </span>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </>
+        )}
+
+        <CommandSeparator />
+
+        <CommandGroup heading="Account">
+          <CommandItem onSelect={() => handleNavigate('/settings')}>
+            <Settings className="mr-2 size-4 text-slate-600" />
+            <span>Settings</span>
+          </CommandItem>
+          <CommandItem onSelect={handleSignOut}>
+            <LogOut className="mr-2 size-4 text-rose-500" />
+            <span>Sign out</span>
+          </CommandItem>
+        </CommandGroup>
+      </CommandList>
+    </CommandDialog>
   )
 }

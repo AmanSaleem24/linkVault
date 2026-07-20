@@ -3,7 +3,6 @@ import { auth } from '@/lib/auth'
 import { GeistSans } from 'geist/font/sans'
 import { GeistMono } from 'geist/font/mono'
 import { AccountMenu } from '@/components/dashboard/account-menu'
-import { CommandPalette } from '@/components/dashboard/command-palette'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -99,9 +98,6 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
-
-      {/* Command palette — rendered at root level for keyboard shortcut */}
-      <CommandPalette />
     </div>
   )
 }

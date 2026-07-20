@@ -6,6 +6,7 @@ import {
   getAccountReferrersAction,
   getAccountDevicesAction,
   getAccountStatusBreakdownAction,
+  getAccountUtmAction,
 } from '@/app/actions/links.analytics'
 import { StatCard } from '@/components/dashboard/charts/stat-card'
 import { SegmentChart } from '@/components/dashboard/charts/segment-chart'
@@ -37,7 +38,7 @@ export default async function AnalyticsPage() {
 
   const range = rangeFromDays(30)
 
-  const [summary, timeSeries, topLinks, locations, referrers, devices, statusBreakdown] =
+  const [summary, timeSeries, topLinks, locations, referrers, devices, statusBreakdown, utm] =
     await Promise.all([
       getAccountAnalyticsAction(),
       getAccountTimeSeriesAction(range),
@@ -46,6 +47,7 @@ export default async function AnalyticsPage() {
       getAccountReferrersAction(),
       getAccountDevicesAction(),
       getAccountStatusBreakdownAction(),
+      getAccountUtmAction(),
     ])
 
   if (!summary.success) {
@@ -171,6 +173,22 @@ export default async function AnalyticsPage() {
           <SegmentChart
             title="Top browsers"
             data={devices.data.browsers}
+            colors={SEGMENT_COLORS}
+          />
+        </div>
+      )}
+
+      {/* UTM Tracking */}
+      {utm?.success && (
+        <div className="grid gap-6 lg:grid-cols-2">
+          <SegmentChart
+            title="Top Campaigns"
+            data={utm.data.campaigns}
+            colors={SEGMENT_COLORS}
+          />
+          <SegmentChart
+            title="Top Sources"
+            data={utm.data.sources}
             colors={SEGMENT_COLORS}
           />
         </div>

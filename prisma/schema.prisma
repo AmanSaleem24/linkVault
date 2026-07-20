@@ -129,6 +129,9 @@ model Click {
   country   String?
   referrer  String?
   ip        String?
+  utmSource String?
+  utmMedium String?
+  utmCampaign String?
   clickedAt DateTime @default(now())
   link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
 

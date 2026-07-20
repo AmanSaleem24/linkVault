@@ -363,6 +363,72 @@ export async function getDevicesAction(linkId: string): Promise<{
   }
 }
 
+// ─── Get UTM Analytics ────────────────────────────────────────────────────────
+export async function getUtmAction(linkId: string): Promise<{
+  success: true
+  data: {
+    sources: Array<{ name: string; count: number; percentage: number }>
+    mediums: Array<{ name: string; count: number; percentage: number }>
+    campaigns: Array<{ name: string; count: number; percentage: number }>
+  }
+} | { success: false; error: string }> {
+  const session = await auth()
+  if (!session?.user?.id) {
+    return { success: false as const, error: 'You must be logged in' }
+  }
+
+  try {
+    const link = await prismaQuery(() => prisma.link.findUnique({
+      where: { id: linkId },
+      select: { userId: true },
+    }))
+
+    if (!link || link.userId !== session.user.id) {
+      return { success: false as const, error: 'Link not found' }
+    }
+
+    const [sourceGroups, mediumGroups, campaignGroups] = await Promise.all([
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmSource'],
+        where: { linkId },
+        _count: { utmSource: true },
+      })),
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmMedium'],
+        where: { linkId },
+        _count: { utmMedium: true },
+      })),
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmCampaign'],
+        where: { linkId },
+        _count: { utmCampaign: true },
+      })),
+    ])
+
+    return {
+      success: true,
+      data: {
+        sources: toRankedRows(
+          sourceGroups.filter(g => g.utmSource).map(g => ({ key: g.utmSource!, count: g._count.utmSource })),
+          name => name || 'Unknown'
+        ),
+        mediums: toRankedRows(
+          mediumGroups.filter(g => g.utmMedium).map(g => ({ key: g.utmMedium!, count: g._count.utmMedium })),
+          name => name || 'Unknown'
+        ),
+        campaigns: toRankedRows(
+          campaignGroups.filter(g => g.utmCampaign).map(g => ({ key: g.utmCampaign!, count: g._count.utmCampaign })),
+          name => name || 'Unknown'
+        ),
+      },
+    }
+  } catch (err) {
+    console.error('[getUtmAction]', err)
+    return { success: false as const, error: 'Failed to fetch UTM stats' }
+  }
+}
+
+
 // ═══════════════════════════════════════════════════════════════════════════════
 // Account-wide analytics (aggregated across all of the user's links)
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -745,5 +811,63 @@ export async function getAccountStatusBreakdownAction(): Promise<
   } catch (err) {
     console.error('[getAccountStatusBreakdownAction]', err)
     return { success: false, error: 'Failed to fetch status breakdown' }
+  }
+}
+
+// ─── 8. Account UTM Analytics ──────────────────────────────────────────────────
+export async function getAccountUtmAction(): Promise<{
+  success: true
+  data: {
+    sources: Array<{ name: string; count: number; percentage: number }>
+    mediums: Array<{ name: string; count: number; percentage: number }>
+    campaigns: Array<{ name: string; count: number; percentage: number }>
+  }
+} | { success: false; error: string }> {
+  const authResult = await requirePro()
+  if ('error' in authResult) return { success: false, error: authResult.error }
+  const { userId } = authResult
+
+  try {
+    const linkIds = await getUserLinkIds(userId)
+    if (linkIds.length === 0) return { success: true, data: { sources: [], mediums: [], campaigns: [] } }
+
+    const [sourceGroups, mediumGroups, campaignGroups] = await Promise.all([
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmSource'],
+        where: { linkId: { in: linkIds } },
+        _count: { utmSource: true },
+      })),
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmMedium'],
+        where: { linkId: { in: linkIds } },
+        _count: { utmMedium: true },
+      })),
+      prismaQuery(() => prisma.click.groupBy({
+        by: ['utmCampaign'],
+        where: { linkId: { in: linkIds } },
+        _count: { utmCampaign: true },
+      })),
+    ])
+
+    return {
+      success: true,
+      data: {
+        sources: toRankedRows(
+          sourceGroups.filter(g => g.utmSource).map(g => ({ key: g.utmSource!, count: g._count.utmSource })),
+          name => name || 'Unknown'
+        ),
+        mediums: toRankedRows(
+          mediumGroups.filter(g => g.utmMedium).map(g => ({ key: g.utmMedium!, count: g._count.utmMedium })),
+          name => name || 'Unknown'
+        ),
+        campaigns: toRankedRows(
+          campaignGroups.filter(g => g.utmCampaign).map(g => ({ key: g.utmCampaign!, count: g._count.utmCampaign })),
+          name => name || 'Unknown'
+        ),
+      },
+    }
+  } catch (err) {
+    console.error('[getAccountUtmAction]', err)
+    return { success: false, error: 'Failed to fetch UTM stats' }
   }
 }
