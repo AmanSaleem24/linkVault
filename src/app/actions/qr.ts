@@ -145,7 +145,36 @@ export async function deleteQrCode(id: string) {
     revalidatePath('/qr')
     return { success: true }
   } catch (error) {
-    console.error('[qr.delete]', error)
+    console.error('Delete QR error:', error)
     return { success: false, error: 'Failed to delete QR code' }
+  }
+}
+
+export async function getQrPageDataAction() {
+  const session = await auth()
+  if (!session?.user?.id) return { success: false, error: 'Unauthorized' }
+
+  try {
+    const [qrRes, subscription] = await Promise.all([
+      getQrCodes(),
+      getCurrentUserSubscription(),
+    ])
+
+    if (!qrRes.success) {
+      return { success: false, error: qrRes.error }
+    }
+
+    const userIsPro = session.user.role === 'admin' || isPro(subscription)
+
+    return {
+      success: true,
+      data: {
+        qrCodes: qrRes.data,
+        isPro: userIsPro,
+      },
+    }
+  } catch (error) {
+    console.error('QR page data error:', error)
+    return { success: false, error: 'Failed to fetch QR page data' }
   }
 }

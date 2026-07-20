@@ -6,6 +6,7 @@ import { Prisma } from '@prisma/client'
 import { RESERVED_SLUGS, SLUG_REGEX, type LinkStatus } from '@/lib/validators'
 import { FREE_TIER_LIMITS } from '@/lib/config'
 import { getCurrentUserSubscription, isPro } from '@/lib/plan'
+import { getUserRoleAction } from './user.getRole'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -438,7 +439,38 @@ export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLo
       },
     }
   } catch (error) {
-    console.error('Get audit log error:', error)
-    return { success: false as const, error: 'Failed to fetch audit log' }
+    console.error('Audit log error:', error)
+    return { success: false, error: 'Failed to fetch audit log' }
+  }
+}
+
+export async function getAuditPageDataAction() {
+  const session = await auth()
+  if (!session?.user?.id) return { success: false, error: 'Unauthorized' }
+
+  try {
+    const { isPro: userIsPro } = await getUserRoleAction()
+
+    if (!userIsPro) {
+      return { success: true, data: { isPro: false, logs: [], totalCount: 0 } }
+    }
+
+    const result = await getAuditLogAction({ isPro: true, limit: 20 })
+
+    if (!result.success) {
+      return { success: false, error: result.error }
+    }
+
+    return {
+      success: true,
+      data: {
+        isPro: true,
+        logs: result.data.logs,
+        totalCount: result.data.totalCount,
+      }
+    }
+  } catch (error) {
+    console.error('Audit page data error:', error)
+    return { success: false, error: 'Failed to fetch audit page data' }
   }
 }

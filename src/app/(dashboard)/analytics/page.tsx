@@ -1,32 +1,49 @@
-import {
-  getAccountAnalyticsAction,
-  getAccountTimeSeriesAction,
-  getAccountTopLinksAction,
-  getAccountLocationsAction,
-  getAccountReferrersAction,
-  getAccountDevicesAction,
-  getAccountStatusBreakdownAction,
-  getAccountUtmAction,
-} from '@/app/actions/links.analytics'
+'use client'
+
+import useSWR from 'swr'
+import { getFullAccountAnalyticsAction } from '@/app/actions/links.analytics'
 import { StatCard } from '@/components/dashboard/charts/stat-card'
 import { SegmentChart } from '@/components/dashboard/charts/segment-chart'
 import { LocationsTable } from '@/components/dashboard/charts/locations-table'
 import { FaviconImg } from '@/components/dashboard/charts/favicon-img'
 import { TimeSeriesChart } from './time-series-chart'
 import { rangeFromDays } from '@/lib/analytics-helpers'
-import { auth } from '@/lib/auth'
 import { LockedPage } from '@/components/dashboard/locked-page'
-import { getCurrentUserSubscription, isPro } from '@/lib/plan'
 
 const SEGMENT_COLORS = ['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']
 const STATUS_COLORS = ['#10b981', '#94a3b8', '#ef4444']
 
-export default async function AnalyticsPage() {
-  const session = await auth()
+export default function AnalyticsPage() {
+  const range = rangeFromDays(30)
+  const { data: result, isLoading } = useSWR(
+    'account-analytics-full', 
+    () => getFullAccountAnalyticsAction(range),
+    { revalidateOnFocus: true }
+  )
 
-  if (session?.user?.role !== 'admin') {
-    const subscription = await getCurrentUserSubscription()
-    if (!isPro(subscription)) {
+  if (isLoading || !result) {
+    return (
+      <div className="global-content py-8 space-y-8 animate-pulse">
+        <div>
+          <div className="h-8 w-48 bg-slate-200 rounded-md" />
+          <div className="h-4 w-64 bg-slate-200 rounded-md mt-2" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-28 bg-slate-200 rounded-2xl" />
+          ))}
+        </div>
+        <div className="h-[360px] bg-slate-200 rounded-2xl" />
+        <div className="grid gap-6 lg:grid-cols-5">
+          <div className="h-[360px] bg-slate-200 rounded-2xl lg:col-span-3" />
+          <div className="h-[360px] bg-slate-200 rounded-2xl lg:col-span-2" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!result.success || !result.data) {
+    if (result.error === 'PRO_REQUIRED') {
       return (
         <LockedPage
           title="Analytics are Pro only"
@@ -34,31 +51,15 @@ export default async function AnalyticsPage() {
         />
       )
     }
-  }
-
-  const range = rangeFromDays(30)
-
-  const [summary, timeSeries, topLinks, locations, referrers, devices, statusBreakdown, utm] =
-    await Promise.all([
-      getAccountAnalyticsAction(),
-      getAccountTimeSeriesAction(range),
-      getAccountTopLinksAction(10),
-      getAccountLocationsAction(),
-      getAccountReferrersAction(),
-      getAccountDevicesAction(),
-      getAccountStatusBreakdownAction(),
-      getAccountUtmAction(),
-    ])
-
-  if (!summary.success) {
     return (
       <div className="global-content py-8 text-sm text-red-600">
-        Failed to load analytics: {summary.error}
+        Failed to load analytics: {result.error || 'Unknown error'}
       </div>
     )
   }
 
-  const kpi = summary.data
+  const kpi = result.data.summary
+  const { timeSeries, topLinks, locations, referrers, devices, statusBreakdown, utm } = result.data
 
   return (
     <div className="global-content py-8 space-y-8">
@@ -99,17 +100,17 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Clicks over time */}
-      {timeSeries.success && <TimeSeriesChart data={timeSeries.data} />}
+      {timeSeries && timeSeries.length > 0 && <TimeSeriesChart data={timeSeries} />}
 
       {/* Top performing links + Status breakdown */}
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="flex h-[360px] flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
           <h2 className="mb-4 shrink-0 text-xl font-bold text-slate-900">Top performing links</h2>
-          {!topLinks.success || topLinks.data.length === 0 ? (
+          {!topLinks || topLinks.length === 0 ? (
             <div className="flex flex-1 items-center justify-center text-sm text-slate-400">No links yet</div>
           ) : (
             <ul className="flex-1 divide-y divide-slate-100 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden">
-              {topLinks.data.map((link, i) => (
+              {topLinks.map((link, i) => (
                 <li key={link.id} className="flex items-center gap-3 py-3">
                   <span className="text-xs font-medium text-slate-400 w-5 shrink-0">
                     {i + 1}
@@ -140,10 +141,10 @@ export default async function AnalyticsPage() {
         </div>
 
         <div className="h-[360px] lg:col-span-2 lg:h-auto">
-          {statusBreakdown.success && (
+          {statusBreakdown && statusBreakdown.length > 0 && (
             <SegmentChart
               title="Link status breakdown"
-              data={statusBreakdown.data}
+              data={statusBreakdown}
               colors={STATUS_COLORS}
             />
           )}
@@ -152,43 +153,43 @@ export default async function AnalyticsPage() {
 
       {/* Locations + Referrers */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {locations.success && <LocationsTable title="Top countries" data={locations.data} />}
-        {referrers.success && (
+        {locations && locations.length > 0 && <LocationsTable title="Top countries" data={locations} />}
+        {referrers && referrers.length > 0 && (
           <SegmentChart
             title="Top referrers"
-            data={referrers.data}
+            data={referrers}
             colors={SEGMENT_COLORS}
           />
         )}
       </div>
 
       {/* Devices + Browsers */}
-      {devices.success && (
+      {devices && devices.devices && devices.browsers && (
         <div className="grid gap-6 lg:grid-cols-2">
           <SegmentChart
             title="Top devices"
-            data={devices.data.devices}
+            data={devices.devices}
             colors={SEGMENT_COLORS}
           />
           <SegmentChart
             title="Top browsers"
-            data={devices.data.browsers}
+            data={devices.browsers}
             colors={SEGMENT_COLORS}
           />
         </div>
       )}
 
       {/* UTM Tracking */}
-      {utm?.success && (
+      {utm && (
         <div className="grid gap-6 lg:grid-cols-2">
           <SegmentChart
             title="Top Campaigns"
-            data={utm.data.campaigns}
+            data={utm.campaigns}
             colors={SEGMENT_COLORS}
           />
           <SegmentChart
             title="Top Sources"
-            data={utm.data.sources}
+            data={utm.sources}
             colors={SEGMENT_COLORS}
           />
         </div>

@@ -133,3 +133,45 @@ export async function updateDefaultsAction(data: unknown) {
     return { success: false, error: 'Failed to update defaults' }
   }
 }
+
+export async function getUserSettingsAction() {
+  const session = await auth()
+  if (!session?.user?.id) return { success: false, error: 'Unauthorized' }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { 
+        name: true, 
+        email: true, 
+        passwordHash: true,
+        defaultUtmSource: true,
+        defaultUtmMedium: true,
+        defaultUtmCampaign: true,
+        defaultExpiresIn: true,
+      },
+    })
+
+    if (!user) return { success: false, error: 'User not found' }
+
+    const subscription = await getCurrentUserSubscription()
+    const userIsPro = session.user.role === 'admin' || isPro(subscription)
+
+    return {
+      success: true,
+      data: {
+        name: user.name,
+        email: user.email,
+        hasPassword: !!user.passwordHash,
+        isPro: userIsPro,
+        defaultUtmSource: user.defaultUtmSource || '',
+        defaultUtmMedium: user.defaultUtmMedium || '',
+        defaultUtmCampaign: user.defaultUtmCampaign || '',
+        defaultExpiresIn: user.defaultExpiresIn || '',
+      }
+    }
+  } catch (error) {
+    console.error('Get user settings error:', error)
+    return { success: false, error: 'Failed to fetch settings' }
+  }
+}

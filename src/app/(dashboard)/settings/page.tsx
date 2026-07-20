@@ -1,40 +1,36 @@
-import { auth } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+'use client'
+
+import useSWR from 'swr'
 import { SettingsClient } from '@/components/settings/settings-client'
-import { prisma } from '@/lib/prisma'
-import { getCurrentUserSubscription, isPro } from '@/lib/plan'
+import { getUserSettingsAction } from '@/app/actions/settings'
 
-export const metadata = {
-  title: 'Settings | LinkVault',
-}
+export default function SettingsPage() {
+  const { data: result, isLoading } = useSWR('user-settings', getUserSettingsAction, { revalidateOnFocus: true })
 
-export default async function SettingsPage() {
-  const session = await auth()
-  if (!session?.user?.id) {
-    redirect('/login')
+  if (isLoading || !result) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12 animate-pulse">
+        <div className="mb-8">
+          <div className="h-9 w-32 bg-slate-200 rounded-md" />
+          <div className="mt-2 h-5 w-64 bg-slate-200 rounded-md" />
+        </div>
+        <div className="space-y-6">
+          <div className="h-[400px] w-full bg-slate-200 rounded-2xl" />
+          <div className="h-[300px] w-full bg-slate-200 rounded-2xl" />
+        </div>
+      </div>
+    )
   }
 
-  // Fetch fresh user data to ensure we have the latest name/email and to check if they have a password
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { 
-      name: true, 
-      email: true, 
-      passwordHash: true,
-      defaultUtmSource: true,
-      defaultUtmMedium: true,
-      defaultUtmCampaign: true,
-      defaultExpiresIn: true,
-    },
-  })
-
-  if (!user) {
-    redirect('/login')
+  if (!result.success || !result.data) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
+        <div className="text-red-500">Failed to load settings. Please try again.</div>
+      </div>
+    )
   }
 
-  const hasPassword = !!user.passwordHash
-  const subscription = await getCurrentUserSubscription()
-  const userIsPro = session.user.role === 'admin' || isPro(subscription)
+  const { name, email, hasPassword, isPro, defaultUtmSource, defaultUtmMedium, defaultUtmCampaign, defaultExpiresIn } = result.data
 
   return (
     <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
@@ -48,14 +44,14 @@ export default async function SettingsPage() {
       </div>
 
       <SettingsClient 
-        initialName={user.name} 
-        initialEmail={user.email} 
+        initialName={name} 
+        initialEmail={email} 
         hasPassword={hasPassword} 
-        isPro={userIsPro}
-        defaultUtmSource={user.defaultUtmSource || ''}
-        defaultUtmMedium={user.defaultUtmMedium || ''}
-        defaultUtmCampaign={user.defaultUtmCampaign || ''}
-        defaultExpiresIn={user.defaultExpiresIn || ''}
+        isPro={isPro}
+        defaultUtmSource={defaultUtmSource}
+        defaultUtmMedium={defaultUtmMedium}
+        defaultUtmCampaign={defaultUtmCampaign}
+        defaultExpiresIn={defaultExpiresIn}
       />
     </div>
   )

@@ -1,4 +1,5 @@
-import { useState, useTransition, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
+import useSWRInfinite from 'swr/infinite'
 import { getLinksAction } from '@/app/actions/links.read'
 import { toggleLinkStatusAction, deleteLinkAction } from '@/app/actions/links.delete'
 import { getUserRoleAction } from '@/app/actions/user.getRole'
@@ -11,14 +12,7 @@ import { type SortState } from '@/components/home/sort-dropdown'
 const PAGE_SIZE = 20
 
 export function useLinks() {
-  const [isPending, startTransition] = useTransition()
   const [isMutating, setIsMutating] = useState(false)
-
-  // Data
-  const [links, setLinks] = useState<LinkRowData[]>([])
-  const [totalCount, setTotalCount] = useState(0)
-  const [nextCursor, setNextCursor] = useState<string | null>(null)
-  const [hasMore, setHasMore] = useState(false)
   const [isPro, setIsPro] = useState(false)
 
   // Fetch user role
@@ -42,38 +36,41 @@ export function useLinks() {
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Load links
-  const loadLinks = useCallback(
-    (cursor?: string, reset = false) => {
-      startTransition(async () => {
-        const result = await getLinksAction({
-          cursor,
-          limit: PAGE_SIZE,
-          search: search || undefined,
-          status: statusFilter === 'all' ? undefined : statusFilter,
-          sortBy: sort.field,
-          sortOrder: sort.order,
-          dateFrom: dateFilter.from || undefined,
-          dateTo: dateFilter.to || undefined,
-        })
+  // SWR Keys and Fetcher
+  const getKey = (pageIndex: number, previousPageData: any) => {
+    if (previousPageData && !previousPageData.data?.hasMore) return null
 
-        if (result.success && result.data) {
-          const data = result.data
-          if (reset) {
-            setLinks(data.links)
-          } else {
-            setLinks(prev => [...prev, ...data.links])
-          }
-          setNextCursor(data.nextCursor)
-          setHasMore(data.hasMore)
-          setTotalCount(data.totalCount)
-        } else {
-          toast.error('Failed to load links')
-        }
-      })
-    },
-    [search, statusFilter, sort.field, sort.order, dateFilter.from, dateFilter.to],
+    const cursor = previousPageData?.data?.nextCursor || undefined
+    return [
+      'links',
+      {
+        cursor,
+        limit: PAGE_SIZE,
+        search: search || undefined,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        sortBy: sort.field,
+        sortOrder: sort.order,
+        dateFrom: dateFilter.from || undefined,
+        dateTo: dateFilter.to || undefined,
+      },
+    ]
+  }
+
+  const fetcher = async ([_, params]: [string, any]) => {
+    const result = await getLinksAction(params)
+    if (!result.success) throw new Error(result.error || 'Failed to load')
+    return result
+  }
+
+  const { data, size, setSize, mutate, isLoading: isSwrLoading } = useSWRInfinite(
+    getKey,
+    fetcher,
+    { revalidateFirstPage: false, revalidateOnFocus: true }
   )
+
+  const links = data ? data.flatMap((page) => page.data?.links || []) : []
+  const totalCount = data?.[0]?.data?.totalCount || 0
+  const hasMore = data?.[data.length - 1]?.data?.hasMore || false
 
   // Debounced search
   const handleSearchChange = useCallback((value: string) => {
@@ -81,24 +78,14 @@ export function useLinks() {
     if (debounceRef.current) clearTimeout(debounceRef.current)
     debounceRef.current = setTimeout(() => {
       setSearch(value)
-      setNextCursor(null)
     }, 300)
   }, [])
 
   useEffect(() => {
-    loadLinks(undefined, true)
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [search, statusFilter, dateFilter.from, dateFilter.to, sort.field, sort.order, loadLinks])
-
-  useEffect(() => {
-    function handleFocus() {
-      loadLinks(undefined, true)
-    }
-    window.addEventListener('focus', handleFocus)
-    return () => window.removeEventListener('focus', handleFocus)
-  }, [loadLinks])
+  }, [])
 
   // Mutations
   async function handleToggleStatus(link: LinkRowData) {
@@ -108,7 +95,7 @@ export function useLinks() {
     setIsMutating(false)
     if (result.success) {
       toast.success(`Link ${newStatus === 'active' ? 'enabled' : 'disabled'}`)
-      loadLinks(undefined, true)
+      mutate()
     } else {
       toast.error(result.error || 'Failed to update status')
     }
@@ -121,18 +108,18 @@ export function useLinks() {
     setIsMutating(false)
     if (result.success) {
       toast.success('Link deleted')
-      loadLinks(undefined, true)
+      mutate()
     } else {
       toast.error(result.error || 'Failed to delete link')
     }
   }
 
   function handleLoadMore() {
-    if (nextCursor && hasMore) loadLinks(nextCursor)
+    if (hasMore) setSize(size + 1)
   }
 
   return {
-    isLoading: isPending || isMutating,
+    isLoading: isSwrLoading || isMutating,
     links,
     totalCount,
     hasMore,

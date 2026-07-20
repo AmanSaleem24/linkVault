@@ -1,21 +1,36 @@
+'use client'
+
+import useSWR from 'swr'
 import { getDashboardDataAction } from '@/app/actions/dashboard'
 import { QuickCreateCard } from '@/components/home/dashboard/quick-create-card'
 import { StatCardRow } from '@/components/home/dashboard/stat-card-row'
 import { UpgradeBanner } from '@/components/home/dashboard/upgrade-banner'
 import { RecentLinksSection } from '@/components/home/dashboard/recent-links-section'
 
-/**
- * /home — Dashboard overview page.
- *
- * This is a server component: it fetches all data in one server round-trip and
- * passes it down to client sub-components. Analytics data for free users is
- * withheld at the server level (never included in the response).
- */
-export default async function HomePage() {
-  const result = await getDashboardDataAction()
+export default function HomePage() {
+  const { data: result, isLoading } = useSWR('dashboard-overview', getDashboardDataAction, { revalidateOnFocus: true })
+
+  if (isLoading || !result) {
+    return (
+      <div className="global-content py-8 animate-pulse">
+        <div className="mb-8">
+          <div className="h-9 w-64 bg-slate-200 rounded-md" />
+          <div className="mt-1.5 h-5 w-48 bg-slate-200 rounded-md" />
+        </div>
+        <div className="mb-6 h-[100px] w-full bg-slate-200 rounded-3xl" />
+        <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="h-28 bg-slate-200 rounded-3xl" />
+          <div className="h-28 bg-slate-200 rounded-3xl" />
+          <div className="h-28 bg-slate-200 rounded-3xl" />
+          <div className="h-28 bg-slate-200 rounded-3xl" />
+        </div>
+        <div className="mt-12 h-64 w-full bg-slate-200 rounded-3xl" />
+      </div>
+    )
+  }
 
   // Graceful fallback on error
-  if (!result.success) {
+  if (!result.success || !result.data) {
     return (
       <div className="global-content py-12">
         <p className="text-slate-500">Failed to load dashboard. Please refresh.</p>

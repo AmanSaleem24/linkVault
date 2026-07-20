@@ -1,29 +1,47 @@
-import { auth } from '@/lib/auth'
-import { getCurrentUserSubscription, isPro } from '@/lib/plan'
-import { redirect } from 'next/navigation'
+'use client'
+
+import useSWR from 'swr'
 import Link from 'next/link'
 import { ArrowLeft, Zap, CheckCircle2, Clock, XCircle, AlertTriangle, CreditCard, Calendar, Shield, Sparkles, Receipt, ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PLANS } from '@/lib/plans'
 import { format } from 'date-fns'
 import { BillingActions } from '@/components/billing/billing-actions'
+import { getBillingDetailsAction } from '@/app/actions/billing'
+import { useSearchParams } from 'next/navigation'
 
-export default async function BillingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ upgraded?: string; pending?: string }>
-}) {
-  const session = await auth()
-  if (!session?.user?.id) {
-    redirect('/login?returnTo=/billing')
+export default function BillingPage() {
+  const searchParams = useSearchParams()
+  const showSuccess = searchParams.get('upgraded') === 'true'
+  const showPending = searchParams.get('pending') === 'true'
+
+  const { data: result, isLoading } = useSWR('billing-details', getBillingDetailsAction, { revalidateOnFocus: true })
+
+  if (isLoading || !result) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12 animate-pulse">
+        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <div className="h-10 w-48 bg-slate-200 rounded-md" />
+            <div className="mt-2 h-5 w-72 bg-slate-200 rounded-md" />
+          </div>
+        </div>
+        <div className="grid gap-8">
+          <div className="h-[300px] w-full bg-slate-200 rounded-3xl" />
+        </div>
+      </div>
+    )
   }
 
-  const subscription = await getCurrentUserSubscription()
-  const pro = isPro(subscription)
+  if (!result.success || !result.data) {
+    return (
+      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
+        <div className="text-red-500">Failed to load billing details. Please try again.</div>
+      </div>
+    )
+  }
 
-  const params = await searchParams
-  const showSuccess = params.upgraded === 'true'
-  const showPending = params.pending === 'true'
+  const { subscription, isPro: pro } = result.data
 
   return (
     <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
