@@ -26,25 +26,7 @@ export default async function BillingPage({
   const showPending = params.pending === 'true'
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] pb-24 dark:bg-background">
-      
-      {/* Subtle Premium Background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden flex justify-center">
-        <div className="absolute -top-40 h-[500px] w-[800px] rounded-full bg-brand-400/5 blur-[120px] dark:bg-brand-400/10"></div>
-      </div>
-
-      <div className="relative mx-auto max-w-4xl px-6 pt-12 lg:pt-16">
-        
-        {/* Navigation */}
-        <Link
-          href="/home"
-          className="group mb-10 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground"
-        >
-          <div className="flex size-7 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200 transition-all group-hover:ring-slate-300 dark:bg-card dark:ring-border">
-            <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
-          </div>
-          Back to dashboard
-        </Link>
+    <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
 
         {/* Header */}
         <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -265,7 +247,6 @@ export default async function BillingPage({
             </section>
           )}
 
-        </div>
       </div>
     </div>
   )
