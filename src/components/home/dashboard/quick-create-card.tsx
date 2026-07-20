@@ -3,7 +3,7 @@
 import { useState, useTransition, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Copy, CheckCheck, Loader2, Zap, QrCode, Download } from 'lucide-react'
-import QRCode from 'react-qr-code'
+import { QRCode } from 'react-qrcode-logo'
 import { toast } from 'sonner'
 import { createLinkAction } from '@/app/actions/links'
 

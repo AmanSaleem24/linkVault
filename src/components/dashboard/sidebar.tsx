@@ -21,10 +21,10 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { href: '/home', label: 'Home', icon: Home },
-  { href: '/link', label: 'Links', icon: Link2 },
-  { href: '/qr', label: 'QR Codes', icon: QrCode, disabled: true, badge: 'Try it' },
+  { href: '/home', label: 'Overview', icon: Home },
+  { href: '/link', label: 'All links', icon: Link2 },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { href: '/qr', label: 'QR Codes', icon: QrCode },
   { href: '/audit', label: 'Activity', icon: History, divider: true },
   { href: '/domains', label: 'Custom domains', icon: Globe, disabled: true },
   { href: '/billing', label: 'Billing', icon: CreditCard, divider: true },

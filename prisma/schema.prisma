@@ -56,6 +56,7 @@ model User {
   links           Link[]
   sessions        Session[]
   subscription    Subscription?
+  qrCodes         QrCode[]
 }
 
 model Subscription {
@@ -108,6 +109,7 @@ model Link {
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
   clicks      Click[]
+  qrCodes     QrCode[]
   user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, status, createdAt])
@@ -155,4 +157,21 @@ enum LinkStatus {
   active
   disabled
   expired
+}
+
+model QrCode {
+  id        String   @id @default(cuid())
+  userId    String
+  linkId    String?
+  rawUrl    String?
+  color     String   @default("#000000")
+  bgColor   String   @default("#ffffff")
+  style     String   @default("squares")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  link      Link?    @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([linkId])
 }

@@ -91,6 +91,18 @@ export async function createLinkAction(input: unknown) {
         },
       })
 
+      if (qrCode) {
+        await tx.qrCode.create({
+          data: {
+            userId,
+            linkId: created.id,
+            color: '#000000',
+            bgColor: '#ffffff',
+            style: 'squares',
+          }
+        })
+      }
+
       await tx.auditLog.create({
         data: {
           userId,
