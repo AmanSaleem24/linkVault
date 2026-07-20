@@ -17,8 +17,8 @@ import { auth } from '@/lib/auth'
 import { LockedPage } from '@/components/dashboard/locked-page'
 import { getCurrentUserSubscription, isPro } from '@/lib/plan'
 
-const SEGMENT_COLORS = ['#3D52A0', '#14b8a6', '#f97316', '#8b5cf6', '#ef4444']
-const STATUS_COLORS = ['#14b8a6', '#94a3b8', '#f87171']
+const SEGMENT_COLORS = ['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']
+const STATUS_COLORS = ['#10b981', '#94a3b8', '#ef4444']
 
 export default async function AnalyticsPage() {
   const session = await auth()
@@ -100,13 +100,13 @@ export default async function AnalyticsPage() {
       {timeSeries.success && <TimeSeriesChart data={timeSeries.data} />}
 
       {/* Top performing links + Status breakdown */}
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="flex flex-col h-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900 mb-6">Top performing links</h2>
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="flex h-[360px] flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
+          <h2 className="mb-4 shrink-0 text-xl font-bold text-slate-900">Top performing links</h2>
           {!topLinks.success || topLinks.data.length === 0 ? (
-            <p className="text-sm text-slate-400 py-8 text-center">No links yet</p>
+            <div className="flex flex-1 items-center justify-center text-sm text-slate-400">No links yet</div>
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="flex-1 divide-y divide-slate-100 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden">
               {topLinks.data.map((link, i) => (
                 <li key={link.id} className="flex items-center gap-3 py-3">
                   <span className="text-xs font-medium text-slate-400 w-5 shrink-0">
@@ -137,7 +137,7 @@ export default async function AnalyticsPage() {
           )}
         </div>
 
-        <div>
+        <div className="h-[360px] lg:col-span-2 lg:h-auto">
           {statusBreakdown.success && (
             <SegmentChart
               title="Link status breakdown"
