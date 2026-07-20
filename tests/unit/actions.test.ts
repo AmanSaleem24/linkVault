@@ -5,7 +5,6 @@ import {
 import {
   exportLinksAction,
   getAuditLogAction,
-  type AuditLogEntry,
 } from '@/app/actions/links.read'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -26,15 +25,15 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-// @ts-ignore
+// @ts-expect-error mock auth typing
 const mockAuth = vi.mocked(auth)
-// @ts-ignore
+// @ts-expect-error Prisma mock typing
 const mockPrisma = vi.mocked(prisma)
 
 const userId = 'test-user'
 
 function mockSession(role: string = 'user') {
-  // @ts-ignore
+  // @ts-expect-error mock auth typing
   mockAuth.mockResolvedValue({ user: { id: userId, email: 'test@test.com', role } })
 }
 
@@ -46,7 +45,7 @@ beforeEach(() => {
 
 describe('getUserRoleAction', () => {
   it('returns false when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(false)
@@ -75,7 +74,7 @@ describe('getUserRoleAction', () => {
 
 describe('exportLinksAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await exportLinksAction()
     expect(result.success).toBe(false)
@@ -168,7 +167,7 @@ describe('getAuditLogAction', () => {
   ]
 
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAuditLogAction({ isPro: true })
     expect(result.success).toBe(false)

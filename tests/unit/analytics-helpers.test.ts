@@ -34,7 +34,7 @@ describe('formatCountry', () => {
   })
 
   it('returns "Unknown" for undefined', () => {
-    // @ts-ignore
+    // @ts-expect-error mock Prisma typing
     expect(formatCountry(undefined)).toBe('Unknown')
   })
 })
@@ -56,7 +56,7 @@ describe('formatReferrer', () => {
   })
 
   it('returns "Direct" for undefined', () => {
-    // @ts-ignore
+    // @ts-expect-error mock Prisma typing
     expect(formatReferrer(undefined)).toBe('Direct')
   })
 

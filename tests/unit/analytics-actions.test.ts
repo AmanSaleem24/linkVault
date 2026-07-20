@@ -7,6 +7,7 @@ import {
   getAccountReferrersAction,
   getAccountDevicesAction,
   getAccountStatusBreakdownAction,
+  type DateRange,
 } from '@/app/actions/links.analytics'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
@@ -20,17 +21,21 @@ vi.mock('@/lib/prisma', () => ({
     link: { findUnique: vi.fn(), findMany: vi.fn(), groupBy: vi.fn() },
     click: { count: vi.fn(), findMany: vi.fn(), groupBy: vi.fn() },
   },
+  prismaQuery: vi.fn(async (fn) => await fn()),
 }))
 
-// @ts-ignore
 const mockAuth = vi.mocked(auth)
-// @ts-ignore
-const mockPrisma = vi.mocked(prisma)
+import type { Mock } from 'vitest'
+
+const mockPrisma = prisma as unknown as {
+  link: { findUnique: Mock; findMany: Mock; groupBy: Mock }
+  click: { count: Mock; findMany: Mock; groupBy: Mock }
+}
 
 const userId = 'test-user'
 
 function mockSession() {
-  // @ts-ignore
+  // @ts-expect-error mock auth typing
   mockAuth.mockResolvedValue({ user: { id: userId, email: 'test@test.com', role: 'user' } })
 }
 
@@ -43,7 +48,7 @@ beforeEach(() => {
 
 describe('getAccountAnalyticsAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountAnalyticsAction()
     expect(result.success).toBe(false)
@@ -120,7 +125,7 @@ describe('getAccountTimeSeriesAction', () => {
   }
 
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountTimeSeriesAction(range)
     expect(result.success).toBe(false)
@@ -160,7 +165,7 @@ describe('getAccountTimeSeriesAction', () => {
 
 describe('getAccountTopLinksAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountTopLinksAction()
     expect(result.success).toBe(false)
@@ -200,7 +205,7 @@ describe('getAccountTopLinksAction', () => {
 
 describe('getAccountLocationsAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountLocationsAction()
     expect(result.success).toBe(false)
@@ -242,7 +247,7 @@ describe('getAccountLocationsAction', () => {
 
 describe('getAccountReferrersAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountReferrersAction()
     expect(result.success).toBe(false)
@@ -270,7 +275,7 @@ describe('getAccountReferrersAction', () => {
 
 describe('getAccountDevicesAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountDevicesAction()
     expect(result.success).toBe(false)
@@ -306,7 +311,7 @@ describe('getAccountDevicesAction', () => {
 
 describe('getAccountStatusBreakdownAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-ignore
+    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAccountStatusBreakdownAction()
     expect(result.success).toBe(false)

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, beforeEach, afterEach, vi } from 'vitest'
 import { signUpAction, verifyEmailAction, forgotPasswordAction, resetPasswordAction } from '@/app/actions/auth'
-import { prisma } from '@/lib/prisma'
+import { prisma, prismaQuery } from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
 import { Pool } from 'pg'
 
@@ -39,7 +39,11 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
   beforeAll(async () => {
     // Warm up Neon database to prevent cold-start timeouts on the first test
     // We use the native pg Pool here to avoid Prisma's aggressive stdout error logging on cold start timeouts.
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL })
+    const pool = new Pool({ 
+      connectionString: process.env.DATABASE_URL,
+      connectionTimeoutMillis: 5000,
+    })
+    pool.on('error', () => { /* ignore background connection errors during warmup */ })
     for (let i = 0; i < 5; i++) {
       try {
         await pool.query('SELECT 1')
@@ -54,13 +58,13 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
 
   // Clean up any test users before and after
   beforeEach(async () => {
-    await prisma.user.deleteMany({ where: { email: testEmail } })
-    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } })
+    await prismaQuery(() => prisma.user.deleteMany({ where: { email: testEmail } }))
+    await prismaQuery(() => prisma.verificationToken.deleteMany({ where: { identifier: testEmail } }))
   })
 
   afterEach(async () => {
-    await prisma.user.deleteMany({ where: { email: testEmail } })
-    await prisma.verificationToken.deleteMany({ where: { identifier: testEmail } })
+    await prismaQuery(() => prisma.user.deleteMany({ where: { email: testEmail } }))
+    await prismaQuery(() => prisma.verificationToken.deleteMany({ where: { identifier: testEmail } }))
   })
 
   it('should sign up a user and generate verification token', async () => {
@@ -72,16 +76,16 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
 
     expect(res.success).toBe(true)
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaQuery(() => prisma.user.findUnique({
       where: { email: testEmail },
-    })
+    }))
     expect(user).toBeDefined()
     expect(user?.emailVerified).toBeNull()
     expect(user?.name).toBe('Test User')
 
-    const token = await prisma.verificationToken.findFirst({
+    const token = await prismaQuery(() => prisma.verificationToken.findFirst({
       where: { identifier: testEmail },
-    })
+    }))
     expect(token).toBeDefined()
     expect(token?.token).toBeDefined()
   })
@@ -93,22 +97,22 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
       password: testPassword,
     })
 
-    const vt = await prisma.verificationToken.findFirst({
+    const vt = await prismaQuery(() => prisma.verificationToken.findFirst({
       where: { identifier: testEmail },
-    })
+    }))
     expect(vt).toBeDefined()
 
     const verifyRes = await verifyEmailAction(vt!.token)
     expect(verifyRes.success).toBe(true)
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaQuery(() => prisma.user.findUnique({
       where: { email: testEmail },
-    })
+    }))
     expect(user?.emailVerified).toBeInstanceOf(Date)
 
-    const tokenExists = await prisma.verificationToken.findFirst({
+    const tokenExists = await prismaQuery(() => prisma.verificationToken.findFirst({
       where: { identifier: testEmail },
-    })
+    }))
     expect(tokenExists).toBeNull()
   })
 
@@ -124,17 +128,17 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
       email: testEmail,
       password: testPassword,
     })
-    await prisma.user.update({
+    await prismaQuery(() => prisma.user.update({
       where: { email: testEmail },
       data: { emailVerified: new Date() },
-    })
+    }))
 
     const forgotRes = await forgotPasswordAction({ email: testEmail })
     expect(forgotRes.success).toBe(true)
 
-    const vt = await prisma.verificationToken.findFirst({
+    const vt = await prismaQuery(() => prisma.verificationToken.findFirst({
       where: { identifier: testEmail },
-    })
+    }))
     expect(vt).toBeDefined()
 
     const resetRes = await resetPasswordAction({
@@ -144,9 +148,9 @@ describe('Auth Integration Tests', { timeout: 30_000 }, () => {
     })
     expect(resetRes.success).toBe(true)
 
-    const user = await prisma.user.findUnique({
+    const user = await prismaQuery(() => prisma.user.findUnique({
       where: { email: testEmail },
-    })
+    }))
     expect(user).toBeDefined()
     const valid = await bcrypt.compare('NewPassword2', user!.passwordHash!)
     expect(valid).toBe(true)
