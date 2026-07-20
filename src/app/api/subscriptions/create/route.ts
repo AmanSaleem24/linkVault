@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { razorpay } from '@/lib/razorpay'
-import { prisma, prismaQuery } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
 import { invalidateSubscriptionCache } from '@/lib/plan'
@@ -29,7 +29,7 @@ export async function POST() {
 
     const keyId = process.env.RAZORPAY_KEY_ID!
 
-    const existing = await prismaQuery(() => prisma.subscription.findUnique({ where: { userId } }))
+    const existing = await prisma.subscription.findUnique({ where: { userId } })
 
     // ── Case 1: Already an active subscriber ──────────────────────────────────
     // Should not happen (pricing page is hidden for pro users), but be defensive.
@@ -79,24 +79,22 @@ export async function POST() {
 
     // Upsert — always exactly one Subscription row per user.
     // Overwrites razorpaySubscriptionId so stale IDs from old sessions are gone.
-    await prismaQuery(() =>
-      prisma.subscription.upsert({
-        where: { userId },
-        create: {
-          userId,
-          razorpaySubscriptionId: subscription.id,
-          planId: 'pro_monthly',
-          status: 'CREATED',
-        },
-        update: {
-          razorpaySubscriptionId: subscription.id,
-          planId: 'pro_monthly',
-          status: 'CREATED',
-          cancelAtPeriodEnd: false,
-          currentPeriodEnd: null,
-        },
-      })
-    )
+    await prisma.subscription.upsert({
+      where: { userId },
+      create: {
+        userId,
+        razorpaySubscriptionId: subscription.id,
+        planId: 'pro_monthly',
+        status: 'CREATED',
+      },
+      update: {
+        razorpaySubscriptionId: subscription.id,
+        planId: 'pro_monthly',
+        status: 'CREATED',
+        cancelAtPeriodEnd: false,
+        currentPeriodEnd: null,
+      },
+    })
 
     // Bust the subscription cache so the billing/home pages don't serve stale state
     await invalidateSubscriptionCache(userId)

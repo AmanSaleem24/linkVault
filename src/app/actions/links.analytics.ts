@@ -2,7 +2,7 @@
 
 import { cache } from 'react'
 import { auth } from '@/lib/auth'
-import { prisma, prismaQuery } from '@/lib/prisma'
+import { prisma } from '@/lib/prisma'
 import { type LinkStatus } from '@/lib/validators'
 import {
   formatCountry,
@@ -58,7 +58,7 @@ export async function getLinkDetailAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: {
         id: true,
@@ -71,7 +71,7 @@ export async function getLinkDetailAction(linkId: string): Promise<{
         updatedAt: true,
         userId: true,
       },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
@@ -110,37 +110,37 @@ export async function getClickAnalyticsAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
-    const clicksResult = await prismaQuery(() => prisma.click.count({ where: { linkId } }))
-    const uniqueResult = await prismaQuery(() => prisma.click.groupBy({
+    const clicksResult = await prisma.click.count({ where: { linkId } })
+    const uniqueResult = await prisma.click.groupBy({
       by: ['ip'],
       where: { linkId },
       _count: { ip: true },
-    }))
+    })
 
-    const topCountryResult = await prismaQuery(() => prisma.click.groupBy({
+    const topCountryResult = await prisma.click.groupBy({
       by: ['country'],
       where: { linkId },
       _count: { country: true },
       orderBy: { _count: { country: 'desc' } },
       take: 1,
-    }))
+    })
 
-    const topDeviceResult = await prismaQuery(() => prisma.click.groupBy({
+    const topDeviceResult = await prisma.click.groupBy({
       by: ['device'],
       where: { linkId },
       _count: { device: true },
       orderBy: { _count: { device: 'desc' } },
       take: 1,
-    }))
+    })
 
     return {
       success: true,
@@ -179,20 +179,20 @@ export async function getTimeSeriesAction(
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
-    const raw = await prismaQuery(() => prisma.click.findMany({
+    const raw = await prisma.click.findMany({
       where: { linkId, clickedAt: { gte: range.from, lte: range.to } },
       select: { clickedAt: true },
       orderBy: { clickedAt: 'asc' },
-    }))
+    })
 
     const serialized = raw.map(r => ({ clickedAt: r.clickedAt.toISOString() }))
     return { success: true, data: fillTimeSeries(serialized, range) }
@@ -216,20 +216,20 @@ export async function getLocationsAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
-    const grouped = await prismaQuery(() => prisma.click.groupBy({
+    const grouped = await prisma.click.groupBy({
       by: ['country'],
       where: { linkId },
       _count: { country: true },
-    }))
+    })
 
     const merged = new Map<string, number>()
     let total = 0
@@ -270,20 +270,20 @@ export async function getReferrersAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
-    const grouped = await prismaQuery(() => prisma.click.groupBy({
+    const grouped = await prisma.click.groupBy({
       by: ['referrer'],
       where: { linkId },
       _count: { referrer: true },
-    }))
+    })
 
     const merged = new Map<string, number>()
     let total = 0
@@ -324,20 +324,20 @@ export async function getDevicesAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
-    const grouped = await prismaQuery(() => prisma.click.groupBy({
+    const grouped = await prisma.click.groupBy({
       by: ['device'],
       where: { linkId },
       _count: { device: true },
-    }))
+    })
 
     const merged = new Map<string, number>()
     let total = 0
@@ -378,31 +378,31 @@ export async function getUtmAction(linkId: string): Promise<{
   }
 
   try {
-    const link = await prismaQuery(() => prisma.link.findUnique({
+    const link = await prisma.link.findUnique({
       where: { id: linkId },
       select: { userId: true },
-    }))
+    })
 
     if (!link || link.userId !== session.user.id) {
       return { success: false as const, error: 'Link not found' }
     }
 
     const [sourceGroups, mediumGroups, campaignGroups] = await Promise.all([
-      prismaQuery(() => prisma.click.groupBy({
+      prisma.click.groupBy({
         by: ['utmSource'],
         where: { linkId },
         _count: { utmSource: true },
-      })),
-      prismaQuery(() => prisma.click.groupBy({
+      }),
+      prisma.click.groupBy({
         by: ['utmMedium'],
         where: { linkId },
         _count: { utmMedium: true },
-      })),
-      prismaQuery(() => prisma.click.groupBy({
+      }),
+      prisma.click.groupBy({
         by: ['utmCampaign'],
         where: { linkId },
         _count: { utmCampaign: true },
-      })),
+      }),
     ])
 
     return {
@@ -459,10 +459,10 @@ const requirePro = cache(async (): Promise<
 })
 
 const getUserLinkIds = cache(async (userId: string): Promise<string[]> => {
-  const links = await prismaQuery(() => prisma.link.findMany({
+  const links = await prisma.link.findMany({
     where: { userId },
     select: { id: true },
-  }))
+  })
   return links.map((l) => l.id)
 })
 
@@ -489,11 +489,11 @@ export async function getAccountAnalyticsAction(): Promise<
 
   try {
     const [statusCounts, linkIds] = await Promise.all([
-      prismaQuery(() => prisma.link.groupBy({
+      prisma.link.groupBy({
         by: ['status'],
         where: { userId },
         _count: { status: true },
-      })),
+      }),
       getUserLinkIds(userId),
     ])
 
@@ -521,33 +521,33 @@ export async function getAccountAnalyticsAction(): Promise<
 
     const [totalClicks, uniqueIpRows, topCountryGroup, topDeviceGroup, topReferrerGroup] =
       await Promise.all([
-        prismaQuery(() => prisma.click.count({ where: { linkId: { in: linkIds } } })),
-        prismaQuery(() => prisma.click.findMany({
+        prisma.click.count({ where: { linkId: { in: linkIds } } }),
+        prisma.click.findMany({
           where: { linkId: { in: linkIds } },
           select: { ip: true },
           distinct: ['ip'],
-        })),
-        prismaQuery(() => prisma.click.groupBy({
+        }),
+        prisma.click.groupBy({
           by: ['country'],
           where: { linkId: { in: linkIds } },
           _count: { country: true },
           orderBy: { _count: { country: 'desc' } },
           take: 1,
-        })),
-        prismaQuery(() => prisma.click.groupBy({
+        }),
+        prisma.click.groupBy({
           by: ['device'],
           where: { linkId: { in: linkIds } },
           _count: { device: true },
           orderBy: { _count: { device: 'desc' } },
           take: 1,
-        })),
-        prismaQuery(() => prisma.click.groupBy({
+        }),
+        prisma.click.groupBy({
           by: ['referrer'],
           where: { linkId: { in: linkIds } },
           _count: { referrer: true },
           orderBy: { _count: { referrer: 'desc' } },
           take: 1,
-        })),
+        }),
       ])
 
     return {
@@ -600,13 +600,13 @@ export async function getAccountTimeSeriesAction(
     const linkIds = await getUserLinkIds(userId)
     if (linkIds.length === 0) return { success: true, data: fillTimeSeries([], range) }
 
-    const clicks = await prismaQuery(() => prisma.click.findMany({
+    const clicks = await prisma.click.findMany({
       where: {
         linkId: { in: linkIds },
         clickedAt: { gte: range.from, lte: range.to },
       },
       select: { clickedAt: true },
-    }))
+    })
 
     return { success: true, data: fillTimeSeries(clicks, range) }
   } catch (err) {
@@ -635,7 +635,7 @@ export async function getAccountTopLinksAction(
   const { userId } = authResult
 
   try {
-    const links = await prismaQuery(() => prisma.link.findMany({
+    const links = await prisma.link.findMany({
       where: { userId },
       orderBy: { clickCount: 'desc' },
       take: limit,
@@ -646,7 +646,7 @@ export async function getAccountTopLinksAction(
         clickCount: true,
         status: true,
       },
-    }))
+    })
 
     return {
       success: true,
@@ -677,11 +677,11 @@ export async function getAccountLocationsAction(): Promise<
     const linkIds = await getUserLinkIds(userId)
     if (linkIds.length === 0) return { success: true, data: [] }
 
-    const groups = await prismaQuery(() => prisma.click.groupBy({
+    const groups = await prisma.click.groupBy({
       by: ['country'],
       where: { linkId: { in: linkIds } },
       _count: { country: true },
-    }))
+    })
 
     const rows = toRankedRows(
       groups.map((g) => ({ key: g.country, count: g._count.country })),
@@ -710,11 +710,11 @@ export async function getAccountReferrersAction(): Promise<
     const linkIds = await getUserLinkIds(userId)
     if (linkIds.length === 0) return { success: true, data: [] }
 
-    const groups = await prismaQuery(() => prisma.click.groupBy({
+    const groups = await prisma.click.groupBy({
       by: ['referrer'],
       where: { linkId: { in: linkIds } },
       _count: { referrer: true },
-    }))
+    })
 
     const rows = toRankedRows(
       groups.map((g) => ({ key: g.referrer ?? 'Direct', count: g._count.referrer })),
@@ -747,16 +747,16 @@ export async function getAccountDevicesAction(): Promise<
     if (linkIds.length === 0) return { success: true, data: { devices: [], browsers: [] } }
 
     const [deviceGroups, browserGroups] = await Promise.all([
-      prismaQuery(() => prisma.click.groupBy({
+      prisma.click.groupBy({
         by: ['device'],
         where: { linkId: { in: linkIds } },
         _count: { device: true },
-      })),
-      prismaQuery(() => prisma.click.groupBy({
+      }),
+      prisma.click.groupBy({
         by: ['browser'],
         where: { linkId: { in: linkIds } },
         _count: { browser: true },
-      })),
+      }),
     ])
 
     return {
@@ -791,11 +791,11 @@ export async function getAccountStatusBreakdownAction(): Promise<
   const { userId } = authResult
 
   try {
-    const groups = await prismaQuery(() => prisma.link.groupBy({
+    const groups = await prisma.link.groupBy({
       by: ['status'],
       where: { userId },
       _count: { status: true },
-    }))
+    })
 
     const labels: Record<string, string> = {
       active: 'Active',
@@ -832,21 +832,21 @@ export async function getAccountUtmAction(): Promise<{
     if (linkIds.length === 0) return { success: true, data: { sources: [], mediums: [], campaigns: [] } }
 
     const [sourceGroups, mediumGroups, campaignGroups] = await Promise.all([
-      prismaQuery(() => prisma.click.groupBy({
+      prisma.click.groupBy({
         by: ['utmSource'],
         where: { linkId: { in: linkIds } },
         _count: { utmSource: true },
-      })),
-      prismaQuery(() => prisma.click.groupBy({
+      }),
+      prisma.click.groupBy({
         by: ['utmMedium'],
         where: { linkId: { in: linkIds } },
         _count: { utmMedium: true },
-      })),
-      prismaQuery(() => prisma.click.groupBy({
+      }),
+      prisma.click.groupBy({
         by: ['utmCampaign'],
         where: { linkId: { in: linkIds } },
         _count: { utmCampaign: true },
-      })),
+      }),
     ])
 
     return {
@@ -869,5 +869,50 @@ export async function getAccountUtmAction(): Promise<{
   } catch (err) {
     console.error('[getAccountUtmAction]', err)
     return { success: false, error: 'Failed to fetch UTM stats' }
+  }
+}
+
+// ─── 9. Full Account Analytics (SWR Payload) ─────────────────────────────────
+export async function getFullAccountAnalyticsAction(range: DateRange) {
+  const session = await auth()
+  if (!session?.user) return { success: false, error: 'UNAUTHORIZED' }
+
+  let userIsPro = session.user.role === 'admin'
+  if (!userIsPro) {
+    const subscription = await getCurrentUserSubscription()
+    userIsPro = isPro(subscription)
+  }
+
+  if (!userIsPro) {
+    return { success: false, error: 'PRO_REQUIRED' }
+  }
+
+  const [summary, timeSeries, topLinks, locations, referrers, devices, statusBreakdown, utm] = await Promise.all([
+    getAccountAnalyticsAction(),
+    getAccountTimeSeriesAction(range),
+    getAccountTopLinksAction(10),
+    getAccountLocationsAction(),
+    getAccountReferrersAction(),
+    getAccountDevicesAction(),
+    getAccountStatusBreakdownAction(),
+    getAccountUtmAction(),
+  ])
+
+  if (!summary.success) {
+    return { success: false, error: summary.error }
+  }
+
+  return {
+    success: true,
+    data: {
+      summary: summary.data,
+      timeSeries: timeSeries.success ? timeSeries.data : [],
+      topLinks: topLinks.success ? topLinks.data : [],
+      locations: locations.success ? locations.data : [],
+      referrers: referrers.success ? referrers.data : [],
+      devices: devices.success ? devices.data : { devices: [], browsers: [] },
+      statusBreakdown: statusBreakdown.success ? statusBreakdown.data : [],
+      utm: utm.success ? utm.data : { sources: [], mediums: [], campaigns: [] },
+    },
   }
 }

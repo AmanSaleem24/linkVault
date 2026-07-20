@@ -6,8 +6,6 @@ import dns from 'node:dns'
 // Force IPv4 resolution because IPv6 might be blackholed in the environment, causing ETIMEDOUT
 dns.setDefaultResultOrder('ipv4first')
 
-const connectionString = process.env.DATABASE_URL
-
 /**
  * Wraps a Prisma query with retry logic to handle Neon cold starts.
  * Retries on transient connection errors (P1000, P1001) up to 3 times
@@ -37,33 +35,67 @@ export async function prismaQuery<T>(
     if (!isRetryable || retries <= 0) {
       throw error
     }
-
+    console.warn(`⏳ Retryable DB error, retrying in ${delay}ms... (${retries} left)`)
     await new Promise((resolve) => setTimeout(resolve, delay))
     return prismaQuery(fn, retries - 1, delay * 2)
   }
 }
 
 function makePrismaClient() {
+   console.log('🔵 makePrismaClient called — instance id:', Math.random().toString(36).slice(2))
+  const connectionString = process.env.DATABASE_URL
+  if (!connectionString) {
+    console.warn("DATABASE_URL is not set. Prisma will fail to connect.");
+  }
   const pool = new Pool({
     connectionString,
-    ssl: { rejectUnauthorized: false },
+    ssl: { rejectUnauthorized: true },
     connectionTimeoutMillis: 20000,
     idleTimeoutMillis: 15000,
     max: 10,
     allowExitOnIdle: true,
   })
   const adapter = new PrismaPg(pool)
-  return new PrismaClient({
+  
+  const client = new PrismaClient({
     adapter,
     log:
       process.env.NODE_ENV === 'development'
         ? ['query', 'error', 'warn']
         : ['error'],
   })
+
+  return client.$extends({
+    query: {
+      $allModels: {
+        async $allOperations({ operation, query, args }) {
+          const safeReadOperations = [
+            'findUnique',
+            'findUniqueOrThrow',
+            'findFirst',
+            'findFirstOrThrow',
+            'findMany',
+            'count',
+            'aggregate',
+            'groupBy',
+          ]
+
+          if (safeReadOperations.includes(operation)) {
+            return prismaQuery(() => query(args))
+          }
+
+          // Do not retry mutations
+          return query(args)
+        },
+      },
+    },
+  })
 }
 
+type ExtendedPrismaClient = ReturnType<typeof makePrismaClient>
+
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+  prisma: ExtendedPrismaClient | undefined
 }
 
 const prisma = globalForPrisma.prisma ?? makePrismaClient()
@@ -71,7 +103,5 @@ const prisma = globalForPrisma.prisma ?? makePrismaClient()
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma
 }
-
-
 
 export { prisma }

@@ -1,6 +1,6 @@
 import { SubscriptionStatus } from '@prisma/client'
 import { getRedis } from './redis'
-import { prisma } from './prisma'
+import { prisma } from '@/lib/prisma'
 import { auth } from './auth'
 
 const SUB_CACHE_KEY = (userId: string) => `sub:${userId}`
