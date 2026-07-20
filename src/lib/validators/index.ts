@@ -106,12 +106,18 @@ export const createLinkSchema = z
       .optional(),
     expiresIn: z.union([z.number().int().positive(), z.string(), z.null()]).optional().nullable(),
     qrCode: z.boolean().optional().default(false),
+    utmSource: z.string().max(100, 'Source too long').optional().nullable(),
+    utmMedium: z.string().max(100, 'Medium too long').optional().nullable(),
+    utmCampaign: z.string().max(100, 'Campaign too long').optional().nullable(),
   })
   .transform((data) => ({
     url: data.url,
     alias: data.alias,
     expiresAt: data.expiresIn !== undefined && data.expiresIn !== null ? resolveExpiry(data.expiresIn as ExpiryDuration) : undefined,
     qrCode: data.qrCode,
+    utmSource: data.utmSource,
+    utmMedium: data.utmMedium,
+    utmCampaign: data.utmCampaign,
   }))
 
 export const updateLinkSchema = z

@@ -43,7 +43,7 @@ export async function createLinkAction(input: unknown) {
   }
   const userId = session.user.id
 
-  const { url, alias, expiresAt, qrCode } = parsed.data
+  const { url, alias, expiresAt, qrCode, utmSource, utmMedium, utmCampaign } = parsed.data
 
   // 3. Enforce limits for free users
   const usageStats = await getUserUsageStatsAction()
@@ -83,35 +83,40 @@ export async function createLinkAction(input: unknown) {
     // 4.5 Apply UTM Defaults and Default Expiry if Pro
     let finalUrl = url
     let finalExpiresAt = expiresAt
-    if (isPro) {
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { defaultUtmSource: true, defaultUtmMedium: true, defaultUtmCampaign: true, defaultExpiresIn: true }
-      })
-      if (user) {
-        if (user.defaultUtmSource || user.defaultUtmMedium || user.defaultUtmCampaign) {
-          try {
-            const urlObj = new URL(url)
-            if (user.defaultUtmSource && !urlObj.searchParams.has('utm_source')) {
-              urlObj.searchParams.set('utm_source', user.defaultUtmSource)
-            }
-            if (user.defaultUtmMedium && !urlObj.searchParams.has('utm_medium')) {
-              urlObj.searchParams.set('utm_medium', user.defaultUtmMedium)
-            }
-            if (user.defaultUtmCampaign && !urlObj.searchParams.has('utm_campaign')) {
-              urlObj.searchParams.set('utm_campaign', user.defaultUtmCampaign)
-            }
-            finalUrl = urlObj.toString()
-          } catch (e) {
-            // If URL parsing fails for some reason, silently fall back to original
+    
+    try {
+      const urlObj = new URL(finalUrl)
+
+      // A. Explicit UTMs take absolute precedence
+      if (utmSource) urlObj.searchParams.set('utm_source', utmSource)
+      if (utmMedium) urlObj.searchParams.set('utm_medium', utmMedium)
+      if (utmCampaign) urlObj.searchParams.set('utm_campaign', utmCampaign)
+
+      // B. Defaults from profile only apply if Pro and not explicitly set AND not in the URL natively
+      if (isPro) {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { defaultUtmSource: true, defaultUtmMedium: true, defaultUtmCampaign: true, defaultExpiresIn: true }
+        })
+        if (user) {
+          if (user.defaultUtmSource && !urlObj.searchParams.has('utm_source')) {
+            urlObj.searchParams.set('utm_source', user.defaultUtmSource)
+          }
+          if (user.defaultUtmMedium && !urlObj.searchParams.has('utm_medium')) {
+            urlObj.searchParams.set('utm_medium', user.defaultUtmMedium)
+          }
+          if (user.defaultUtmCampaign && !urlObj.searchParams.has('utm_campaign')) {
+            urlObj.searchParams.set('utm_campaign', user.defaultUtmCampaign)
+          }
+          if (finalExpiresAt === undefined && user.defaultExpiresIn) {
+            finalExpiresAt = resolveExpiry(user.defaultExpiresIn as ExpiryDuration) ?? undefined
           }
         }
-        
-        // If the user didn't explicitly set an expiry for this link, apply the default
-        if (finalExpiresAt === undefined && user.defaultExpiresIn) {
-          finalExpiresAt = resolveExpiry(user.defaultExpiresIn as ExpiryDuration) ?? undefined
-        }
       }
+      
+      finalUrl = urlObj.toString()
+    } catch (e) {
+      // If URL parsing fails, silently fall back to original (Zod already validated it, so this shouldn't happen)
     }
 
     // 5. Create the link + audit log in a single transaction

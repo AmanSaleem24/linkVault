@@ -16,6 +16,9 @@ const qrSchema = z.object({
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid color format'),
   bgColor: z.string().regex(/^#[0-9a-fA-F]{6}$/, 'Invalid background color format'),
   style: z.enum(['squares', 'dots']),
+  utmSource: z.string().optional().nullable(),
+  utmMedium: z.string().optional().nullable(),
+  utmCampaign: z.string().optional().nullable(),
 })
 
 export async function getQrCodes() {
@@ -57,7 +60,7 @@ export async function createQrCode(data: z.infer<typeof qrSchema>) {
     return { success: false, error: 'Invalid data' }
   }
 
-  const { mode, linkId, rawUrl, alias, color, bgColor, style } = parsed.data
+  const { mode, linkId, rawUrl, alias, color, bgColor, style, utmSource, utmMedium, utmCampaign } = parsed.data
 
   try {
     // Enforce limits
@@ -87,7 +90,14 @@ export async function createQrCode(data: z.infer<typeof qrSchema>) {
       if (!rawUrl) return { success: false, error: 'URL is required to shorten' }
       
       // Call existing link creation logic
-      const res = await createLinkAction({ url: rawUrl, alias, qrCode: false })
+      const res = await createLinkAction({ 
+        url: rawUrl, 
+        alias, 
+        qrCode: false,
+        utmSource: utmSource || undefined,
+        utmMedium: utmMedium || undefined,
+        utmCampaign: utmCampaign || undefined,
+      })
       if (!res.success) {
         return { success: false, error: res.error }
       }

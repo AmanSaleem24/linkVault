@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { QRCode } from 'react-qrcode-logo'
-import { Loader2, Link2, Palette, Save, ArrowLeft, Grid, CircleDot, Plus, Globe, Check, Lock } from 'lucide-react'
+import { Loader2, Link2, Palette, Save, ArrowLeft, Grid, CircleDot, Plus, Globe, Check, Lock, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getUserLinksAction, checkAliasAvailabilityAction } from '@/app/actions/links.read'
 import { createQrCode, getQrCodes } from '@/app/actions/qr'
@@ -33,6 +33,11 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
   const [alias, setAlias] = useState('')
   const [aliasChecking, setAliasChecking] = useState(false)
   const [aliasError, setAliasError] = useState('')
+  
+  const [showUtms, setShowUtms] = useState(false)
+  const [utmSource, setUtmSource] = useState('')
+  const [utmMedium, setUtmMedium] = useState('')
+  const [utmCampaign, setUtmCampaign] = useState('')
   
   const [fgColor, setFgColor] = useState('#000000')
   const [bgColor, setBgColor] = useState('#ffffff')
@@ -91,7 +96,10 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
       alias: mode === 'new' && isPro ? alias : undefined,
       color: fgColor, 
       bgColor, 
-      style 
+      style,
+      utmSource: mode === 'new' && showUtms && isPro ? utmSource : undefined,
+      utmMedium: mode === 'new' && showUtms && isPro ? utmMedium : undefined,
+      utmCampaign: mode === 'new' && showUtms && isPro ? utmCampaign : undefined,
     })
     
     if (res.success) {
@@ -222,6 +230,87 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                   )}
                   {alias && !aliasError && !aliasChecking && (
                     <p className="mt-1.5 text-xs font-medium text-emerald-500">Available!</p>
+                  )}
+                </div>
+
+                {/* UTM Tags */}
+                <div className={`mt-2 rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[#2B0094]/30 bg-[#2B0094]/2' : 'border-slate-200 bg-white dark:border-border dark:bg-card'}`}>
+                  <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${showUtms && isPro ? '' : 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md dark:hover:border-slate-600'}`}>
+                    <div className="flex items-center gap-3.5">
+                      <div className="relative flex size-4.5 items-center justify-center">
+                        <input
+                          type="checkbox"
+                          checked={isPro ? showUtms : false}
+                          onChange={(e) => {
+                            if (isPro) {
+                              setShowUtms(e.target.checked)
+                              if (!e.target.checked) {
+                                setUtmSource('')
+                                setUtmMedium('')
+                                setUtmCampaign('')
+                              }
+                            }
+                          }}
+                          disabled={!isPro}
+                          className="peer size-4.5 rounded border-slate-300 text-[#2B0094] focus:ring-[#2B0094]/20 disabled:cursor-not-allowed dark:border-slate-600 dark:bg-background"
+                        />
+                      </div>
+                      <span className="flex items-center gap-2 text-[0.95rem] font-medium text-slate-800 dark:text-slate-200">
+                        <Tag className="size-4 text-[#2B0094]" />
+                        UTM Tags
+                      </span>
+                    </div>
+                    {!isPro ? (
+                      <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500 dark:text-muted-foreground">
+                        Upgrade to Pro
+                      </span>
+                    ) : (
+                      showUtms && (utmSource || utmMedium || utmCampaign) && (
+                        <span className="rounded-md bg-[#2B0094]/10 px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-[#2B0094] dark:bg-[#2B0094]/20">
+                          Configured
+                        </span>
+                      )
+                    )}
+                  </label>
+
+                  {showUtms && isPro && (
+                    <div className="animate-in slide-in-from-top-2 duration-200">
+                      <div className="mx-4 mb-4 h-px bg-[#2B0094]/10 dark:bg-[#2B0094]/20" />
+                      <div className="px-4 pb-4">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                          <div className="flex-1 space-y-1">
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Source</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. twitter"
+                              value={utmSource}
+                              onChange={(e) => setUtmSource(e.target.value)}
+                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                            />
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Medium</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. social"
+                              value={utmMedium}
+                              onChange={(e) => setUtmMedium(e.target.value)}
+                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                            />
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Campaign</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. summer_sale"
+                              value={utmCampaign}
+                              onChange={(e) => setUtmCampaign(e.target.value)}
+                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>

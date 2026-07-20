@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Link2, Globe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useCreateLink } from '@/components/home/use-create-link'
@@ -15,7 +15,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import { Check, ChevronDown, Clock } from 'lucide-react'
+import { Check, ChevronDown, Clock, Tag } from 'lucide-react'
 
 export default function CreateLinkPage() {
   const {
@@ -26,6 +26,9 @@ export default function CreateLinkPage() {
     expiresIn, setExpiresIn,
     customValue, setCustomValue,
     customUnit, setCustomUnit,
+    utmSource, setUtmSource,
+    utmMedium, setUtmMedium,
+    utmCampaign, setUtmCampaign,
     stats, loadingStats,
     isPending,
     createdData,
@@ -43,6 +46,16 @@ export default function CreateLinkPage() {
   } = useCreateLink()
 
   const aliasDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [showUtms, setShowUtms] = useState(false)
+  
+  // Clean up UTM fields when toggle is turned off
+  useEffect(() => {
+    if (!showUtms) {
+      setUtmSource('')
+      setUtmMedium('')
+      setUtmCampaign('')
+    }
+  }, [showUtms, setUtmSource, setUtmMedium, setUtmCampaign])
 
   function handleAliasChange(value: string) {
     setAlias(value)
@@ -256,6 +269,82 @@ export default function CreateLinkPage() {
                             </DropdownMenu>
                           </div>
                         )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* UTM Tags */}
+              <div className={`rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[#2B0094]/30 bg-[#2B0094]/2' : 'border-slate-200 bg-white'}`}>
+                <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${showUtms && isPro ? '' : 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md'}`}>
+                  <div className="flex items-center gap-3.5">
+                    <div className="relative flex size-4.5 items-center justify-center">
+                      <input
+                        type="checkbox"
+                        checked={isPro ? showUtms : false}
+                        onChange={(e) => isPro && setShowUtms(e.target.checked)}
+                        disabled={!isPro || loadingStats}
+                        readOnly={!isPro}
+                        className="peer size-4.5 rounded border-slate-300 text-[#2B0094] focus:ring-[#2B0094]/20 disabled:cursor-not-allowed"
+                      />
+                    </div>
+                    <span className="flex items-center gap-2 text-[0.95rem] font-medium text-slate-800">
+                      <Tag className="size-4 text-[#2B0094]" />
+                      UTM Tags
+                    </span>
+                  </div>
+                  {!isPro ? (
+                    <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500">
+                      Upgrade to Pro
+                    </span>
+                  ) : (
+                    showUtms && (utmSource || utmMedium || utmCampaign) && (
+                      <span className="rounded-md bg-[#2B0094]/10 px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-[#2B0094]">
+                        Configured
+                      </span>
+                    )
+                  )}
+                </label>
+
+                {showUtms && isPro && (
+                  <div className="animate-in slide-in-from-top-2 duration-200">
+                    <div className="mx-4 mb-4 h-px bg-[#2B0094]/10" />
+                    <div className="px-4 pb-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500">Source</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. twitter"
+                            value={utmSource}
+                            onChange={(e) => setUtmSource(e.target.value)}
+                            disabled={loadingStats}
+                            className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500">Medium</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. social"
+                            value={utmMedium}
+                            onChange={(e) => setUtmMedium(e.target.value)}
+                            disabled={loadingStats}
+                            className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 disabled:opacity-50"
+                          />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500">Campaign</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. summer_sale"
+                            value={utmCampaign}
+                            onChange={(e) => setUtmCampaign(e.target.value)}
+                            disabled={loadingStats}
+                            className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 disabled:opacity-50"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

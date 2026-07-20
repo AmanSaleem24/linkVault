@@ -28,6 +28,11 @@ export function useCreateLink() {
   const [customValue, setCustomValue] = useState('')
   const [customUnit, setCustomUnit] = useState<'m' | 'h'>('m')
 
+  // UTM state
+  const [utmSource, setUtmSource] = useState('')
+  const [utmMedium, setUtmMedium] = useState('')
+  const [utmCampaign, setUtmCampaign] = useState('')
+
   // UI state
   const [stats, setStats] = useState<LinkStats | null>(null)
   const [loadingStats, setLoadingStats] = useState(true)
@@ -150,6 +155,9 @@ export function useCreateLink() {
         alias: alias || undefined,
         qrCode,
         expiresIn: resolvedExpiresIn,
+        utmSource: utmSource || undefined,
+        utmMedium: utmMedium || undefined,
+        utmCampaign: utmCampaign || undefined,
       })
 
       if (res.success && res.data) {
@@ -165,6 +173,9 @@ export function useCreateLink() {
         setCustomValue('')
         setExpires(false)
         setQrCode(false)
+        setUtmSource('')
+        setUtmMedium('')
+        setUtmCampaign('')
         await loadStats()
       } else {
         toast.error(res.error || 'Failed to create link')
@@ -187,6 +198,9 @@ export function useCreateLink() {
     expiresIn, setExpiresIn,
     customValue, setCustomValue,
     customUnit, setCustomUnit,
+    utmSource, setUtmSource,
+    utmMedium, setUtmMedium,
+    utmCampaign, setUtmCampaign,
     stats, loadingStats,
     isPending, startTransition,
     createdData,
