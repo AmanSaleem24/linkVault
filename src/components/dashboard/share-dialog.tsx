@@ -2,11 +2,8 @@
 
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Copy, Check } from 'lucide-react'
-import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaLinkedin, FaEnvelope } from 'react-icons/fa6'
+import { FaWhatsapp, FaFacebook, FaInstagram, FaXTwitter, FaLinkedin } from 'react-icons/fa6'
 import { toast } from 'sonner'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 
 interface ShareDialogProps {
   url: string
@@ -60,7 +57,7 @@ export function ShareDialog({ url, title, children }: ShareDialogProps) {
       setCopied(true)
       toast.success('Link copied to clipboard')
       setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
+    } catch {
       toast.error('Failed to copy link')
     }
   }

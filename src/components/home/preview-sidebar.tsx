@@ -1,8 +1,7 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
-import { Link2, Star, CheckCircle2, Globe, Copy, ExternalLink } from 'lucide-react'
+import { Link as LinkIcon, Star, CheckCircle2, Globe, Copy, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import QRCode from 'react-qr-code'
 import { toast } from 'sonner'
@@ -15,8 +14,8 @@ interface PreviewSidebarProps {
   alias: string
   qrCode: boolean
   expires: boolean
-  expiresIn: any
-  getExpiryLabel: (v: any) => string
+  expiresIn: number | string | null
+  getExpiryLabel: (v: number | string | null) => string
   createdData: { shortUrl: string; originalUrl: string; hasQr: boolean } | null
   isPro: boolean
   stats: LinkStats | null
@@ -32,10 +31,7 @@ export function PreviewSidebar({
   expiresIn,
   getExpiryLabel,
   createdData,
-  isPro,
-  stats,
 }: PreviewSidebarProps) {
-  const isQrLimitReached = !!(stats && !isPro && stats.qrCount >= stats.limits.qr)
 
   if (createdData) {
     // ── SUCCESS STATE ───────────────────────────────────────────────────────

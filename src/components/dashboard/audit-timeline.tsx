@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FileText, Plus, Pencil, Trash2, ExternalLink, ToggleRight, ToggleLeft } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AuditLogEntry } from '@/app/actions/links.read'

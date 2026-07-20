@@ -1,8 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
-import { Link2, Sparkles, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
-import { type LinkStats } from '@/components/home/use-create-link'
+import { Sparkles, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 

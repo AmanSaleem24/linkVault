@@ -36,12 +36,17 @@ export function useCreateLink() {
   const [urlError, setUrlError] = useState<string | null>(null)
   const [aliasStatus, setAliasStatus] = useState<'idle' | 'checking' | 'available' | 'taken'>('idle')
   const [aliasError, setAliasError] = useState<string | null>(null)
-  const aliasCheckTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hasMountedStats = useRef(false)
+  const hasMountedBaseUrl = useRef(false)
   const [baseUrl, setBaseUrl] = useState(ENV_BASE_URL)
 
   // Resolve baseUrl after mount (SSR-safe)
   useEffect(() => {
-    if (!ENV_BASE_URL) setBaseUrl(window.location.origin)
+    if (hasMountedBaseUrl.current) return
+    hasMountedBaseUrl.current = true
+    if (!ENV_BASE_URL) {
+      Promise.resolve().then(() => setBaseUrl(window.location.origin))
+    }
   }, [])
 
   // ─── Data fetching ────────────────────────────────────────────────────────
@@ -58,6 +63,8 @@ export function useCreateLink() {
   }
 
   useEffect(() => {
+    if (hasMountedStats.current) return
+    hasMountedStats.current = true
     loadStats()
   }, [])
 

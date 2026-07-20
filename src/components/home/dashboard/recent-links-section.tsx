@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Copy, CheckCheck, ExternalLink, Lock, Globe } from 'lucide-react'
 import { toast } from 'sonner'
 import type { RecentLinkRow } from '@/app/actions/dashboard'
@@ -34,11 +35,14 @@ function FaviconImg({ url }: { url: string }) {
 
   return (
     <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-100 bg-slate-50">
-      <img
+      <Image
         src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
         alt={hostname}
+        width={16}
+        height={16}
         className="size-4 object-contain"
         onError={() => setErrored(true)}
+        unoptimized
       />
     </div>
   )
@@ -142,9 +146,12 @@ function RecentLinkItem({
 
 export function RecentLinksSection({ links, isPro }: RecentLinksSectionProps) {
   const [baseUrl, setBaseUrl] = useState('')
+  const hasMounted = useRef(false)
 
   useEffect(() => {
-    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || window.location.origin)
+    if (hasMounted.current) return
+    hasMounted.current = true
+    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))
   }, [])
 
   return (
@@ -168,7 +175,7 @@ export function RecentLinksSection({ links, isPro }: RecentLinksSectionProps) {
           </p>
           <Link
             href="/links/new"
-            className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-[#23007A] bg-gradient-to-b from-[#3D00D1] to-[#2B0094] px-4 py-2 text-[0.85rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3)] transition-all hover:from-[#4300E6] hover:to-[#3100A8]"
+            className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-[#23007A] bg-linear-to-b from-[#3D00D1] to-[#2B0094] px-4 py-2 text-[0.85rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3)] transition-all hover:from-[#4300E6] hover:to-[#3100A8]"
           >
             Create a link
           </Link>

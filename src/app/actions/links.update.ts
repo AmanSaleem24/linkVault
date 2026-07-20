@@ -3,7 +3,6 @@
 import { revalidatePath } from 'next/cache'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import { getRedis, LINK_CACHE_KEY } from '@/lib/redis'
 import { updateLinkSchema } from '@/lib/validators'
 import { invalidateCache } from './links.create'
 

@@ -1,11 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Copy, Eye, Pencil, Trash2, ToggleLeft, ToggleRight, BarChart2, MoreHorizontal, ExternalLink, Globe, CornerDownRight, Calendar, Lock, Share2 } from 'lucide-react'
-import { toast } from 'sonner'
 import { type LinkStatus } from '@/lib/validators'
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,37 +39,6 @@ export interface LinkRowProps {
   getLinkTitle: (url: string) => string
 }
 
-// ─── Favicon helper ───────────────────────────────────────────────────────────
-
-function FaviconImg({ url }: { url: string }) {
-  const [errored, setErrored] = useState(false)
-  let hostname = ''
-  try {
-    hostname = new URL(url).hostname
-  } catch {
-    /* ignore */
-  }
-
-  if (!hostname || errored) {
-    return (
-      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
-        <Globe className="size-4" />
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 border border-slate-100 overflow-hidden">
-      <img
-        src={`https://www.google.com/s2/favicons?domain=${hostname}&sz=32`}
-        alt={hostname}
-        className="size-5 object-contain"
-        onError={() => setErrored(true)}
-      />
-    </div>
-  )
-}
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(iso: string) {
@@ -108,7 +73,11 @@ export function LinkRow({
         />
 
         {/* Favicon */}
-        {!isCompact && <FaviconImg url={link.originalUrl} />}
+        {!isCompact && (
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+            <Globe className="size-4" />
+          </div>
+        )}
 
         {/* Title */}
         <span className="flex-1 truncate text-base font-semibold text-slate-900">
@@ -117,7 +86,7 @@ export function LinkRow({
 
         {/* Action icons */}
         <div className="flex shrink-0 items-center gap-0.5">
-          <ShareDialog 
+          <ShareDialog
             url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : `https://linkvault.io/${link.slug}`}
             title={getLinkTitle(link.originalUrl)}
           >
@@ -258,7 +227,6 @@ export function LinkRow({
             Click data
           </span>
         )}
-
 
         {/* Date pill */}
         <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[0.75rem] font-medium text-slate-600">

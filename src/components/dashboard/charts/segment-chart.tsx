@@ -14,7 +14,6 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
   const strokeWidth = 20
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
-  let offset = 0
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -43,11 +42,10 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
                 strokeWidth={strokeWidth}
               />
               {data.map((d, i) => {
+                const prevOffset = data.slice(0, i).reduce((sum, dd) => sum + (dd.count / total) * circumference, 0)
                 const fraction = d.count / total
                 const dash = fraction * circumference
                 const gap = circumference - dash
-                const segOffset = offset
-                offset += dash
                 return (
                   <circle
                     key={`${d.name}-${i}`}
@@ -58,7 +56,7 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
                     stroke={colors[i % colors.length]}
                     strokeWidth={strokeWidth}
                     strokeDasharray={`${dash} ${gap}`}
-                    strokeDashoffset={-segOffset}
+                    strokeDashoffset={-prevOffset}
                     strokeLinecap="butt"
                   />
                 )

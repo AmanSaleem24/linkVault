@@ -86,7 +86,7 @@ export function DateFilterPopover({
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalFrom(dateFrom ? new Date(dateFrom) : null)
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     setLocalTo(dateTo ? new Date(dateTo) : null)
   }, [dateFrom, dateTo])
 

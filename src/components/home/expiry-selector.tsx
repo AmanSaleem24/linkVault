@@ -1,13 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import { PRESET_DURATIONS, type ExpiryDuration } from '@/lib/validators'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { ChevronDown } from 'lucide-react'
 
@@ -38,7 +36,6 @@ export function ExpirySelector({
   className = '',
 }: ExpirySelectorProps) {
   const isCustom = value === 'custom'
-  const activePreset = PRESET_PILLS.find(p => p.value === value)
 
   return (
     <div className={className}>
@@ -102,7 +99,7 @@ export function ExpirySelector({
               {UNIT_LABELS[customUnit] ?? 'Hrs'}
               <ChevronDown className="size-3.5 text-slate-400" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[120px] rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-200/50 ring-1 ring-slate-200/60">
+            <DropdownMenuContent align="start" className="w-30 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-200/50 ring-1 ring-slate-200/60">
               {(['m', 'h'] as const).map((unit) => (
                 <DropdownMenuItem
                   key={unit}

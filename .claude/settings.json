@@ -12,7 +12,12 @@
       "Bash(pnpm prisma *)",
       "Bash(pnpm build *)",
       "Bash(pnpm add *)",
-      "Bash(npx next *)"
+      "Bash(npx next *)",
+      "Bash(npx eslint *)",
+      "Bash(node -e 'const r=require\\(\"/tmp/eslint-results.json\"\\);r.forEach\\(f=>{if\\(f.errorCount>0\\)console.log\\(f.filePath\\)}\\(\\)\\)')",
+      "Bash(awk '{for\\(i=1;i<=NF;i++\\) if\\($i ~ /\\\\.tsx?$/\\) print $i}')",
+      "Read(//tmp/**)",
+      "Bash(tee /tmp/eslint-output.txt)"
     ]
   }
 }

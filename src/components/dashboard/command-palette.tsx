@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CommandOverlay, CommandGroup, CommandItem } from '@/components/ui/command'
 import {
@@ -28,18 +28,20 @@ export function CommandPalette() {
   const [recentLinks, setRecentLinks] = useState<RecentLink[]>([])
   const [isLoadingLinks, setIsLoadingLinks] = useState(false)
   const router = useRouter()
+  const hasLoadedRef = useRef(false)
 
-  // Load recent links when palette opens
+  // Load recent links when palette opens (only once per mount)
   useEffect(() => {
-    if (open) {
-      setIsLoadingLinks(true)
-      getLinksAction({ limit: 5 }).then((result) => {
-        if (result.success) {
-          setRecentLinks(result.data.links.slice(0, 5))
-        }
-        setIsLoadingLinks(false)
-      })
-    }
+    if (!open) return
+    if (hasLoadedRef.current) return
+    hasLoadedRef.current = true
+    setIsLoadingLinks(true)
+    getLinksAction({ limit: 5 }).then((result) => {
+      if (result.success) {
+        setRecentLinks(result.data.links.slice(0, 5))
+      }
+      setIsLoadingLinks(false)
+    })
   }, [open])
 
   // Keyboard shortcut: Ctrl+K or Cmd+K to toggle, Escape to close

@@ -7,7 +7,6 @@ import { getRedis, LINK_CACHE_KEY } from '@/lib/redis'
 import { generateUniqueSlug } from '@/lib/slugs'
 import { createLinkSchema } from '@/lib/validators'
 import { getUserUsageStatsAction } from './links.read'
-import { FREE_TIER_LIMITS } from '@/lib/config'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

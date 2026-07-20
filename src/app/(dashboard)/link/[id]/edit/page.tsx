@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ExpirySelector } from '@/components/home/expiry-selector'
-import { PRESET_DURATIONS, type ExpiryDuration } from '@/lib/validators'
+import { type ExpiryDuration } from '@/lib/validators'
 import { getLinkDetailAction } from '@/app/actions/links.analytics'
 import { createLinkAction } from '@/app/actions/links'
 import type { LinkDetailData } from '@/app/actions/links.analytics'
@@ -103,7 +103,14 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
       const result = await createLinkAction({
         url: link.originalUrl,
         alias: slug,
-        expiresIn: resolveExpiryValue(),
+        expiresIn: (() => {
+          if (expiresIn === 'custom' && customValue) {
+            const num = parseInt(customValue, 10)
+            if (customUnit === 'h') return `${num}h` as ExpiryDuration
+            return `${num}m` as ExpiryDuration
+          }
+          return expiresIn
+        })(),
       })
 
       if (result.success) {
@@ -117,7 +124,7 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
     } finally {
       setIsSaving(false)
     }
-  }, [link, slug, expiresIn, validateSlug, router])
+  }, [link, slug, validateSlug, router, expiresIn, customValue, customUnit])
 
   if (isLoading) {
     return (
@@ -176,30 +183,6 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
       </div>
     )
   }
-
-  const getExpiryLabel = () => {
-    if (expiresIn && expiresIn !== 'custom') {
-      return PRESET_DURATIONS.find(d => d.value === expiresIn)?.label ?? 'Expires in'
-    }
-    if (expiresIn === 'custom') {
-      if (!customValue) return 'Custom…'
-      return customUnit === 'h'
-        ? `${customValue} hour${Number(customValue) > 1 ? 's' : ''}`
-        : `${customValue} min${Number(customValue) > 1 ? 's' : ''}`
-    }
-    return 'Expires in'
-  }
-
-  const resolveExpiryValue = (): ExpiryDuration => {
-    if (expiresIn === 'custom' && customValue) {
-      const num = parseInt(customValue, 10)
-      if (customUnit === 'h') return `${num}h` as ExpiryDuration
-      return `${num}m` as ExpiryDuration
-    }
-    return expiresIn
-  }
-
-  const expiryLabel = getExpiryLabel()
 
   return (
     <div className="global-content bg-white mt-12 pb-10 pt-8">

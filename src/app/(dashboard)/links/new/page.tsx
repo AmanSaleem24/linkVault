@@ -31,7 +31,7 @@ export default function CreateLinkPage() {
     createdData,
     urlError, setUrlError,
     aliasStatus, setAliasStatus,
-    aliasError, setAliasError,
+    aliasError,
     baseUrl,
     handleCreate,
     checkAlias,

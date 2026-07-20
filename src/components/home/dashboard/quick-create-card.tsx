@@ -41,14 +41,25 @@ export function QuickCreateCard({
   const [copied, setCopied] = useState(false)
   const [baseUrl, setBaseUrl] = useState('')
   const qrRef = useRef<HTMLDivElement>(null)
+  const hasMountedBaseUrl = useRef(false)
+  const hasMountedQr = useRef(false)
 
   useEffect(() => {
-    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || window.location.origin)
+    if (hasMountedBaseUrl.current) return
+    hasMountedBaseUrl.current = true
+    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))
   }, [])
 
   // If QR limit is reached, uncheck silently when the prop updates
   useEffect(() => {
-    if (isQrLimitReached) setQrCode(false)
+    if (hasMountedQr.current) return
+    hasMountedQr.current = true
+  }, [isQrLimitReached])
+
+  useEffect(() => {
+    if (hasMountedQr.current && isQrLimitReached) {
+      setQrCode(false)
+    }
   }, [isQrLimitReached])
 
   function validateUrl(value: string): string | null {

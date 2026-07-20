@@ -19,7 +19,7 @@ function fallbackCopy(text: string, label: string) {
   document.body.appendChild(textarea)
   textarea.select()
   try {
-    document.execCommand('copy') // eslint-disable-next-line deprecation/deprecation
+    document.execCommand('copy')
     toast.success(label)
   } catch {
     toast.error('Failed to copy — please copy manually')

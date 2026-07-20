@@ -61,7 +61,7 @@ export async function getLinksAction(params: LinksListParams = {}): Promise<Link
   } = params
 
   try {
-    const where: any = { userId: session.user.id }
+    const where: Record<string, unknown> = { userId: session.user.id }
 
     if (search) {
       where.AND = where.AND || []
@@ -207,7 +207,7 @@ export async function getUserUsageStatsAction() {
       linkCount = logs.length
       qrCount = logs.filter(log => {
         if (!log.newValue || typeof log.newValue !== 'object') return false
-        return (log.newValue as Record<string, any>).hasQrCode === true
+        return (log.newValue as Record<string, unknown>).hasQrCode === true
       }).length
     }
 
@@ -280,7 +280,7 @@ export async function checkAliasAvailabilityAction(slug: string): Promise<{ avai
     return { available: false, reason: 'Only lowercase letters, numbers, and hyphens allowed' }
   }
 
-  if (RESERVED_SLUGS.includes(trimmed as any)) {
+  if (RESERVED_SLUGS.includes(trimmed)) {
     return { available: false, reason: 'This alias is reserved' }
   }
 
@@ -354,7 +354,7 @@ export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLo
   try {
     const fetchLimit = limit + 1 // fetch one extra to detect hasMore
 
-    let logs: Array<{ id: string; entityId: string; action: string; entityType: string; previousValue: Json; newValue: Json; createdAt: Date }>
+    let logs: Array<{ id: string; entityId: string; action: string; entityType: string; previousValue: unknown; newValue: unknown; createdAt: Date }>
 
     if (cursor) {
       // Cursor-based: skip the cursor row, fetch next page
@@ -365,21 +365,21 @@ export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLo
       if (!cursorLog) {
         return { success: true, data: { logs: [], totalCount: 0, nextCursor: null } }
       }
-      logs = await prisma.auditLog.findMany({
+      logs = (await prisma.auditLog.findMany({
         where: {
           userId: session.user.id,
           createdAt: { lt: cursorLog.createdAt },
         },
         orderBy: { createdAt: 'desc' },
         take: fetchLimit,
-      })
+      })) as Array<{ id: string; entityId: string; action: string; entityType: string; previousValue: unknown; newValue: unknown; createdAt: Date }>
     } else {
       // First page: newest first
-      logs = await prisma.auditLog.findMany({
+      logs = (await prisma.auditLog.findMany({
         where: { userId: session.user.id },
         orderBy: { createdAt: 'desc' },
         take: fetchLimit,
-      })
+      })) as Array<{ id: string; entityId: string; action: string; entityType: string; previousValue: unknown; newValue: unknown; createdAt: Date }>
     }
 
     const hasMore = logs.length > limit

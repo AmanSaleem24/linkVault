@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import {
-  ChevronLeft, Globe, Copy, Pencil, Share2, Tag, Lock,
-  BarChart3, Sparkles, MoreHorizontal, CornerDownRight,
+  ChevronLeft, Globe, Copy, Pencil, Share2, Tag,
+  BarChart3, Sparkles, MoreHorizontal, CornerDownRight, Lock,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { copyToClipboard, getLinkTitle } from '@/components/link/link-helpers'
@@ -20,17 +21,14 @@ import {
   type LinkDetailData,
   type ClickAnalytics,
   type TimeSeriesPoint,
-  type CountryData,
   type DateRange,
 } from '@/app/actions/links.analytics'
-import { Button } from '@/components/ui/button'
 import { ShareDialog } from '@/components/dashboard/share-dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { DateFilterPopover, type DateFilter } from '@/components/home/date-filter-popover'
 import { StatCard } from '@/components/dashboard/charts/stat-card'
@@ -111,8 +109,11 @@ export default function LinkAnalyticsPage() {
     }
   }, [linkId, router])
 
+  // Initial data load only — filter changes are handled by onApply/onClear callbacks
   useEffect(() => {
-    if (dateFilter.from && dateFilter.to) loadAll(dateFilter)
+    if (dateFilter.from && dateFilter.to) {
+      Promise.resolve().then(() => loadAll(dateFilter))
+    }
   }, [dateFilter, loadAll])
 
   // Handlers
@@ -144,12 +145,6 @@ export default function LinkAnalyticsPage() {
   }
 
   const shortUrl = `${window.location.origin}/${link.slug}`
-  const statusColors: Record<string, { bg: string; text: string; dot: string }> = {
-    active: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
-    disabled: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
-    expired: { bg: 'bg-red-50', text: 'text-red-700', dot: 'bg-red-500' },
-  }
-  const statusStyle = statusColors[link.status] ?? statusColors.active
 
   return (
     <div className="global-content py-8">
@@ -284,7 +279,7 @@ export default function LinkAnalyticsPage() {
               className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-bold text-indigo-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
             >
               <Sparkles className="size-3.5 text-fuchsia-500" />
-              What's driving engagement?
+              What{`'`}s driving engagement?
             </button>
             {!isPro && (
               <button
