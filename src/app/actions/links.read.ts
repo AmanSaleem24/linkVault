@@ -2,8 +2,10 @@
 
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { Prisma } from '@prisma/client'
 import { RESERVED_SLUGS, SLUG_REGEX, type LinkStatus } from '@/lib/validators'
 import { FREE_TIER_LIMITS } from '@/lib/config'
+import { getCurrentUserSubscription, isPro } from '@/lib/plan'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -61,7 +63,7 @@ export async function getLinksAction(params: LinksListParams = {}): Promise<Link
   } = params
 
   try {
-    const where: Record<string, unknown> = { userId: session.user.id }
+    const where: { userId: string; AND?: Prisma.LinkWhereInput[]; [k: string]: unknown } = { userId: session.user.id }
 
     if (search) {
       where.AND = where.AND || []
@@ -182,7 +184,8 @@ export async function getUserUsageStatsAction() {
     where: { id: userId },
     select: { role: true }
   })
-  const isPro = dbUser?.role === 'admin' || dbUser?.role === 'pro'
+  const subscription = await getCurrentUserSubscription()
+  const userIsPro = dbUser?.role === 'admin' || isPro(subscription)
 
   const startOfMonth = new Date()
   startOfMonth.setDate(1)
@@ -193,7 +196,7 @@ export async function getUserUsageStatsAction() {
     let linkCount = 0
     let qrCount = 0
 
-    if (!isPro) {
+    if (!userIsPro) {
       const logs = await prisma.auditLog.findMany({
         where: {
           userId,
@@ -216,7 +219,7 @@ export async function getUserUsageStatsAction() {
       data: {
         linkCount,
         qrCount,
-        isPro,
+        isPro: userIsPro,
         limits: FREE_TIER_LIMITS,
       },
     }
@@ -232,6 +235,14 @@ export async function exportLinksAction(): Promise<{ success: true; csv: string 
   const session = await auth()
   if (!session?.user?.id) {
     return { success: false as const, error: 'You must be logged in' }
+  }
+
+  // CSV export is a Pro feature
+  const subscription = await getCurrentUserSubscription()
+  const userIsPro =
+    session.user.role === 'admin' || isPro(subscription)
+  if (!userIsPro) {
+    return { success: false as const, error: 'CSV export is a Pro feature. Please upgrade to access this.' }
   }
 
   try {
@@ -280,7 +291,7 @@ export async function checkAliasAvailabilityAction(slug: string): Promise<{ avai
     return { available: false, reason: 'Only lowercase letters, numbers, and hyphens allowed' }
   }
 
-  if (RESERVED_SLUGS.includes(trimmed)) {
+  if ((RESERVED_SLUGS as readonly string[]).includes(trimmed)) {
     return { available: false, reason: 'This alias is reserved' }
   }
 
@@ -333,18 +344,19 @@ export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLo
 
   const { isPro: isProParam, limit = 20, cursor } = params
 
-  // If isPro not provided, resolve from session
-  let isPro = isProParam
-  if (isPro === undefined) {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    })
-    isPro = dbUser?.role === 'admin' || dbUser?.role === 'pro'
+  // If isPro not provided, resolve from session and subscription
+  let userIsPro = isProParam
+  if (userIsPro === undefined) {
+    if (session.user.role === 'admin') {
+      userIsPro = true
+    } else {
+      const subscription = await getCurrentUserSubscription()
+      userIsPro = isPro(subscription)
+    }
   }
 
   // Server-side gate: no data for free users
-  if (!isPro) {
+  if (!userIsPro) {
     return {
       success: true,
       data: { logs: [], totalCount: 0, nextCursor: null },

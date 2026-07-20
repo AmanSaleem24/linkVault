@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getUserUsageStatsAction } from '@/app/actions/links'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { isPro as mockIsPro, getCurrentUserSubscription as mockGetCurrentUserSubscription } from '@/lib/plan'
 
 // Mock the auth module
 vi.mock('@/lib/auth', () => ({
@@ -17,7 +18,16 @@ vi.mock('@/lib/prisma', () => ({
     auditLog: {
       findMany: vi.fn(),
     },
+    subscription: {
+      findUnique: vi.fn(),
+    },
   },
+}))
+
+// Mock the plan module (getCurrentUserSubscription / isPro)
+vi.mock('@/lib/plan', () => ({
+  getCurrentUserSubscription: vi.fn(),
+  isPro: vi.fn(() => false),
 }))
 
 describe('getUserUsageStatsAction', () => {
@@ -58,11 +68,15 @@ describe('getUserUsageStatsAction', () => {
     }
   })
 
-  it('identifies pro tier users', async () => {
+  it('identifies pro tier users (active subscription)', async () => {
     // @ts-expect-error mock auth typing
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'pro-1', role: 'pro' } })
+    vi.mocked(auth).mockResolvedValue({ user: { id: 'pro-1', role: 'user' } })
     // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'pro-1', role: 'pro' })
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'pro-1', role: 'user' })
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetCurrentUserSubscription).mockResolvedValue({ status: 'ACTIVE' } as never)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(true)
 
     // @ts-expect-error Prisma mock typing
     vi.mocked(prisma.auditLog.findMany).mockResolvedValue([])

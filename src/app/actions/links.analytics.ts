@@ -14,6 +14,8 @@ import {
   type DateRange,
   type TimeSeriesPoint,
 } from '@/lib/analytics-helpers'
+import { getCurrentUserSubscription } from '@/lib/plan'
+import { isPro } from '@/lib/plan'
 export type { DateRange, TimeSeriesPoint } from '@/lib/analytics-helpers'
 import type { SegmentRow } from '@/components/dashboard/charts/types'
 
@@ -373,6 +375,23 @@ const requireUserId = cache(async (): Promise<{ userId: string } | { error: stri
   return { userId: session.user.id }
 })
 
+const requirePro = cache(async (): Promise<
+  { userId: string } | { error: string; needsUpgrade: true }
+> => {
+  const session = await auth()
+  if (!session?.user?.id) return { error: 'Not authenticated', needsUpgrade: true }
+
+  if (session.user.role === 'admin') {
+    return { userId: session.user.id }
+  }
+
+  const subscription = await getCurrentUserSubscription()
+  if (!isPro(subscription)) {
+    return { error: 'Analytics are Pro only', needsUpgrade: true }
+  }
+  return { userId: session.user.id }
+})
+
 const getUserLinkIds = cache(async (userId: string): Promise<string[]> => {
   const links = await prismaQuery(() => prisma.link.findMany({
     where: { userId },
@@ -398,7 +417,7 @@ export interface AccountAnalyticsData {
 export async function getAccountAnalyticsAction(): Promise<
   { success: true; data: AccountAnalyticsData } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -507,7 +526,7 @@ export async function getAccountTimeSeriesAction(
 ): Promise<
   { success: true; data: Array<{ date: string; count: number }> } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -545,7 +564,7 @@ export async function getAccountTopLinksAction(
 ): Promise<
   { success: true; data: TopLinkRow[] } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -584,7 +603,7 @@ export async function getAccountLocationsAction(): Promise<
     data: Array<{ name: string; count: number; percentage: number }>
   } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -617,7 +636,7 @@ export async function getAccountReferrersAction(): Promise<
     data: Array<{ name: string; count: number; percentage: number }>
   } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -653,7 +672,7 @@ export async function getAccountDevicesAction(): Promise<
     }
   } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 
@@ -701,7 +720,7 @@ export async function getAccountStatusBreakdownAction(): Promise<
     data: Array<{ name: string; count: number; percentage: number }>
   } | { success: false; error: string }
 > {
-  const authResult = await requireUserId()
+  const authResult = await requirePro()
   if ('error' in authResult) return { success: false, error: authResult.error }
   const { userId } = authResult
 

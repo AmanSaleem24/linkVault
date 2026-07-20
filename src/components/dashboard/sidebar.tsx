@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Lock, Globe } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Lock, Globe, CreditCard } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -27,7 +27,8 @@ const navItems: NavItem[] = [
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/audit', label: 'Activity', icon: History, divider: true },
   { href: '/domains', label: 'Custom domains', icon: Globe, disabled: true },
-  { href: '/settings', label: 'Settings', icon: Settings, disabled: true, divider: true },
+  { href: '/billing', label: 'Billing', icon: CreditCard, divider: true },
+  { href: '/settings', label: 'Settings', icon: Settings, disabled: true },
 ]
 
 export function Sidebar({ isPro = false }: { isPro?: boolean }) {

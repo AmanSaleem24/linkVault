@@ -20,8 +20,14 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     link: { findUnique: vi.fn(), findMany: vi.fn(), groupBy: vi.fn() },
     click: { count: vi.fn(), findMany: vi.fn(), groupBy: vi.fn() },
+    subscription: { findUnique: vi.fn() },
   },
   prismaQuery: vi.fn(async (fn) => await fn()),
+}))
+
+vi.mock('@/lib/plan', () => ({
+  getCurrentUserSubscription: vi.fn(async () => null),
+  isPro: vi.fn(() => false),
 }))
 
 const mockAuth = vi.mocked(auth)
@@ -36,7 +42,7 @@ const userId = 'test-user'
 
 function mockSession() {
   // @ts-expect-error mock auth typing
-  mockAuth.mockResolvedValue({ user: { id: userId, email: 'test@test.com', role: 'user' } })
+  mockAuth.mockResolvedValue({ user: { id: userId, email: 'test@test.com', role: 'admin' } })
 }
 
 beforeEach(() => {

@@ -16,6 +16,10 @@ export default function AllLinksPage() {
   const [isExporting, setIsExporting] = useState(false)
 
   const handleExport = async () => {
+    if (!isPro) {
+      router.push('/pricing')
+      return
+    }
     setIsExporting(true)
     try {
       const result = await exportLinksAction()
@@ -83,7 +87,7 @@ export default function AllLinksPage() {
           ) : (
             <Download className="size-4" />
           )}
-          Download CSV
+          {isPro ? 'Download CSV' : 'Upgrade to Export'}
         </Button>
       </div>
 

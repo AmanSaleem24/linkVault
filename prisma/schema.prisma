@@ -41,19 +41,60 @@ model VerificationToken {
 }
 
 model User {
-  id            String     @id @default(cuid())
-  name          String
-  email         String     @unique
-  passwordHash  String?
-  role          Role       @default(user)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  image         String?
-  emailVerified DateTime?
-  accounts      Account[]
-  auditLogs     AuditLog[]
-  links         Link[]
-  sessions      Session[]
+  id              String        @id @default(cuid())
+  name            String
+  email           String       @unique
+  passwordHash    String?
+  role            Role          @default(user)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  image           String?
+  emailVerified   DateTime?
+  razorpayCustomerId String?
+  accounts        Account[]
+  auditLogs       AuditLog[]
+  links           Link[]
+  sessions        Session[]
+  subscription    Subscription?
+}
+
+model Subscription {
+  id                      String             @id @default(cuid())
+  userId                  String             @unique
+  user                    User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  razorpaySubscriptionId  String             @unique
+  planId                  String
+  status                  SubscriptionStatus @default(CREATED)
+  currentPeriodEnd        DateTime?
+  cancelAtPeriodEnd       Boolean            @default(false)
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([razorpaySubscriptionId])
+}
+
+model WebhookEvent {
+  id          String    @id @default(cuid())
+  provider    String    @default("razorpay")
+  eventId     String    @unique
+  eventType   String
+  payload     Json
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([eventId])
+  @@index([processedAt])
+}
+
+enum SubscriptionStatus {
+  CREATED
+  AUTHENTICATED
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  COMPLETED
 }
 
 model Link {

@@ -8,6 +8,7 @@ import {
 } from '@/app/actions/links.read'
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { getCurrentUserSubscription as mockGetSub, isPro as mockIsPro } from '@/lib/plan'
 
 vi.mock('@/lib/auth', () => ({
   auth: vi.fn(),
@@ -22,7 +23,13 @@ vi.mock('@/lib/prisma', () => ({
       findUnique: vi.fn(),
       count: vi.fn(),
     },
+    subscription: { findUnique: vi.fn() },
   },
+}))
+
+vi.mock('@/lib/plan', () => ({
+  getCurrentUserSubscription: vi.fn(async () => null),
+  isPro: vi.fn(() => false),
 }))
 
 // @ts-expect-error mock auth typing
@@ -47,24 +54,32 @@ describe('getUserRoleAction', () => {
   it('returns false when not logged in', async () => {
     // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue(null)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(false)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(false)
   })
 
-  it('returns false for regular user role', async () => {
-    mockSession('user')
+  it('returns false for free tier (no active subscription)', async () => {
+    // @ts-expect-error mock auth typing
+    mockAuth.mockResolvedValue({ user: { id: userId, role: 'user' } })
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue(null)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(false)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(false)
   })
 
-  it('returns true for pro role', async () => {
-    mockSession('pro')
-    const result = await getUserRoleAction()
-    expect(result.isPro).toBe(true)
-  })
-
-  it('returns true for admin role', async () => {
-    mockSession('admin')
+  it('returns true when subscription is ACTIVE', async () => {
+    // @ts-expect-error mock auth typing
+    mockAuth.mockResolvedValue({ user: { id: userId, role: 'user' } })
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(true)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(true)
   })
@@ -83,8 +98,25 @@ describe('exportLinksAction', () => {
     }
   })
 
-  it('returns CSV with correct headers', async () => {
+  it('fails for free users', async () => {
     mockSession('user')
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue(null)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(false)
+    const result = await exportLinksAction()
+    expect(result.success).toBe(false)
+    if (!result.success) {
+      expect(result.error).toContain('Pro feature')
+    }
+  })
+
+  it('returns CSV with correct headers for Pro users', async () => {
+    mockSession('user')
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([])
 
     const result = await exportLinksAction()
@@ -97,6 +129,10 @@ describe('exportLinksAction', () => {
 
   it('escapes URLs with quotes in CSV', async () => {
     mockSession('user')
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([
       {
         slug: 'test',
@@ -117,6 +153,10 @@ describe('exportLinksAction', () => {
 
   it('includes all link fields in CSV rows', async () => {
     mockSession('user')
+    // @ts-expect-error mock typing
+    vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
+    // @ts-expect-error mock typing
+    vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([
       {
         slug: 'abc123',

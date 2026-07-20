@@ -123,8 +123,8 @@ export default function LinkAnalyticsPage() {
   }, [link])
 
   const handleUpgrade = useCallback(() => {
-    toast.info('Upgrade flow coming soon!')
-  }, [])
+    router.push('/pricing')
+  }, [router])
 
   // Loading state
   if (isLoading || !link) {

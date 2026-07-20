@@ -11,6 +11,7 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 /**
  * AccountMenu — dropdown in the top navbar
@@ -81,15 +82,14 @@ export function AccountMenu({
                 <p className="text-xs font-medium text-foreground">{isPro ? 'Pro account' : 'Free account'}</p>
               </div>
               {!isPro && (
-                <Button
-                  size="sm"
-                  className="h-7 rounded-md bg-brand-400 px-3 text-xs font-semibold text-white hover:bg-brand-500 dark:bg-brand-300 dark:text-brand-600 dark:hover:bg-brand-200"
-                  onClick={() => {
-                    // Will be wired to billing/upgrade page later
-                  }}
-                >
-                  Upgrade
-                </Button>
+                <Link href="/pricing">
+                  <Button
+                    size="sm"
+                    className="h-7 rounded-md bg-brand-400 px-3 text-xs font-semibold text-white hover:bg-brand-500 dark:bg-brand-300 dark:text-brand-600 dark:hover:bg-brand-200"
+                  >
+                    Upgrade
+                  </Button>
+                </Link>
               )}
             </div>
           </DropdownMenuLabel>

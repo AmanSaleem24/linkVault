@@ -3,6 +3,7 @@
 import { auth } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { FREE_TIER_LIMITS } from '@/lib/config'
+import { getCurrentUserSubscription } from '@/lib/plan'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,7 +50,7 @@ export async function getDashboardDataAction(): Promise<DashboardResult> {
 
   const userId = session.user.id
 
-  // Always fetch the freshest role from DB (role change doesn't require re-login)
+  // Always fetch the freshest role/subscription from DB (upgrade doesn't require re-login)
   const dbUser = await prisma.user.findUnique({
     where: { id: userId },
     select: { role: true, name: true },
@@ -59,7 +60,9 @@ export async function getDashboardDataAction(): Promise<DashboardResult> {
     return { success: false, error: 'User not found' }
   }
 
-  const isPro = dbUser.role === 'admin' || dbUser.role === 'pro'
+  const subscription = await getCurrentUserSubscription()
+  const isPro =
+    dbUser.role === 'admin' || subscription?.status === 'ACTIVE'
 
   // ── Parse first name ───────────────────────────────────────────────────────
   const firstName = dbUser.name?.split(' ')[0] ?? session.user.email?.split('@')[0] ?? 'there'

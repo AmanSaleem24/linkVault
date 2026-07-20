@@ -7,6 +7,8 @@ import QRCode from 'react-qr-code'
 import { toast } from 'sonner'
 import { type LinkStats } from '@/components/home/use-create-link'
 
+import { type ExpiryDuration } from '@/lib/validators'
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface PreviewSidebarProps {
@@ -15,7 +17,7 @@ interface PreviewSidebarProps {
   qrCode: boolean
   expires: boolean
   expiresIn: number | string | null
-  getExpiryLabel: (v: number | string | null) => string
+  getExpiryLabel: (v: ExpiryDuration) => string
   createdData: { shortUrl: string; originalUrl: string; hasQr: boolean } | null
   isPro: boolean
   stats: LinkStats | null
@@ -132,7 +134,7 @@ export function PreviewSidebar({
           {expires && (
             <li className="flex items-center gap-3">
               <CheckCircle2 className="size-4.5 text-green-500" strokeWidth={2.5} />
-              Expires: {getExpiryLabel(expiresIn)}
+              Expires: {getExpiryLabel(expiresIn as ExpiryDuration)}
             </li>
           )}
           <li className="flex items-center gap-3 text-slate-400">

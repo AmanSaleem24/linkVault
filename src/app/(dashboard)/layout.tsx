@@ -6,7 +6,9 @@ import { AccountMenu } from '@/components/dashboard/account-menu'
 import { CommandPalette } from '@/components/dashboard/command-palette'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 import { Search } from 'lucide-react'
+import { getCurrentUserSubscription, isPro as checkIsPro } from '@/lib/plan'
 
 /**
  * (dashboard) Route Group Layout
@@ -32,7 +34,12 @@ export default async function DashboardLayout({
   }
 
   const user = session.user
-  const isPro = user.role === 'admin' || user.role === 'pro'
+  let userIsPro = user.role === 'admin'
+  if (!userIsPro) {
+    const subscription = await getCurrentUserSubscription()
+    userIsPro = checkIsPro(subscription)
+  }
+  const isPro = userIsPro
 
   return (
     <div className={`${GeistSans.variable} ${GeistMono.variable} flex h-full min-h-screen font-[family-name:var(--font-geist-sans)]`}>
@@ -69,14 +76,14 @@ export default async function DashboardLayout({
               <Search className="size-5" />
             </button>
 
-            {!isPro ? (
-              <Button
-                className="hidden h-10 bg-[#ECEEFE] px-5 text-[0.95rem] font-semibold text-[#2B0094] shadow-none hover:bg-[#e0e4fd] dark:bg-brand-400/20 dark:text-brand-300 md:flex"
-              >
-                Upgrade
-              </Button>
-            ) : (
+            {isPro ? (
               <span className="hidden rounded bg-[#ECEEFE] px-3 py-1.5 text-[0.75rem] font-bold text-[#2B0094] dark:bg-brand-400/20 dark:text-brand-300 md:flex">Pro</span>
+            ) : (
+              <Link href="/pricing" className="hidden md:block">
+                <Button className="h-10 bg-[#ECEEFE] px-5 text-[0.95rem] font-semibold text-[#2B0094] shadow-none hover:bg-[#e0e4fd] dark:bg-brand-400/20 dark:text-brand-300">
+                  Upgrade
+                </Button>
+              </Link>
             )}
 
             <AccountMenu

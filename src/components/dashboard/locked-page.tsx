@@ -20,11 +20,7 @@ export function LockedPage({
   const router = useRouter()
   
   const handleUpgrade = () => {
-    if (onUpgrade) {
-      onUpgrade()
-    } else {
-      router.push('/settings')
-    }
+    router.push('/pricing')
   }
 
   return (

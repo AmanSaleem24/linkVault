@@ -226,7 +226,7 @@ export function QuickCreateCard({
             <QrCode className="size-3.5 shrink-0" />
             QR limit reached —{' '}
             <Link
-              href="/billing/upgrade"
+              href="/pricing"
               className="font-semibold text-[#2B0094] underline-offset-2 hover:underline"
             >
               Upgrade to Pro
@@ -269,7 +269,7 @@ export function QuickCreateCard({
       {isLinkLimitReached && (
         <p className="mt-2 text-[0.82rem] font-medium text-amber-600">
           You&apos;ve reached your monthly link limit.{' '}
-          <Link href="/billing/upgrade" className="underline hover:text-amber-700">
+          <Link href="/pricing" className="underline hover:text-amber-700">
             Upgrade to Pro
           </Link>{' '}
           for unlimited links.
