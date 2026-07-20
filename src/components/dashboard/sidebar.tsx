@@ -95,7 +95,7 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
       </div>
 
       {/* ── Navigation ─────────────────────────────────────────────────── */}
-      <nav className={`flex flex-1 flex-col gap-1 ${collapsed ? 'px-2' : 'px-3'}`}>
+      <nav className={`flex flex-1 flex-col gap-1 overflow-y-auto [&::-webkit-scrollbar]:hidden ${collapsed ? 'px-2' : 'px-3'}`}>
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon

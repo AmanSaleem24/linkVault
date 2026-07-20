@@ -16,7 +16,7 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
   const circumference = 2 * Math.PI * radius
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <h3 className="text-sm font-semibold text-slate-700 mb-4">{title}</h3>
 
       {total === 0 ? (
@@ -25,7 +25,7 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
           <p className="text-xs mt-1">Clicks will appear here</p>
         </div>
       ) : (
-        <div className="flex flex-col sm:flex-row items-center gap-6">
+        <div className="flex flex-1 flex-col items-center justify-center gap-6 sm:flex-row">
           <div className="shrink-0">
             <svg
               width={size}

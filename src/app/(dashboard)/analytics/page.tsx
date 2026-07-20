@@ -100,8 +100,8 @@ export default async function AnalyticsPage() {
       {timeSeries.success && <TimeSeriesChart data={timeSeries.data} />}
 
       {/* Top performing links + Status breakdown */}
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="flex flex-col h-full rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900 mb-6">Top performing links</h2>
           {!topLinks.success || topLinks.data.length === 0 ? (
             <p className="text-sm text-slate-400 py-8 text-center">No links yet</p>
@@ -137,7 +137,7 @@ export default async function AnalyticsPage() {
           )}
         </div>
 
-        <div className="lg:col-span-2">
+        <div>
           {statusBreakdown.success && (
             <SegmentChart
               title="Link status breakdown"

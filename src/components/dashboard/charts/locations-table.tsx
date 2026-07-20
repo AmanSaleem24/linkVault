@@ -12,13 +12,13 @@ export function LocationsTable({ title, data, emptyLabel = 'No data yet' }: Loca
   const maxCount = data[0]?.count ?? 1
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <h3 className="text-sm font-semibold text-slate-700 mb-4">{title}</h3>
 
       {data.length === 0 ? (
         <p className="text-sm text-slate-400 py-8 text-center">{emptyLabel}</p>
       ) : (
-        <div className="overflow-x-auto">
+        <div className="flex-1 overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-slate-100">

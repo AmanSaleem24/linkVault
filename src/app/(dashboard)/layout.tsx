@@ -42,7 +42,7 @@ export default async function DashboardLayout({
   const isPro = userIsPro
 
   return (
-    <div className={`${GeistSans.variable} ${GeistMono.variable} flex h-full min-h-screen font-[family-name:var(--font-geist-sans)]`}>
+    <div className={`${GeistSans.variable} ${GeistMono.variable} flex h-screen overflow-hidden font-[family-name:var(--font-geist-sans)]`}>
       {/* ── Sidebar (client component for active-link highlighting) ──────── */}
       <Sidebar isPro={isPro} />
 
