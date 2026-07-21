@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { razorpay } from '@/lib/razorpay'
+import { getRazorpay } from '@/lib/razorpay'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -34,7 +34,7 @@ export async function POST() {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
-    await razorpay.subscriptions.cancel(subscription.razorpaySubscriptionId, true)
+    await getRazorpay().subscriptions.cancel(subscription.razorpaySubscriptionId, true)
 
     await prisma.subscription.update({
       where: { userId },

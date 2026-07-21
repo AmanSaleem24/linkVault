@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import crypto from 'crypto'
 import { prisma } from '@/lib/prisma'
-import { razorpay } from '@/lib/razorpay'
+import { getRazorpay } from '@/lib/razorpay'
 import { auth } from '@/lib/auth'
 import { invalidateSubscriptionCache } from '@/lib/plan'
 
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
     // proved the payment. We still try to get billing dates for a better UX.
     let currentPeriodEnd: Date | null = subscription.currentPeriodEnd
     try {
-      const rzpSub = await razorpay.subscriptions.fetch(razorpay_subscription_id)
+      const rzpSub = await getRazorpay().subscriptions.fetch(razorpay_subscription_id)
       if (rzpSub.current_end && rzpSub.current_end > 0) {
         currentPeriodEnd = new Date(rzpSub.current_end * 1000)
       }

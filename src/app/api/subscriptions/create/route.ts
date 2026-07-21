@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { razorpay } from '@/lib/razorpay'
+import { getRazorpay } from '@/lib/razorpay'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 import { checkRateLimit } from '@/lib/rate-limit'
@@ -44,7 +44,7 @@ export async function POST() {
     // automatic billing. Reusing them causes "id does not exist" errors.
     if (existing?.status === 'CREATED') {
       try {
-        const rzpSub = await razorpay.subscriptions.fetch(existing.razorpaySubscriptionId)
+        const rzpSub = await getRazorpay().subscriptions.fetch(existing.razorpaySubscriptionId)
         if (rzpSub.status === 'created') {
           console.log('[subscriptions/create] reusing created sub:', existing.razorpaySubscriptionId)
           return NextResponse.json({ subscriptionId: existing.razorpaySubscriptionId, keyId })
@@ -69,7 +69,7 @@ export async function POST() {
 
     // ── Create a brand-new Razorpay subscription ───────────────────────────────
     console.log('[subscriptions/create] creating new Razorpay subscription...')
-    const subscription = await razorpay.subscriptions.create({
+    const subscription = await getRazorpay().subscriptions.create({
       plan_id: planId,
       customer_notify: 1,
       total_count: 120,
