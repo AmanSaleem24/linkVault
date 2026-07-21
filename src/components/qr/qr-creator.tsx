@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { QRCode } from 'react-qrcode-logo'
-import { Loader2, Link2, Palette, Save, ArrowLeft, Grid, CircleDot, Plus, Globe, Check, Lock, Tag } from 'lucide-react'
+import { Loader2, Link2, Palette, Save, ArrowLeft, Grid, CircleDot, Plus, Check, Lock, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getUserLinksAction, checkAliasAvailabilityAction } from '@/app/actions/links.read'
 import { createQrCode, getQrCodes } from '@/app/actions/qr'
@@ -57,11 +57,11 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
   }, [])
 
   useEffect(() => {
-    if (!alias.trim()) {
-      setAliasError('')
-      return
-    }
     const timer = setTimeout(async () => {
+      if (!alias.trim()) {
+        setAliasError('')
+        return
+      }
       setAliasChecking(true)
       const res = await checkAliasAvailabilityAction(alias)
       setAliasChecking(false)
@@ -70,7 +70,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
       } else {
         setAliasError('')
       }
-    }, 500)
+    }, alias.trim() ? 500 : 0)
     return () => clearTimeout(timer)
   }, [alias])
 

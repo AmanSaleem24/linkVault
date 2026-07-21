@@ -30,14 +30,21 @@ vi.mock('@/lib/plan', () => ({
   isPro: vi.fn(() => false),
 }))
 
+// Cast mocks to their vi.fn() types for full mock API access
+const mockAuth = auth as unknown as ReturnType<typeof vi.fn>
+const mockPrisma = prisma as unknown as {
+  user: { findUnique: ReturnType<typeof vi.fn> }
+  auditLog: { findMany: ReturnType<typeof vi.fn> }
+  subscription: { findUnique: ReturnType<typeof vi.fn> }
+}
+
 describe('getUserUsageStatsAction', () => {
   beforeEach(() => {
     vi.resetAllMocks()
   })
 
   it('fails if user is not logged in', async () => {
-    // @ts-expect-error mock auth typing
-    vi.mocked(auth).mockResolvedValue(null)
+    mockAuth.mockResolvedValue(null)
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(false)
     if (!result.success) {
@@ -46,13 +53,10 @@ describe('getUserUsageStatsAction', () => {
   })
 
   it('identifies free tier users and returns usage counts', async () => {
-    // @ts-expect-error mock auth typing
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'user-1', role: 'user' } })
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'user-1', role: 'user' })
+    mockAuth.mockResolvedValue({ user: { id: 'user-1', role: 'user' } })
+    mockPrisma.user.findUnique.mockResolvedValue({ id: 'user-1', role: 'user' })
 
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([
+    mockPrisma.auditLog.findMany.mockResolvedValue([
       { newValue: { hasQrCode: false } },
       { newValue: { hasQrCode: false } },
       { newValue: { hasQrCode: true } },
@@ -69,17 +73,12 @@ describe('getUserUsageStatsAction', () => {
   })
 
   it('identifies pro tier users (active subscription)', async () => {
-    // @ts-expect-error mock auth typing
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'pro-1', role: 'user' } })
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'pro-1', role: 'user' })
-    // @ts-expect-error mock typing
+    mockAuth.mockResolvedValue({ user: { id: 'pro-1', role: 'user' } })
+    mockPrisma.user.findUnique.mockResolvedValue({ id: 'pro-1', role: 'user' })
     vi.mocked(mockGetCurrentUserSubscription).mockResolvedValue({ status: 'ACTIVE' } as never)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(true)
 
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([])
+    mockPrisma.auditLog.findMany.mockResolvedValue([])
 
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(true)
@@ -89,13 +88,10 @@ describe('getUserUsageStatsAction', () => {
   })
 
   it('identifies admin tier users as pro', async () => {
-    // @ts-expect-error mock auth typing
-    vi.mocked(auth).mockResolvedValue({ user: { id: 'admin-1', role: 'admin' } })
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: 'admin-1', role: 'admin' })
+    mockAuth.mockResolvedValue({ user: { id: 'admin-1', role: 'admin' } })
+    mockPrisma.user.findUnique.mockResolvedValue({ id: 'admin-1', role: 'admin' })
 
-    // @ts-expect-error Prisma mock typing
-    vi.mocked(prisma.auditLog.findMany).mockResolvedValue([])
+    mockPrisma.auditLog.findMany.mockResolvedValue([])
 
     const result = await getUserUsageStatsAction()
     expect(result.success).toBe(true)

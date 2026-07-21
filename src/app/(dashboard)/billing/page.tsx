@@ -2,7 +2,7 @@
 
 import useSWR from 'swr'
 import Link from 'next/link'
-import { ArrowLeft, Zap, CheckCircle2, Clock, XCircle, AlertTriangle, CreditCard, Calendar, Shield, Sparkles, Receipt, ArrowRight, Check } from 'lucide-react'
+import { Zap, CheckCircle2, Clock, XCircle, CreditCard, Calendar, Shield, Sparkles, Receipt, ArrowRight, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PLANS } from '@/lib/plans'
 import { format } from 'date-fns'
@@ -86,7 +86,7 @@ export default function BillingPage() {
             </div>
             <div>
               <p className="text-base font-bold text-blue-800 dark:text-blue-300">Activating your subscription…</p>
-              <p className="mt-1 text-sm text-blue-700 dark:text-blue-400/90">We're just waiting for the final confirmation from Razorpay. Give it a minute and refresh.</p>
+              <p className="mt-1 text-sm text-blue-700 dark:text-blue-400/90">We&apos;re just waiting for the final confirmation from Razorpay. Give it a minute and refresh.</p>
             </div>
           </div>
         )}

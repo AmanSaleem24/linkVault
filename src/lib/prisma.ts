@@ -19,11 +19,14 @@ export async function prismaQuery<T>(
   try {
     return await fn()
   } catch (error: unknown) {
+    const errorCode = (error !== null && typeof error === 'object' && 'code' in error)
+      ? (error as { code: unknown }).code
+      : undefined
     const isRetryable =
-      (error as any)?.code === 'ETIMEDOUT' ||
-      (error as any)?.code === 'ECONNREFUSED' ||
-      (error as any)?.code === 'P1000' ||
-      (error as any)?.code === 'P1001' ||
+      errorCode === 'ETIMEDOUT' ||
+      errorCode === 'ECONNREFUSED' ||
+      errorCode === 'P1000' ||
+      errorCode === 'P1001' ||
       (error instanceof Error &&
         (error.message.includes('P1000') ||
           error.message.includes('P1001') ||

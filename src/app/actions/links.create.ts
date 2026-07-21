@@ -126,7 +126,7 @@ export async function createLinkAction(input: unknown) {
       }
       
       finalUrl = urlObj.toString()
-    } catch (e) {
+    } catch {
       // If URL parsing fails, silently fall back to original (Zod already validated it, so this shouldn't happen)
     }
 

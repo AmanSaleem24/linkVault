@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import useSWRInfinite from 'swr/infinite'
-import { getLinksAction } from '@/app/actions/links.read'
+import { getLinksAction, type LinksListParams, type LinksResult } from '@/app/actions/links.read'
 import { toggleLinkStatusAction, deleteLinkAction } from '@/app/actions/links.delete'
 import { getUserRoleAction } from '@/app/actions/user.getRole'
 import { toast } from 'sonner'
@@ -37,7 +37,7 @@ export function useLinks() {
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // SWR Keys and Fetcher
-  const getKey = (pageIndex: number, previousPageData: any) => {
+  const getKey = (pageIndex: number, previousPageData: (LinksResult & { success: true }) | null) => {
     if (previousPageData && !previousPageData.data?.hasMore) return null
 
     const cursor = previousPageData?.data?.nextCursor || undefined
@@ -56,7 +56,7 @@ export function useLinks() {
     ]
   }
 
-  const fetcher = async ([_, params]: [string, any]) => {
+  const fetcher = async ([, params]: [string, LinksListParams]) => {
     const result = await getLinksAction(params)
     if (!result.success) throw new Error(result.error || 'Failed to load')
     return result

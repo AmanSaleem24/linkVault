@@ -32,15 +32,22 @@ vi.mock('@/lib/plan', () => ({
   isPro: vi.fn(() => false),
 }))
 
-// @ts-expect-error mock auth typing
-const mockAuth = vi.mocked(auth)
-// @ts-expect-error Prisma mock typing
-const mockPrisma = vi.mocked(prisma)
+const mockAuth = auth as unknown as ReturnType<typeof vi.fn>
+
+const mockPrisma = prisma as unknown as {
+  user: { findUnique: ReturnType<typeof vi.fn> }
+  link: { findMany: ReturnType<typeof vi.fn> }
+  auditLog: {
+    findMany: ReturnType<typeof vi.fn>
+    findUnique: ReturnType<typeof vi.fn>
+    count: ReturnType<typeof vi.fn>
+  }
+  subscription: { findUnique: ReturnType<typeof vi.fn> }
+}
 
 const userId = 'test-user'
 
 function mockSession(role: string = 'user') {
-  // @ts-expect-error mock auth typing
   mockAuth.mockResolvedValue({ user: { id: userId, email: 'test@test.com', role } })
 }
 
@@ -52,33 +59,24 @@ beforeEach(() => {
 
 describe('getUserRoleAction', () => {
   it('returns false when not logged in', async () => {
-    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue(null)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(false)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(false)
   })
 
   it('returns false for free tier (no active subscription)', async () => {
-    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue({ user: { id: userId, role: 'user' } })
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue(null)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(false)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(false)
   })
 
   it('returns true when subscription is ACTIVE', async () => {
-    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue({ user: { id: userId, role: 'user' } })
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(true)
     const result = await getUserRoleAction()
     expect(result.isPro).toBe(true)
@@ -89,7 +87,6 @@ describe('getUserRoleAction', () => {
 
 describe('exportLinksAction', () => {
   it('fails when not logged in', async () => {
-    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await exportLinksAction()
     expect(result.success).toBe(false)
@@ -100,9 +97,7 @@ describe('exportLinksAction', () => {
 
   it('fails for free users', async () => {
     mockSession('user')
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue(null)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(false)
     const result = await exportLinksAction()
     expect(result.success).toBe(false)
@@ -113,9 +108,7 @@ describe('exportLinksAction', () => {
 
   it('returns CSV with correct headers for Pro users', async () => {
     mockSession('user')
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([])
 
@@ -129,9 +122,7 @@ describe('exportLinksAction', () => {
 
   it('escapes URLs with quotes in CSV', async () => {
     mockSession('user')
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([
       {
@@ -153,9 +144,7 @@ describe('exportLinksAction', () => {
 
   it('includes all link fields in CSV rows', async () => {
     mockSession('user')
-    // @ts-expect-error mock typing
     vi.mocked(mockGetSub).mockResolvedValue({ status: 'ACTIVE' } as never)
-    // @ts-expect-error mock typing
     vi.mocked(mockIsPro).mockReturnValue(true)
     mockPrisma.link.findMany.mockResolvedValue([
       {
@@ -207,7 +196,6 @@ describe('getAuditLogAction', () => {
   ]
 
   it('fails when not logged in', async () => {
-    // @ts-expect-error mock auth typing
     mockAuth.mockResolvedValue(null)
     const result = await getAuditLogAction({ isPro: true })
     expect(result.success).toBe(false)

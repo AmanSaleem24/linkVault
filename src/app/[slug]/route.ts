@@ -96,9 +96,10 @@ export async function GET(
   const ua = parseUserAgent(userAgent)
 
   // Parse UTM parameters
-  const utmSource = request.nextUrl.searchParams.get('utm_source') ?? undefined
-  const utmMedium = request.nextUrl.searchParams.get('utm_medium') ?? undefined
-  const utmCampaign = request.nextUrl.searchParams.get('utm_campaign') ?? undefined
+  const { searchParams } = new URL(request.url)
+  const utmSource = searchParams.get('utm_source') ?? undefined
+  const utmMedium = searchParams.get('utm_medium') ?? undefined
+  const utmCampaign = searchParams.get('utm_campaign') ?? undefined
 
   const redis = getRedis()
   const now = new Date()

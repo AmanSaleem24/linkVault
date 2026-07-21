@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Link as LinkIcon, Star, CheckCircle2, Globe, Copy, ExternalLink } from 'lucide-react'
+import { Star, CheckCircle2, Globe, Copy, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { QRCode } from 'react-qrcode-logo'
 import { toast } from 'sonner'

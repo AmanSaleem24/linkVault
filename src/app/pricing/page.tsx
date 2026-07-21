@@ -5,7 +5,7 @@ import { PLANS } from '@/lib/plans'
 import { PricingClient } from '@/components/pricing/pricing-client'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { ArrowLeft, CheckCircle2, Sparkles, Zap } from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Sparkles } from 'lucide-react'
 
 export default async function PricingPage() {
   const session = await auth()

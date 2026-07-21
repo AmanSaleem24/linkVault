@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { deleteQrCode } from '@/app/actions/qr'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import Link from 'next/link'
+
 import {
   DropdownMenu,
   DropdownMenuContent,

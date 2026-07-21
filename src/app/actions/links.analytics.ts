@@ -433,13 +433,7 @@ export async function getUtmAction(linkId: string): Promise<{
 // Account-wide analytics (aggregated across all of the user's links)
 // ═══════════════════════════════════════════════════════════════════════════════
 
-// ─── Internal helpers ─────────────────────────────────────────────────────────
 
-const requireUserId = cache(async (): Promise<{ userId: string } | { error: string }> => {
-  const session = await auth()
-  if (!session?.user?.id) return { error: 'Not authenticated' }
-  return { userId: session.user.id }
-})
 
 const requirePro = cache(async (): Promise<
   { userId: string } | { error: string; needsUpgrade: true }

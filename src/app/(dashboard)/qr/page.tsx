@@ -4,17 +4,13 @@ import useSWR from 'swr'
 import { QrManager } from '@/components/qr/qr-manager'
 import { getQrPageDataAction } from '@/app/actions/qr'
 import { FREE_TIER_LIMITS } from '@/lib/config'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export default function QrPage() {
   const { data: result, isLoading } = useSWR('qr-page-data', getQrPageDataAction, { revalidateOnFocus: true })
-  const [appUrl, setAppUrl] = useState('https://linkvault.io')
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setAppUrl(window.location.origin)
-    }
-  }, [])
+  const [appUrl] = useState(() =>
+    typeof window !== 'undefined' ? window.location.origin : 'https://linkvault.io'
+  )
 
   if (isLoading || !result) {
     return (

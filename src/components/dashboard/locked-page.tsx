@@ -8,14 +8,12 @@ interface LockedPageProps {
   title: string
   description: string
   ctaLabel?: string
-  onUpgrade?: () => void
 }
 
 export function LockedPage({ 
   title, 
   description, 
   ctaLabel = 'Upgrade to Pro', 
-  onUpgrade 
 }: LockedPageProps) {
   const router = useRouter()
   

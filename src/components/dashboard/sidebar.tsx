@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Lock, Globe, CreditCard } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Globe, CreditCard } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
-export function Sidebar({ isPro = false }: { isPro?: boolean }) {
+export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
 
@@ -99,7 +99,6 @@ export function Sidebar({ isPro = false }: { isPro?: boolean }) {
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
           const Icon = item.icon
-          const isLocked = item.href === '/audit' && !isPro
 
           return (
             <div key={item.href}>
