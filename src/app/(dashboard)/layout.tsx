@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { AccountMenu } from '@/components/dashboard/account-menu'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Button } from '@/components/ui/button'
+import Image from 'next/image'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
 import { getCurrentUserSubscription, isPro as checkIsPro } from '@/lib/plan'
@@ -50,9 +51,9 @@ export default async function DashboardLayout({
         {/* ── Top Navbar ──────────────────────────────────────────────────── */}
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-4 md:px-6 dark:bg-background">
           {/* Mobile: logo (sidebar is hidden on mobile) */}
-          <span className="text-lg font-bold tracking-tight text-brand-400 dark:text-brand-300 md:hidden">
-            LinkVault
-          </span>
+          <Link href="/home" className="flex items-center gap-2 md:hidden">
+            <Image src="/logo.png" alt="LinkVault" width={24} height={24} className="rounded-md" />
+          </Link>
 
           {/* Search bar (desktop) */}
           <div className="hidden md:flex md:flex-1">

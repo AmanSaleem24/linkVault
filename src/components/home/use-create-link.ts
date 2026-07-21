@@ -5,7 +5,7 @@ import { getUserUsageStatsAction, createLinkAction, checkAliasAvailabilityAction
 import { type ExpiryDuration } from '@/lib/validators'
 import { toast } from 'sonner'
 
-const ENV_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? ''
+const ENV_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://link-vault-theta.vercel.app'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

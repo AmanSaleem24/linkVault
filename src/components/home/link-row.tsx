@@ -87,7 +87,7 @@ export function LinkRow({
         {/* Action icons */}
         <div className="flex shrink-0 items-center gap-0.5">
           <ShareDialog
-            url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : `https://linkvault.io/${link.slug}`}
+            url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : `https://link-vault-theta.vercel.app/${link.slug}`}
             title={getLinkTitle(link.originalUrl)}
           >
             <button

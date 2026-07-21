@@ -29,7 +29,7 @@ export default function CustomDomainsPage() {
           Custom Domains
         </h1>
         <p className="mt-4 text-base leading-relaxed text-slate-500 dark:text-muted-foreground">
-          Brand your links with your own domain name. Replace <strong className="text-slate-700 dark:text-slate-300">linkvault.io</strong> with your own website&apos;s domain to increase trust and click-through rates.
+          Brand your links with your own domain name. Replace <strong className="text-slate-700 dark:text-slate-300">link-vault-theta.vercel.app</strong> with your own website&apos;s domain to increase trust and click-through rates.
         </p>
 
         <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-brand-200/60 bg-brand-50/50 px-4 py-1.5 text-sm font-medium text-brand-700 dark:border-brand-800/40 dark:bg-brand-950/30 dark:text-brand-300">

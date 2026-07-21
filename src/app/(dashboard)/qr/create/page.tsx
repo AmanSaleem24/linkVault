@@ -15,7 +15,7 @@ export default async function CreateQrPage() {
   }
 
   const headersList = await headers()
-  const host = headersList.get('host') || 'linkvault.io'
+  const host = headersList.get('host') || 'link-vault-theta.vercel.app'
   const protocol = headersList.get('x-forwarded-proto') || 'http'
   const appUrl = `${protocol}://${host}`
 

@@ -143,6 +143,112 @@
   }
 }
 
+/* ── Dot-grid background (page-wide, very faint) ────────────────── */
+
+.page-dot-grid {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(61, 82, 160, 0.04) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+.dark .page-dot-grid {
+  background-image: radial-gradient(circle, rgba(112, 145, 230, 0.04) 1px, transparent 0);
+}
+
+/* ── Animation keyframes ─────────────────────────────────────────── */
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.55; }
+}
+
+@keyframes badge-ping {
+  0%   { transform: scale(1); opacity: 1; }
+  75%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%   { opacity: 0.3; }
+  50%  { opacity: 1; }
+  100% { opacity: 0.3; }
+}
+
+@keyframes number-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(61, 82, 160, 0.15); }
+  50%      { box-shadow: 0 0 18px rgba(61, 82, 160, 0.3); }
+}
+
+@keyframes bar-shimmer {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+/* ── Reusable animation utility classes ─────────────────────────── */
+
+.anim-gradient-text {
+  background-size: 200% 200%;
+  animation: gradient-shift 6s ease-in-out infinite;
+}
+
+.anim-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+.anim-badge-dot::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: badge-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.anim-bar-shimmer {
+  animation: bar-shimmer 2.5s ease-in-out infinite;
+}
+
+.anim-number-glow {
+  animation: number-glow 3s ease-in-out infinite;
+}
+
+/* ── Hover helper classes ───────────────────────────────────────── */
+
+.hover-card {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.hover-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px -12px rgba(61, 82, 160, 0.18);
+}
+
+.hover-card-static {
+  transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.hover-card-static:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px -10px rgba(61, 82, 160, 0.15);
+}
+
+/* ── prefers-reduced-motion ─────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 @media (min-width: 768px) {
   :root {
     --content-gutter: 98px;

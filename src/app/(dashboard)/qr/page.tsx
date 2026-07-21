@@ -9,7 +9,7 @@ import { useState } from 'react'
 export default function QrPage() {
   const { data: result, isLoading } = useSWR('qr-page-data', getQrPageDataAction, { revalidateOnFocus: true })
   const [appUrl] = useState(() =>
-    typeof window !== 'undefined' ? window.location.origin : 'https://linkvault.io'
+    typeof window !== 'undefined' ? window.location.origin : 'https://link-vault-theta.vercel.app'
   )
 
   if (isLoading || !result) {

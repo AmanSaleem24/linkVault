@@ -126,7 +126,7 @@ export default function CreateLinkPage() {
                   Domain
                 </label>
                 <div className="flex h-12.5 w-full items-center rounded-xl border border-slate-200 bg-slate-50 px-4">
-                  <span className="text-[0.95rem] font-medium text-slate-500">linkvault.com</span>
+                  <span className="text-[0.95rem] font-medium text-slate-500">link-vault-theta.vercel.app</span>
                 </div>
               </div>
 

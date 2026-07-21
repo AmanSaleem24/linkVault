@@ -151,7 +151,7 @@ export function RecentLinksSection({ links, isPro }: RecentLinksSectionProps) {
   useEffect(() => {
     if (hasMounted.current) return
     hasMounted.current = true
-    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))
+    setBaseUrl(process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : 'https://link-vault-theta.vercel.app'))
   }, [])
 
   return (

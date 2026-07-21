@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Globe, CreditCard } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 
 /**
@@ -58,17 +59,16 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
       {/* ── Logo row ─────────────────────────────────── */}
       <div className="flex h-16 items-center px-5">
         {!collapsed ? (
-          <span className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-[#FF6C37] dark:text-[#FF6C37]">
-            {/* Simple logo approximation */}
-            <div className="flex size-7 items-center justify-center rounded-full border-2 border-[#FF6C37] font-serif text-sm">
-              b
-            </div>
-            LinkVault
-          </span>
+          <Link href="/home" className="flex items-center gap-2.5">
+            <Image src="/logo.png" alt="LinkVault" width={28} height={28} className="rounded-md" />
+            <span className="text-xl font-extrabold tracking-tight text-[#FF6C37] dark:text-[#FF6C37]">
+              LinkVault
+            </span>
+          </Link>
         ) : (
-          <div className="mx-auto flex size-7 items-center justify-center rounded-full border-2 border-[#FF6C37] font-serif text-sm font-extrabold text-[#FF6C37]">
-            b
-          </div>
+          <Link href="/home" className="mx-auto flex size-7 items-center justify-center">
+            <Image src="/logo.png" alt="LinkVault" width={28} height={28} className="rounded-md" />
+          </Link>
         )}
       </div>
 

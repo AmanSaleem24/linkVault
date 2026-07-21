@@ -1,0 +1,15 @@
+# robots.txt for LinkVault
+# See https://developers.google.com/search/docs/advanced/robots/intro
+
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /home/
+Disallow: /link/
+Disallow: /dashboard/
+
+# Crawl delay
+Crawl-delay: 10
+
+# Sitemap
+Sitemap: https://linkvault.app/sitemap.xml

@@ -76,7 +76,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
 
   const selectedLink = links.find((l) => l.id === linkId)
   
-  let previewUrl = 'https://linkvault.io'
+  let previewUrl = 'https://link-vault-theta.vercel.app'
   if (mode === 'existing' && selectedLink) {
     previewUrl = `${appUrl}/${selectedLink.slug}`
   } else if (mode === 'new' && rawUrl) {
@@ -210,7 +210,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                   </div>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <span className="text-sm text-slate-400">linkvault.io/</span>
+                      <span className="text-sm text-slate-400">link-vault-theta.vercel.app/</span>
                     </div>
                     <input
                       type="text"
