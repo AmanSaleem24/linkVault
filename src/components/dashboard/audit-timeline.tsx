@@ -69,13 +69,60 @@ function formatDate(iso: string): { date: string; time: string } {
   }
 }
 
-function formatJsonValue(val: Record<string, unknown> | null): string {
-  if (!val) return ''
-  const parts: string[] = []
-  if (val.slug) parts.push(`/${val.slug}`)
-  if (val.originalUrl) parts.push(val.originalUrl as string)
-  if (val.status) parts.push(`status: ${val.status}`)
-  return parts.join(' → ') || JSON.stringify(val).slice(0, 80)
+function EventDetails({ log }: { log: AuditLogEntry }) {
+  if (log.action === 'create') {
+    const url = log.newValue?.originalUrl as string | undefined
+    return url ? (
+      <span className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
+        Targeted to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{url}</code>
+      </span>
+    ) : <span className="text-muted-foreground">Link created</span>
+  }
+
+  if (log.action === 'delete') {
+    const url = log.previousValue?.originalUrl as string | undefined
+    return url ? (
+      <span className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
+        Previously targeted to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{url}</code>
+      </span>
+    ) : <span className="text-muted-foreground">Link deleted</span>
+  }
+
+  if (log.action === 'enable') {
+    return <span className="text-muted-foreground">Link was enabled and is now publicly accessible.</span>
+  }
+
+  if (log.action === 'disable') {
+    return <span className="text-muted-foreground">Link was disabled and will now return a 404.</span>
+  }
+
+  if (log.action === 'update') {
+    const changes: React.ReactNode[] = []
+    const prev = log.previousValue || {}
+    const next = log.newValue || {}
+
+    if (prev.originalUrl !== next.originalUrl && next.originalUrl) {
+      changes.push(
+        <span key="url" className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
+          Destination updated to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{next.originalUrl as string}</code>
+        </span>
+      )
+    }
+    if (prev.slug !== next.slug && next.slug) {
+      changes.push(
+        <span key="slug" className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
+          Alias changed to <strong className="text-foreground">/{next.slug as string}</strong>
+        </span>
+      )
+    }
+    
+    if (changes.length > 0) {
+      return <div className="flex flex-col gap-1.5">{changes}</div>
+    }
+    return <span className="text-muted-foreground">Link details updated</span>
+  }
+
+  return <span className="text-muted-foreground">Action performed</span>
 }
 
 interface AuditTimelineProps {
@@ -109,121 +156,105 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
   }
 
   return (
-    <div className="global-content py-8">
-      <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-foreground">Activity log</h1>
-        <p className="mt-1.5 text-base text-muted-foreground">
-          A record of all actions taken on your links
-        </p>
-      </div>
-
-      {logs.length === 0 && !isLoadingMore && (
-        <div className="rounded-xl border border-border bg-card p-12 text-center">
-          <FileText className="mx-auto size-10 text-muted-foreground/60 mb-3" />
-          <p className="text-base font-medium text-foreground">No activity yet</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Actions like creating, updating, or deleting links will appear here.
+    <div className="global-content mb-12 mt-6">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">Activity Log</h1>
+          <p className="mt-3 text-[1.05rem] text-muted-foreground">
+            A comprehensive record of all actions taken on your links.
           </p>
         </div>
-      )}
 
-      {dates.length > 0 && (
-        <div className="space-y-8">
-          {dates.map((date) => (
-            <div key={date}>
-              {/* Date header */}
-              <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        {logs.length === 0 && !isLoadingMore && (
+          <div className="rounded-2xl border border-border/80 bg-card p-16 text-center shadow-sm">
+            <FileText className="mx-auto size-12 text-muted-foreground/50 mb-4" />
+            <p className="text-lg font-bold text-foreground">No activity yet</p>
+            <p className="mt-2 text-[0.95rem] text-muted-foreground max-w-md mx-auto">
+              Once you start creating, editing, and managing your links, those actions will automatically appear here.
+            </p>
+          </div>
+        )}
+
+        {dates.length > 0 && (
+          <div className="space-y-12">
+            {dates.map((date) => (
+              <div key={date}>
+                {/* Date header */}
+                <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-muted-foreground mb-4 pl-2">
                   {date}
                 </h2>
-                <div className="flex-1 h-px bg-slate-200" />
-              </div>
 
-              {/* Entries for this date */}
-              <div className="space-y-0">
-                {grouped[date].map((log, idx) => {
-                  const config = ACTION_CONFIG[log.action] ?? DEFAULT_CONFIG
-                  const Icon = config.icon
-                  const { time } = formatDate(log.createdAt)
-                  const isLast = idx === grouped[date].length - 1
-                  const isToggle = log.action === 'enable' || log.action === 'disable'
+                {/* Entries for this date */}
+                <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
+                  <div className="divide-y divide-border/50">
+                    {grouped[date].map((log) => {
+                      const config = ACTION_CONFIG[log.action] ?? DEFAULT_CONFIG
+                      const Icon = config.icon
+                      const { time } = formatDate(log.createdAt)
 
-                  return (
-                    <div key={log.id} className="flex gap-4">
-                      {/* Timeline dot + line */}
-                      <div className="flex flex-col items-center">
-                        <div className={cn('size-8 rounded-full flex items-center justify-center', config.iconBg)}>
-                          <Icon className={cn('size-4', config.iconColor)} />
-                        </div>
-                        {!isLast && <div className="w-px flex-1 bg-slate-200 mt-1 min-h-10" />}
-                      </div>
-
-                      {/* Content */}
-                      <div className={cn('flex-1 pb-6', isLast && 'pb-0')}>
-                        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
-                          <div className="flex items-center justify-between">
-                            <span className={cn(
-                              'inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-0.5 rounded-full',
-                              config.badgeBg,
-                              config.badgeText
-                            )}>
-                              <Icon className="size-3" />
-                              {config.label}
-                            </span>
-                            <span className="text-xs text-muted-foreground">{time}</span>
-                          </div>
-
-                          <div className="mt-3 space-y-1">
-                            {log.linkSlug && (
-                              <div className="flex items-center gap-2 text-sm">
-                                <span className="font-medium text-foreground">/{log.linkSlug}</span>
-                                {log.linkUrl && (
-                                  <a
-                                    href={log.linkUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-muted-foreground hover:text-brand transition-colors"
-                                  >
-                                    <ExternalLink className="size-3.5" />
-                                  </a>
+                      return (
+                        <div key={log.id} className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 sm:p-6 hover:bg-muted/20 transition-colors">
+                          <div className="flex items-start sm:items-center gap-4 sm:gap-6">
+                            <div className={cn('size-11 sm:size-12 rounded-xl flex items-center justify-center shrink-0 border border-border/40 shadow-sm', config.iconBg)}>
+                              <Icon className={cn('size-5', config.iconColor)} />
+                            </div>
+                            <div className="space-y-1.5">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className={cn('text-xs font-bold uppercase tracking-wider', config.badgeText)}>
+                                  {config.label}
+                                </span>
+                                {log.linkSlug && (
+                                  <>
+                                    <span className="text-muted-foreground/30">•</span>
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="font-semibold text-foreground">/{log.linkSlug}</span>
+                                      {log.linkUrl && (
+                                        <a
+                                          href={log.linkUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-muted-foreground hover:text-[var(--accent-brand)] transition-colors inline-flex mt-0.5"
+                                          title="Visit Link"
+                                        >
+                                          <ExternalLink className="size-3.5" />
+                                        </a>
+                                      )}
+                                    </div>
+                                  </>
                                 )}
                               </div>
-                            )}
-
-                            {log.previousValue && (
-                              <p className={cn('text-xs', isToggle ? 'text-muted-foreground' : 'text-muted-foreground')}>
-                                From: {formatJsonValue(log.previousValue)}
-                              </p>
-                            )}
-                            {log.newValue && (
-                              <p className={cn('text-xs', isToggle ? 'text-muted-foreground font-medium' : 'text-muted-foreground')}>
-                                To: {formatJsonValue(log.newValue)}
-                              </p>
-                            )}
+                              <div className="text-[0.95rem]">
+                                <EventDetails log={log} />
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="text-left sm:text-right shrink-0 mt-3 sm:mt-0 pl-15 sm:pl-0">
+                            <span className="text-[0.85rem] font-medium text-muted-foreground">{time}</span>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                  )
-                })}
+                      )
+                    })}
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          {/* Load more */}
-          {hasMore && (
-            <div className="flex items-center justify-center pt-4">
-              <button
-                onClick={handleLoadMore}
-                disabled={isLoadingMore}
-                className="text-[0.85rem] font-medium text-muted-foreground hover:text-[#3D52A0] transition-colors disabled:opacity-50"
-              >
-                {isLoadingMore ? 'Loading...' : 'Load more'}
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+            {/* Load more */}
+            {hasMore && (
+              <div className="flex items-center justify-center pt-2">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={isLoadingMore}
+                  className="h-11 px-6 rounded-xl bg-muted/50 border border-border/50 text-[0.95rem] font-semibold text-foreground hover:bg-muted hover:border-border transition-all disabled:opacity-50"
+                >
+                  {isLoadingMore ? 'Loading...' : 'Load older activity'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
