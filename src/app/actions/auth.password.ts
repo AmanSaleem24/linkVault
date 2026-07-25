@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { sendPasswordResetEmail } from '@/lib/email'
 import { forgotPasswordSchema, resetPasswordSchema } from '@/lib/validators'
 import { PASSWORD_RESET_TOKEN_EXPIRY_MINUTES, BCRYPT_ROUNDS } from '@/lib/config'
+import { authIpLimiter, getIp } from '@/lib/ratelimit'
 
 // ─── Forgot Password ──────────────────────────────────────────────────────────
 
@@ -16,6 +17,14 @@ export async function forgotPasswordAction(formData: unknown) {
   }
 
   const { email } = result.data
+
+  const ip = await getIp()
+  if (ip) {
+    const { success } = await authIpLimiter.limit(ip)
+    if (!success) {
+      return { success: false, error: 'Too many requests. Please try again later.' }
+    }
+  }
 
   try {
     const user = await prisma.user.findFirst({

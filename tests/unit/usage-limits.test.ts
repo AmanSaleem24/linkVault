@@ -68,7 +68,7 @@ describe('getUserUsageStatsAction', () => {
       expect(result.data.isPro).toBe(false)
       expect(result.data.linkCount).toBe(3)
       expect(result.data.qrCount).toBe(1)
-      expect(result.data.limits).toEqual({ links: 50, qr: 10 })
+      expect(result.data.limits).toEqual({ links: 20, qr: 10 })
     }
   })
 

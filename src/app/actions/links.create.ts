@@ -7,6 +7,7 @@ import { getRedis, LINK_CACHE_KEY } from '@/lib/redis'
 import { generateUniqueSlug } from '@/lib/slugs'
 import { createLinkSchema, resolveExpiry, type ExpiryDuration } from '@/lib/validators'
 import { getUserUsageStatsAction } from './links.read'
+import { createLinkLimiter } from '@/lib/ratelimit'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -44,6 +45,12 @@ export async function createLinkAction(input: unknown) {
   const userId = session.user.id
 
   const { url, alias, expiresAt, qrCode, utmSource, utmMedium, utmCampaign } = parsed.data
+
+  // 2.5 Rate Limit (keyed by userId since they are authenticated)
+  const { success: rateLimitSuccess } = await createLinkLimiter.limit(userId)
+  if (!rateLimitSuccess) {
+    return { success: false as const, error: 'You are creating links too fast. Please try again in a minute.' }
+  }
 
   // 3. Enforce limits for free users
   const usageStats = await getUserUsageStatsAction()

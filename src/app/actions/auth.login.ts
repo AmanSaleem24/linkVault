@@ -3,6 +3,7 @@
 import { signIn, signOut } from '@/lib/auth'
 import { AuthError } from 'next-auth'
 import { loginSchema } from '@/lib/validators'
+import { authIpLimiter, authEmailLimiter, getIp } from '@/lib/ratelimit'
 
 // ─── Login ────────────────────────────────────────────────────────────────────
 
@@ -12,6 +13,20 @@ export async function loginAction(formData: unknown) {
     return { success: false, error: 'Invalid email or password' }
   }
   const { email, password } = parsed.data
+
+  const ip = await getIp()
+  if (ip) {
+    const { success } = await authIpLimiter.limit(ip)
+    if (!success) {
+      return { success: false, error: 'Too many login attempts. Please try again later.' }
+    }
+  }
+
+  const normalizedEmail = email.trim().toLowerCase()
+  const { success: emailSuccess } = await authEmailLimiter.limit(normalizedEmail)
+  if (!emailSuccess) {
+    return { success: false, error: 'Too many login attempts. Please try again later.' }
+  }
 
   try {
     await signIn('credentials', {

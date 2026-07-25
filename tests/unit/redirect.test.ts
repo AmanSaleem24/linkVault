@@ -9,6 +9,10 @@ const mockPrisma = vi.hoisted(() => ({
 
 const mockRedisGet = vi.hoisted(() => vi.fn())
 
+const mockRatelimit = vi.hoisted(() => ({
+  limit: vi.fn().mockResolvedValue({ success: true, limit: 100, remaining: 99, reset: Date.now() + 10000 }),
+}))
+
 vi.mock('next/server', async () => {
   const actual = await vi.importActual<typeof import('next/server')>('next/server')
   return {
@@ -25,6 +29,11 @@ vi.mock('@/lib/redis', () => ({
   getRedis: mockRedisGet,
   LINK_CACHE_KEY: (slug: string) => `cache:link:${slug}`,
   LINK_CACHE_TTL: 3600,
+}))
+
+vi.mock('@/lib/ratelimit', () => ({
+  getIp: vi.fn().mockResolvedValue('127.0.0.1'),
+  redirectLimiter: mockRatelimit,
 }))
 
 // ─── Imports ────────────────────────────────────────────────────────────────
@@ -276,6 +285,43 @@ describe('GET redirect handler', () => {
 
     expect(response).toBeInstanceOf(NextResponse)
     expect(response.status).toBe(404)
+  })
+})
+
+describe('Rate Limiting & Bots', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockRatelimit.limit.mockResolvedValue({ success: true, limit: 100, remaining: 99, reset: Date.now() + 10000 })
+  })
+
+  it('returns 429 when rate limit exceeded', async () => {
+    mockRatelimit.limit.mockResolvedValue({ success: false, limit: 100, remaining: 0, reset: Date.now() + 10000 })
+    
+    const response = await GET(makeRequest(), { params })
+    
+    expect(response.status).toBe(429)
+    expect(response.headers.get('Retry-After')).toBeTruthy()
+    expect(mockPrisma.link.findUnique).not.toHaveBeenCalled()
+  })
+
+  it('bypasses analytics for bot requests', async () => {
+    mockRedisNull()
+    mockPrisma.link.findUnique.mockResolvedValue({
+      id: 'link-1',
+      originalUrl: 'https://example.com/',
+      status: 'active',
+      expiresAt: null,
+    })
+
+    const response = await GET(
+      makeRequest({
+        'user-agent': 'Twitterbot/1.0',
+      }),
+      { params }
+    )
+
+    expect(response.status).toBe(302)
+    expect(mockPrisma.click.create).not.toHaveBeenCalled()
   })
 })
 

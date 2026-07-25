@@ -3,7 +3,8 @@ import { after } from 'next/server'
 import { getRedis, LINK_CACHE_KEY, LINK_CACHE_TTL, type CachedLink } from '@/lib/redis'
 import { prisma } from '@/lib/prisma'
 import { RESERVED_SLUGS } from '@/lib/validators'
-
+import { redirectLimiter, getIp } from '@/lib/ratelimit'
+import { isbot } from 'isbot'
 const LINKVAULT_404 = `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -95,11 +96,32 @@ export async function GET(
     undefined
   const ua = parseUserAgent(userAgent)
 
+  // ─── Rate Limiting (Before DB/Cache) ──────────────────────────────────────
+  const requestIp = await getIp()
+  
+  if (requestIp) {
+    const { success, reset, remaining, limit } = await redirectLimiter.limit(requestIp)
+    if (!success) {
+      return new NextResponse('Too Many Requests', {
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': limit.toString(),
+          'X-RateLimit-Remaining': remaining.toString(),
+          'X-RateLimit-Reset': reset.toString(),
+          'Retry-After': Math.max(0, Math.ceil((reset - Date.now()) / 1000)).toString(),
+        },
+      })
+    }
+  }
+  // Note: We deliberately bypass rate limiting if no IP is found to avoid a shared-fate DDoS vector.
+
   // Parse UTM parameters
   const { searchParams } = new URL(request.url)
   const utmSource = searchParams.get('utm_source') ?? undefined
   const utmMedium = searchParams.get('utm_medium') ?? undefined
   const utmCampaign = searchParams.get('utm_campaign') ?? undefined
+
+  const isBotRequest = isbot(userAgent)
 
   const redis = getRedis()
   const now = new Date()
@@ -115,36 +137,38 @@ export async function GET(
           cachedStatus === 'active' &&
           (!expiresAt || expiresAt > now)
         ) {
-          // Cache hit — redirect immediately, log analytics async
-          after(async () => {
-            try {
-              const link = await prisma.link.findUnique({
-                where: { slug },
-                select: { id: true },
-              })
-              if (!link) return
-              await prisma.click.create({
-                data: {
-                  linkId: link.id,
-                  browser: ua.browser,
-                  os: ua.os,
-                  device: ua.device,
-                  country: normalizedCountry,
-                  referrer: referer ?? undefined,
-                  ip: ip ?? undefined,
-                  utmSource,
-                  utmMedium,
-                  utmCampaign,
-                },
-              })
-              await prisma.link.update({
-                where: { id: link.id },
-                data: { clickCount: { increment: 1 } },
-              })
-            } catch {
-              // Analytics failure — non-critical
-            }
-          })
+          // Cache hit — redirect immediately, log analytics async if not a bot
+          if (!isBotRequest) {
+            after(async () => {
+              try {
+                const link = await prisma.link.findUnique({
+                  where: { slug },
+                  select: { id: true },
+                })
+                if (!link) return
+                await prisma.click.create({
+                  data: {
+                    linkId: link.id,
+                    browser: ua.browser,
+                    os: ua.os,
+                    device: ua.device,
+                    country: normalizedCountry,
+                    referrer: referer ?? undefined,
+                    ip: ip ?? undefined,
+                    utmSource,
+                    utmMedium,
+                    utmCampaign,
+                  },
+                })
+                await prisma.link.update({
+                  where: { id: link.id },
+                  data: { clickCount: { increment: 1 } },
+                })
+              } catch {
+                // Analytics failure — non-critical
+              }
+            })
+          }
           return NextResponse.redirect(cached.originalUrl, 302)
         }
         // Cached but disabled or expired — fall through to DB
@@ -199,31 +223,33 @@ export async function GET(
   }
 
   // ── Async analytics (runs after response is sent) ─────────────────────────
-  after(async () => {
-    if (!record) return
-    try {
-      await prisma.click.create({
-        data: {
-          linkId: record.id,
-          browser: ua.browser,
-          os: ua.os,
-          device: ua.device,
-          country: normalizedCountry,
-          referrer: referer ?? undefined,
-          ip: ip ?? undefined,
-          utmSource,
-          utmMedium,
-          utmCampaign,
-        },
-      })
-      await prisma.link.update({
-        where: { id: record.id },
-        data: { clickCount: { increment: 1 } },
-      })
-    } catch {
-      // Analytics failure — non-critical
-    }
-  })
+  if (!isBotRequest) {
+    after(async () => {
+      if (!record) return
+      try {
+        await prisma.click.create({
+          data: {
+            linkId: record.id,
+            browser: ua.browser,
+            os: ua.os,
+            device: ua.device,
+            country: normalizedCountry,
+            referrer: referer ?? undefined,
+            ip: ip ?? undefined,
+            utmSource,
+            utmMedium,
+            utmCampaign,
+          },
+        })
+        await prisma.link.update({
+          where: { id: record.id },
+          data: { clickCount: { increment: 1 } },
+        })
+      } catch {
+        // Analytics failure — non-critical
+      }
+    })
+  }
 
   return NextResponse.redirect(record.originalUrl, 302)
 }

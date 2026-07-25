@@ -6,6 +6,7 @@ import { prisma } from '@/lib/prisma'
 import { sendVerificationEmail } from '@/lib/email'
 import { signupSchema } from '@/lib/validators'
 import { AUTH_TOKEN_EXPIRY_MINUTES, BCRYPT_ROUNDS } from '@/lib/config'
+import { authIpLimiter, getIp } from '@/lib/ratelimit'
 
 // ─── Sign Up ──────────────────────────────────────────────────────────────────
 
@@ -16,6 +17,14 @@ export async function signUpAction(formData: unknown) {
   }
 
   const { name, email, password } = result.data
+
+  const ip = await getIp()
+  if (ip) {
+    const { success } = await authIpLimiter.limit(ip)
+    if (!success) {
+      return { success: false, error: 'Too many signup attempts. Please try again later.' }
+    }
+  }
 
   try {
     const existingUser = await prisma.user.findFirst({
