@@ -51,10 +51,10 @@ export default async function DashboardLayout({
         {/* ── Top Navbar ──────────────────────────────────────────────────── */}
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-4 md:px-6 dark:bg-background">
           {/* Mobile: logo (sidebar is hidden on mobile) */}
-          <Link href="/home" className="flex items-center gap-2 md:hidden">
-            <Image src="/logo.png" alt="LinkVault" width={32} height={32} className="rounded-md" />
+          <Link href="/home" className="flex items-center gap-1.5 md:hidden">
+            <Image src="/logo.svg" alt="LinkVault" width={32} height={32} className="rounded-md w-auto h-8" />
             <span className="text-xl font-extrabold tracking-tight">
-              <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+              <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
             </span>
           </Link>
 

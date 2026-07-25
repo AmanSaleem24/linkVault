@@ -87,7 +87,7 @@ export function LinkRow({
         {/* Action icons */}
         <div className="flex shrink-0 items-center gap-0.5">
           <ShareDialog
-            url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : `https://link-vault-theta.vercel.app/${link.slug}`}
+            url={`${process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app'}/${link.slug}`}
             title={getLinkTitle(link.originalUrl)}
           >
             <button
@@ -191,7 +191,7 @@ export function LinkRow({
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand-500 hover:underline transition-colors truncate"
         >
-          {typeof window !== 'undefined' ? `${window.location.host}/${link.slug}` : link.slug}
+          {`${(process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app').replace(/^https?:\/\//, '')}/${link.slug}`}
         </a>
         <button
           onClick={(e) => { e.stopPropagation(); onCopy() }}

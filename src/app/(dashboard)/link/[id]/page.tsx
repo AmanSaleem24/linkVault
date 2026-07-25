@@ -152,7 +152,7 @@ export default function LinkAnalyticsPage() {
     )
   }
 
-  const shortUrl = `${window.location.origin}/${link.slug}`
+  const shortUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app'}/${link.slug}`
 
   return (
     <div className="global-content py-8">
@@ -220,7 +220,7 @@ export default function LinkAnalyticsPage() {
               </button>
 
               <ShareDialog
-                url={typeof window !== 'undefined' ? `${window.location.origin}/${link.slug}` : ''}
+                url={`${process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app'}/${link.slug}`}
                 title={getLinkTitle(link.originalUrl)}
               >
                 <button

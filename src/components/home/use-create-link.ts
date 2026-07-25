@@ -5,7 +5,7 @@ import { getUserUsageStatsAction, createLinkAction, checkAliasAvailabilityAction
 import { type ExpiryDuration } from '@/lib/validators'
 import { toast } from 'sonner'
 
-const ENV_BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://link-vault-theta.vercel.app'
+const ENV_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

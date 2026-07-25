@@ -403,10 +403,10 @@ function Navbar() {
       }`}
     >
       <div className="global-content flex items-center justify-between py-4">
-        <Link href="/" className="flex items-center gap-2.5" prefetch={false}>
-          <Image src="/logo.png" alt="LinkVault" width={40} height={40} className="rounded-md" />
+        <Link href="/" className="flex items-center gap-1.5" prefetch={false}>
+          <Image src="/logo.svg" alt="LinkVault" width={40} height={40} className="rounded-md w-auto h-10" />
           <span className="text-2xl font-extrabold tracking-tight">
-            <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+            <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
           </span>
         </Link>
 

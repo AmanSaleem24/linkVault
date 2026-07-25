@@ -18,10 +18,10 @@ export function AuthShell({ children }: AuthShellProps) {
       <div className="flex w-full flex-col lg:w-[60%]">
         <div className="px-10 pt-10 sm:px-14">
           {/* Brand */}
-          <Link href="/" className="mb-10 flex items-center gap-2">
-            <Image src="/logo.png" alt="LinkVault" width={40} height={40} className="rounded-md" />
+          <Link href="/" className="mb-10 flex items-center gap-1.5">
+            <Image src="/logo.svg" alt="LinkVault" width={40} height={40} className="rounded-md w-auto h-10" />
             <span className="text-2xl font-extrabold tracking-tight">
-              <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+              <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
             </span>
           </Link>
         </div>
