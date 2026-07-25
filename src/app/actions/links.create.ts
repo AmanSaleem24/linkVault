@@ -61,9 +61,7 @@ export async function createLinkAction(input: unknown) {
     }
     
     // Gatekeep Pro features
-    if (alias) {
-      return { success: false as const, error: 'Custom aliases are a Pro feature.' }
-    }
+    // (Custom aliases are allowed for free users up to 20 links)
     if (expiresAt !== undefined && expiresAt !== null) {
       return { success: false as const, error: 'Link expiration is a Pro feature.' }
     }

@@ -52,7 +52,10 @@ export default async function DashboardLayout({
         <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-4 md:px-6 dark:bg-background">
           {/* Mobile: logo (sidebar is hidden on mobile) */}
           <Link href="/home" className="flex items-center gap-2 md:hidden">
-            <Image src="/logo.png" alt="LinkVault" width={24} height={24} className="rounded-md" />
+            <Image src="/logo.png" alt="LinkVault" width={32} height={32} className="rounded-md" />
+            <span className="text-xl font-extrabold tracking-tight">
+              <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+            </span>
           </Link>
 
           {/* Search bar (desktop) */}

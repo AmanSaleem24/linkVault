@@ -23,7 +23,7 @@ export const BCRYPT_ROUNDS = parseInt(
 // ─── Free Tier Limits ─────────────────────────────────────────────────────────
 
 export const FREE_TIER_LINK_LIMIT = parseInt(
-  process.env.FREE_TIER_LINK_LIMIT || '50',
+  process.env.FREE_TIER_LINK_LIMIT || '20',
   10
 )
 

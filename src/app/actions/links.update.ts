@@ -50,9 +50,7 @@ export async function updateLinkAction(input: unknown) {
     const isUserPro = session.user.role === 'admin' || isPro(subscription)
 
     if (!isUserPro) {
-      if (alias !== undefined && alias !== existing.slug) {
-        return { success: false as const, error: 'Custom aliases are a Pro feature.' }
-      }
+      // (Custom aliases are allowed for free users up to 20 links)
       
       const existingExpires = existing.expiresAt ? existing.expiresAt.getTime() : null
       const newExpires = expiresAt ? expiresAt.getTime() : null

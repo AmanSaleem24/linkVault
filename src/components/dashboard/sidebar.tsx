@@ -56,18 +56,17 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
         {collapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
       </button>
 
-      {/* ── Logo row ─────────────────────────────────── */}
       <div className="flex h-16 items-center px-5">
         {!collapsed ? (
           <Link href="/home" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="LinkVault" width={28} height={28} className="rounded-md" />
-            <span className="text-xl font-extrabold tracking-tight text-[#FF6C37] dark:text-[#FF6C37]">
-              LinkVault
+            <Image src="/logo.png" alt="LinkVault" width={36} height={36} className="rounded-md" />
+            <span className="text-2xl font-extrabold tracking-tight">
+              <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
             </span>
           </Link>
         ) : (
           <Link href="/home" className="mx-auto flex size-7 items-center justify-center">
-            <Image src="/logo.png" alt="LinkVault" width={28} height={28} className="rounded-md" />
+            <Image src="/logo.png" alt="LinkVault" width={32} height={32} className="rounded-md" />
           </Link>
         )}
       </div>

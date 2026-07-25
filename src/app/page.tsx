@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   ChevronRight,
@@ -403,13 +404,9 @@ function Navbar() {
     >
       <div className="global-content flex items-center justify-between py-4">
         <Link href="/" className="flex items-center gap-2.5" prefetch={false}>
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3D52A0] shadow-md shadow-[#3D52A0]/25">
-            <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-            </svg>
-          </div>
-          <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
-            LinkVault
+          <Image src="/logo.png" alt="LinkVault" width={40} height={40} className="rounded-md" />
+          <span className="text-2xl font-extrabold tracking-tight">
+            <span className="text-cyan-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
           </span>
         </Link>
 
