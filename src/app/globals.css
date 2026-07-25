@@ -145,16 +145,17 @@
 
 /* ── Dot-grid background (page-wide, very faint) ────────────────── */
 
-.page-dot-grid {
+.page-dot-grid::before {
+  content: "";
   pointer-events: none;
   position: fixed;
   inset: 0;
-  z-index: 0;
+  z-index: -1;
   background-image: radial-gradient(circle, rgba(61, 82, 160, 0.04) 1px, transparent 0);
   background-size: 28px 28px;
 }
 
-.dark .page-dot-grid {
+.dark .page-dot-grid::before {
   background-image: radial-gradient(circle, rgba(112, 145, 230, 0.04) 1px, transparent 0);
 }
 
