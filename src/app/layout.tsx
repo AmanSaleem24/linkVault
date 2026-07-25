@@ -14,7 +14,9 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://linkvault.app";
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost')
+  ? process.env.NEXT_PUBLIC_APP_URL 
+  : (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://link-vault-theta.vercel.app');
 
 export const viewport: Viewport = {
   themeColor: [
@@ -100,6 +102,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Toaster } from "@/components/ui/sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -131,6 +135,7 @@ export default function RootLayout({
         <AnimatedBackground />
         {children}
         <CommandPalette />
+        <Toaster />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

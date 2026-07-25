@@ -5,7 +5,7 @@ import { getUserUsageStatsAction, createLinkAction, checkAliasAvailabilityAction
 import { type ExpiryDuration } from '@/lib/validators'
 import { toast } from 'sonner'
 
-const ENV_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://link-vault-theta.vercel.app'
+const ENV_BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://link-vault-theta.vercel.app'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -49,9 +49,7 @@ export function useCreateLink() {
   useEffect(() => {
     if (hasMountedBaseUrl.current) return
     hasMountedBaseUrl.current = true
-    if (!ENV_BASE_URL) {
-      Promise.resolve().then(() => setBaseUrl(window.location.origin))
-    }
+    setBaseUrl(window.location.origin)
   }, [])
 
   // ─── Data fetching ────────────────────────────────────────────────────────

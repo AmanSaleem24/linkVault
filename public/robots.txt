@@ -12,4 +12,4 @@ Disallow: /dashboard/
 Crawl-delay: 10
 
 # Sitemap
-Sitemap: https://linkvault.app/sitemap.xml
+Sitemap: https://link-vault-theta.vercel.app/sitemap.xml

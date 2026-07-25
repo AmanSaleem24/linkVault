@@ -4,6 +4,15 @@ export const resend = new Resend(process.env.RESEND_API_KEY!)
 
 export const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'noreply@link-vault-theta.vercel.app'
 
+const getAppUrl = () => {
+  if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost')) {
+    return process.env.NEXT_PUBLIC_APP_URL;
+  }
+  return process.env.NODE_ENV === 'development' 
+    ? 'http://localhost:3000' 
+    : 'https://link-vault-theta.vercel.app';
+};
+
 // ─── Email senders ────────────────────────────────────────────────────────────
 
 export async function sendVerificationEmail({
@@ -15,7 +24,7 @@ export async function sendVerificationEmail({
   name: string
   token: string
 }) {
-  const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/verify-email?token=${token}`
+  const verifyUrl = `${getAppUrl()}/verify-email?token=${token}`
 
   return resend.emails.send({
     from: FROM_EMAIL,
@@ -43,7 +52,7 @@ export async function sendPasswordResetEmail({
   name: string
   token: string
 }) {
-  const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`
+  const resetUrl = `${getAppUrl()}/reset-password?token=${token}`
 
   return resend.emails.send({
     from: FROM_EMAIL,
