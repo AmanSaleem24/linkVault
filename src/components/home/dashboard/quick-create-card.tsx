@@ -161,49 +161,31 @@ export function QuickCreateCard({
 
   return (
     <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
-      {/* ── Card header: right-aligned link quota for free users ── */}
-      {showLinkQuota && (
-        <div className="mb-3 flex items-center justify-end">
-          <p
-            id="quick-create-link-quota"
-            className={`text-[0.78rem] font-medium ${
-              isLinkLimitReached ? 'text-red-500' : 'text-muted-foreground'
-            }`}
-          >
-            {isLinkLimitReached
-              ? 'Monthly link limit reached'
-              : `You can create ${linksRemainingThisMonth} more link${linksRemainingThisMonth === 1 ? '' : 's'} this month.`}
-          </p>
-        </div>
-      )}
-
       {/* ── URL input + Shorten button ── */}
-      <div className="flex gap-3">
-        <div className="relative flex-1">
-          <input
-            id="quick-create-url"
-            type="url"
-            placeholder="Paste a long URL to shorten it"
-            value={url}
-            onChange={(e) => {
-              setUrl(e.target.value)
-              setUrlError(null)
-              setCreated(null)
-            }}
-            onKeyDown={handleKeyDown}
-            disabled={isLinkLimitReached || isPending}
-            className={`h-11 w-full rounded-xl border bg-card px-4 text-[0.95rem] text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-[3px] disabled:opacity-50 disabled:cursor-not-allowed ${
-              urlError
-                ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
-                : 'border-border hover:border-border focus:border-[var(--accent-brand)] focus:ring-[var(--accent-brand)]/15'
-            }`}
-          />
-        </div>
+      <div className="flex h-12 items-stretch gap-3">
+        <input
+          id="quick-create-url"
+          type="url"
+          placeholder="Paste a long URL to shorten it"
+          value={url}
+          onChange={(e) => {
+            setUrl(e.target.value)
+            setUrlError(null)
+            setCreated(null)
+          }}
+          onKeyDown={handleKeyDown}
+          disabled={isLinkLimitReached || isPending}
+          className={`w-full flex-1 m-0 appearance-none rounded-xl border bg-background px-4 text-[0.95rem] text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-[3px] disabled:opacity-50 disabled:cursor-not-allowed ${
+            urlError
+              ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
+              : 'border-border/80 hover:border-border focus:border-[var(--accent-brand)] focus:ring-[var(--accent-brand)]/15'
+          }`}
+        />
         <button
           id="quick-create-submit"
           onClick={handleShorten}
           disabled={isLinkLimitReached || isPending}
-          className="flex h-11 items-center gap-2 rounded-xl border border-[var(--accent-brand-hover)] bg-gradient-to-b from-[var(--accent-brand)] to-[var(--accent-brand)] px-5 text-[0.95rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all hover:from-[var(--accent-brand-active)] hover:to-[var(--accent-brand)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          className="flex items-center gap-2 rounded-xl border border-[var(--accent-brand-hover)] bg-gradient-to-b from-[var(--accent-brand)] to-[var(--accent-brand)] px-5 text-[0.95rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all hover:from-[var(--accent-brand-active)] hover:to-[var(--accent-brand)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {isPending ? (
             <Loader2 className="size-4 animate-spin" />
@@ -219,8 +201,8 @@ export function QuickCreateCard({
         <p className="mt-2 text-[0.8rem] font-medium text-red-500">{urlError}</p>
       )}
 
-      {/* ── QR checkbox row ── */}
-      <div className="mt-3">
+      {/* ── Options Row: QR Checkbox & Quota Text ── */}
+      <div className="mt-3 flex items-center justify-between ml-1">
         {isQrLimitReached ? (
           <p id="quick-create-qr-limit" className="flex items-center gap-1.5 text-[0.8rem] text-muted-foreground">
             <QrCode className="size-3.5 shrink-0" />
@@ -262,6 +244,20 @@ export function QuickCreateCard({
               </span>
             )}
           </label>
+        )}
+
+        {/* ── Card header / Labels (Moved inline to right) ── */}
+        {showLinkQuota && (
+          <p
+            id="quick-create-link-quota"
+            className={`text-[0.78rem] font-medium ${
+              isLinkLimitReached ? 'text-red-500' : 'text-muted-foreground'
+            }`}
+          >
+            {isLinkLimitReached
+              ? 'Monthly link limit reached'
+              : `You can create ${linksRemainingThisMonth} more link${linksRemainingThisMonth === 1 ? '' : 's'} this month.`}
+          </p>
         )}
       </div>
 
@@ -337,7 +333,7 @@ export function QuickCreateCard({
 
       {/* ── Advanced create link ── */}
       {!isLinkLimitReached && (
-        <p className="mt-3 text-[0.82rem] text-muted-foreground">
+        <p className="mt-2.5 ml-1 text-[0.82rem] text-muted-foreground">
           Need a custom alias or expiration?{' '}
           <Link
             href="/links/new"
