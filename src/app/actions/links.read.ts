@@ -417,16 +417,23 @@ export async function getAuditLogAction(params: AuditLogParams): Promise<AuditLo
 
     const formatted = pageLogs.map(log => {
       const link = linkMap.get(log.entityId)
+      
+      const prevVal = log.previousValue as Record<string, unknown> | null
+      const newVal = log.newValue as Record<string, unknown> | null
+      
+      const fallbackSlug = (newVal?.slug || prevVal?.slug) as string | undefined
+      const fallbackUrl = (newVal?.originalUrl || prevVal?.originalUrl) as string | undefined
+      
       return {
         id: log.id,
         action: log.action,
         entityType: log.entityType,
         entityId: log.entityId,
-        previousValue: log.previousValue as Record<string, unknown> | null,
-        newValue: log.newValue as Record<string, unknown> | null,
+        previousValue: prevVal,
+        newValue: newVal,
         createdAt: log.createdAt.toISOString(),
-        linkSlug: link?.slug ?? null,
-        linkUrl: link?.originalUrl ?? null,
+        linkSlug: link?.slug ?? fallbackSlug ?? null,
+        linkUrl: link?.originalUrl ?? fallbackUrl ?? null,
       }
     })
 

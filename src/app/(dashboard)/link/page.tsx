@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Link as LinkIcon, Loader2, Plus, Download } from 'lucide-react'
+import { Link as LinkIcon, Loader2, Plus, Download, RefreshCw } from 'lucide-react'
 import { LinkRow } from '@/components/home/link-row'
 import { useLinks } from '@/components/link/use-links'
 import { LinkFilters } from '@/components/link/link-filters'
@@ -64,6 +64,8 @@ export default function AllLinksPage() {
     handleToggleStatus,
     handleDelete,
     handleLoadMore,
+    refresh,
+    isValidating,
   } = useLinks()
 
   return (
@@ -76,18 +78,29 @@ export default function AllLinksPage() {
             {totalCount} link{totalCount !== 1 ? 's' : ''} total
           </p>
         </div>
-        <Button
-          onClick={handleExport}
-          disabled={isExporting || isLoading}
-          className="h-10 gap-2 rounded-md bg-[var(--accent-brand)] px-5 text-[0.875rem] font-semibold text-white shadow-[0_0_20px_-5px_rgba(112,145,230,0.4)] transition-all hover:-translate-y-0.5 hover:bg-[var(--accent-brand-hover)] hover:text-white hover:shadow-[0_0_25px_-5px_rgba(112,145,230,0.6)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-brand)]/40 active:translate-y-0 active:scale-[0.98]"
-        >
-          {isExporting ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <Download className="size-4" />
-          )}
-          {isPro ? 'Download CSV' : 'Upgrade to Export'}
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={refresh}
+            disabled={isValidating || isLoading}
+            className="h-10 w-10 p-0 rounded-md border-border/60 hover:bg-muted text-muted-foreground transition-all"
+            title="Refresh links"
+          >
+            <RefreshCw className={`size-4 ${isValidating ? 'animate-spin text-foreground' : ''}`} />
+          </Button>
+          <Button
+            onClick={handleExport}
+            disabled={isExporting || isLoading}
+            className="h-10 gap-2 rounded-md bg-[var(--accent-brand)] px-5 text-[0.875rem] font-semibold text-white shadow-[0_0_20px_-5px_rgba(112,145,230,0.4)] transition-all hover:-translate-y-0.5 hover:bg-[var(--accent-brand-hover)] hover:text-white hover:shadow-[0_0_25px_-5px_rgba(112,145,230,0.6)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-brand)]/40 active:translate-y-0 active:scale-[0.98]"
+          >
+            {isExporting ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Download className="size-4" />
+            )}
+            {isPro ? 'Download CSV' : 'Upgrade to Export'}
+          </Button>
+        </div>
       </div>
 
       {/* Filters bar */}

@@ -62,7 +62,7 @@ export function useLinks() {
     return result
   }
 
-  const { data, size, setSize, mutate, isLoading: isSwrLoading } = useSWRInfinite(
+  const { data, size, setSize, mutate, isLoading: isSwrLoading, isValidating } = useSWRInfinite(
     getKey,
     fetcher,
     { revalidateFirstPage: false, revalidateOnFocus: true }
@@ -138,5 +138,7 @@ export function useLinks() {
     handleToggleStatus,
     handleDelete,
     handleLoadMore,
+    refresh: () => mutate(),
+    isValidating,
   }
 }

@@ -6,7 +6,7 @@ import { AuditTimeline } from '@/components/dashboard/audit-timeline'
 import { getAuditPageDataAction } from '@/app/actions/links.read'
 
 export default function AuditLogPage() {
-  const { data: result, isLoading } = useSWR('audit-page-data', getAuditPageDataAction, { revalidateOnFocus: true })
+  const { data: result, isLoading, mutate, isValidating } = useSWR('audit-page-data', getAuditPageDataAction, { revalidateOnFocus: true })
 
   if (isLoading || !result) {
     return (
@@ -61,5 +61,5 @@ export default function AuditLogPage() {
     )
   }
 
-  return <AuditTimeline initialLogs={logs} totalCount={totalCount} />
+  return <AuditTimeline initialLogs={logs} totalCount={totalCount} onRefresh={() => mutate()} isRefreshing={isValidating} />
 }

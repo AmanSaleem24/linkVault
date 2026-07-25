@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { FileText, Plus, Pencil, Trash2, ExternalLink, ToggleRight, ToggleLeft } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { FileText, Plus, Pencil, Trash2, ExternalLink, ToggleRight, ToggleLeft, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AuditLogEntry } from '@/app/actions/links.read'
 
@@ -73,27 +73,29 @@ function EventDetails({ log }: { log: AuditLogEntry }) {
   if (log.action === 'create') {
     const url = log.newValue?.originalUrl as string | undefined
     return url ? (
-      <span className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
-        Targeted to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{url}</code>
-      </span>
-    ) : <span className="text-muted-foreground">Link created</span>
+      <div className="flex items-start sm:items-center gap-2 text-foreground">
+        <span className="text-muted-foreground">Targeted to:</span> 
+        <code className="bg-muted/60 border border-border/50 px-2 py-1 rounded-md text-[0.85rem] font-medium break-all">{url}</code>
+      </div>
+    ) : <span className="text-muted-foreground">Link created successfully.</span>
   }
 
   if (log.action === 'delete') {
     const url = log.previousValue?.originalUrl as string | undefined
     return url ? (
-      <span className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
-        Previously targeted to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{url}</code>
-      </span>
-    ) : <span className="text-muted-foreground">Link deleted</span>
+      <div className="flex items-start sm:items-center gap-2 text-foreground">
+        <span className="text-muted-foreground">Previously targeted to:</span> 
+        <code className="bg-muted/60 border border-border/50 px-2 py-1 rounded-md text-[0.85rem] font-medium break-all">{url}</code>
+      </div>
+    ) : <span className="text-muted-foreground">Link deleted.</span>
   }
 
   if (log.action === 'enable') {
-    return <span className="text-muted-foreground">Link was enabled and is now publicly accessible.</span>
+    return <span className="text-foreground">Link was enabled and is now publicly accessible.</span>
   }
 
   if (log.action === 'disable') {
-    return <span className="text-muted-foreground">Link was disabled and will now return a 404.</span>
+    return <span className="text-foreground">Link was disabled and will now return a 404 page.</span>
   }
 
   if (log.action === 'update') {
@@ -103,46 +105,46 @@ function EventDetails({ log }: { log: AuditLogEntry }) {
 
     if (prev.originalUrl !== next.originalUrl && next.originalUrl) {
       changes.push(
-        <span key="url" className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
-          Destination updated to <code className="bg-muted/50 border border-border/50 px-1.5 py-0.5 rounded text-[0.8rem] truncate max-w-[200px] sm:max-w-sm text-foreground">{next.originalUrl as string}</code>
-        </span>
+        <div key="url" className="flex flex-col sm:flex-row sm:items-center gap-2 text-foreground">
+          <span className="text-muted-foreground shrink-0">Destination updated to:</span> 
+          <code className="bg-muted/60 border border-border/50 px-2 py-1 rounded-md text-[0.85rem] font-medium break-all">{next.originalUrl as string}</code>
+        </div>
       )
     }
     if (prev.slug !== next.slug && next.slug) {
       changes.push(
-        <span key="slug" className="inline-flex items-center gap-1.5 text-muted-foreground flex-wrap">
-          Alias changed to <strong className="text-foreground">/{next.slug as string}</strong>
-        </span>
+        <div key="slug" className="flex items-center gap-2 text-foreground">
+          <span className="text-muted-foreground shrink-0">Alias changed to:</span> 
+          <strong className="text-foreground bg-foreground/5 px-2 py-0.5 rounded-md">/{next.slug as string}</strong>
+        </div>
       )
     }
     
     if (changes.length > 0) {
-      return <div className="flex flex-col gap-1.5">{changes}</div>
+      return <div className="flex flex-col gap-2">{changes}</div>
     }
-    return <span className="text-muted-foreground">Link details updated</span>
+    return <span className="text-muted-foreground">Link details updated.</span>
   }
 
-  return <span className="text-muted-foreground">Action performed</span>
+  return <span className="text-muted-foreground">Action performed.</span>
 }
 
 interface AuditTimelineProps {
   initialLogs: AuditLogEntry[]
   totalCount: number
+  onRefresh?: () => void
+  isRefreshing?: boolean
 }
 
-export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
+export function AuditTimeline({ initialLogs, totalCount, onRefresh, isRefreshing }: AuditTimelineProps) {
   const [logs, setLogs] = useState<AuditLogEntry[]>(initialLogs)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
-  // Group logs by date
-  const grouped = logs.reduce<Record<string, AuditLogEntry[]>>((acc, log) => {
-    const { date } = formatDate(log.createdAt)
-    if (!acc[date]) acc[date] = []
-    acc[date].push(log)
-    return acc
-  }, {})
+  // Sync internal state when fresh data is fetched via SWR
+  useEffect(() => {
+    setLogs(initialLogs)
+  }, [initialLogs])
 
-  const dates = Object.keys(grouped).sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
   const hasMore = logs.length < totalCount
 
   const handleLoadMore = async () => {
@@ -156,16 +158,30 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
   }
 
   return (
-    <div className="global-content mb-12 mt-6">
-      <div className="mx-auto max-w-5xl">
-        <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">Activity Log</h1>
-          <p className="mt-3 text-[1.05rem] text-muted-foreground">
+    <div className="global-content py-8">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Activity Log</h1>
+          <p className="mt-1.5 text-base text-muted-foreground">
             A comprehensive record of all actions taken on your links.
           </p>
         </div>
+        {onRefresh && (
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onRefresh}
+              disabled={isRefreshing}
+              className="h-10 w-10 flex items-center justify-center rounded-md border border-border/60 hover:bg-muted text-muted-foreground transition-all shrink-0 disabled:opacity-50"
+              title="Refresh logs"
+            >
+              <RefreshCw className={cn("size-4", isRefreshing && "animate-spin text-foreground")} />
+            </button>
+          </div>
+        )}
+      </div>
 
-        {logs.length === 0 && !isLoadingMore && (
+      {logs.length === 0 && !isLoadingMore && (
           <div className="rounded-2xl border border-border/80 bg-card p-16 text-center shadow-sm">
             <FileText className="mx-auto size-12 text-muted-foreground/50 mb-4" />
             <p className="text-lg font-bold text-foreground">No activity yet</p>
@@ -175,78 +191,86 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
           </div>
         )}
 
-        {dates.length > 0 && (
-          <div className="space-y-12">
-            {dates.map((date) => (
-              <div key={date}>
-                {/* Date header */}
-                <h2 className="text-[0.85rem] font-bold uppercase tracking-widest text-muted-foreground mb-4 pl-2">
-                  {date}
-                </h2>
+        {logs.length > 0 && (
+          <div className="space-y-0 relative">
+            {logs.map((log, index) => {
+              const config = ACTION_CONFIG[log.action] ?? DEFAULT_CONFIG
+              const Icon = config.icon
+              const { date, time } = formatDate(log.createdAt)
+              
+              const isLast = index === logs.length - 1
 
-                {/* Entries for this date */}
-                <div className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-                  <div className="divide-y divide-border/50">
-                    {grouped[date].map((log) => {
-                      const config = ACTION_CONFIG[log.action] ?? DEFAULT_CONFIG
-                      const Icon = config.icon
-                      const { time } = formatDate(log.createdAt)
+              return (
+                <div key={log.id} className="relative pl-12 md:pl-48 py-5 group first:pt-2 last:pb-2">
+                  
+                  {/* Timeline Line Connecting Events */}
+                  {!isLast && (
+                    <div className="absolute top-10 bottom-[-1.25rem] left-[23px] md:left-[9.5rem] w-px bg-border/80 z-0" />
+                  )}
 
-                      return (
-                        <div key={log.id} className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 sm:p-6 hover:bg-muted/20 transition-colors">
-                          <div className="flex items-start sm:items-center gap-4 sm:gap-6">
-                            <div className={cn('size-11 sm:size-12 rounded-xl flex items-center justify-center shrink-0 border border-border/40 shadow-sm', config.iconBg)}>
-                              <Icon className={cn('size-5', config.iconColor)} />
-                            </div>
-                            <div className="space-y-1.5">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={cn('text-xs font-bold uppercase tracking-wider', config.badgeText)}>
-                                  {config.label}
-                                </span>
-                                {log.linkSlug && (
-                                  <>
-                                    <span className="text-muted-foreground/30">•</span>
-                                    <div className="flex items-center gap-1.5">
-                                      <span className="font-semibold text-foreground">/{log.linkSlug}</span>
-                                      {log.linkUrl && (
-                                        <a
-                                          href={log.linkUrl}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="text-muted-foreground hover:text-[var(--accent-brand)] transition-colors inline-flex mt-0.5"
-                                          title="Visit Link"
-                                        >
-                                          <ExternalLink className="size-3.5" />
-                                        </a>
-                                      )}
-                                    </div>
-                                  </>
-                                )}
-                              </div>
-                              <div className="text-[0.95rem]">
-                                <EventDetails log={log} />
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <div className="text-left sm:text-right shrink-0 mt-3 sm:mt-0 pl-15 sm:pl-0">
-                            <span className="text-[0.85rem] font-medium text-muted-foreground">{time}</span>
-                          </div>
+                  {/* Node / Icon */}
+                  <div className={cn("absolute left-2 md:left-[8.5rem] top-5 size-10 rounded-full flex items-center justify-center border-[3px] border-background z-10 shadow-sm ring-1 ring-border/20 transition-transform group-hover:scale-110", config.iconBg)}>
+                     <Icon className={cn("size-4", config.iconColor)} strokeWidth={2.5} />
+                  </div>
+
+                  {/* Desktop Date/Time */}
+                  <div className="hidden md:flex absolute left-0 top-5 w-28 flex-col items-end pt-1 pr-2">
+                    <span className="text-[0.9rem] font-bold text-foreground">{date}</span>
+                    <span className="text-[0.8rem] text-muted-foreground font-medium mt-0.5">{time}</span>
+                  </div>
+
+                  {/* Card */}
+                  <div className="bg-card rounded-xl p-5 border border-border/60 shadow-sm transition-all duration-300 hover:shadow-md hover:border-border/80 z-10 relative">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 pb-3 border-b border-border/40">
+                      
+                      <div className="flex flex-wrap items-center gap-2.5">
+                        <span className={cn("inline-flex items-center gap-1.5 text-[0.75rem] font-bold uppercase tracking-widest", config.badgeText)}>
+                          {config.label}
+                        </span>
+                        <span className="text-muted-foreground/30">•</span>
+                        {log.linkSlug ? (
+                          <span className="font-bold text-foreground text-[0.95rem]">/{log.linkSlug}</span>
+                        ) : (
+                          <span className="font-semibold text-muted-foreground italic text-[0.95rem]">System</span>
+                        )}
+                      </div>
+
+                      {/* Mobile Date/Time & Visit Link */}
+                      <div className="flex items-center justify-between sm:justify-end gap-4">
+                        <div className="md:hidden flex items-center gap-2 text-[0.8rem] text-muted-foreground font-medium">
+                          <span>{date}</span>
+                          <span className="size-1 rounded-full bg-border" />
+                          <span>{time}</span>
                         </div>
-                      )
-                    })}
+                        
+                        {log.linkUrl && (
+                          <a 
+                            href={log.linkUrl} 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex w-fit items-center gap-1.5 text-xs font-bold text-[var(--accent-brand)] bg-[var(--accent-brand)]/10 px-2.5 py-1.5 rounded-md hover:bg-[var(--accent-brand)]/20 transition-colors shadow-sm"
+                          >
+                            Visit <ExternalLink className="size-3.5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div className="text-[0.9rem] leading-relaxed">
+                      <EventDetails log={log} />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
 
             {/* Load more */}
             {hasMore && (
-              <div className="flex items-center justify-center pt-2">
+              <div className="relative flex items-center justify-center pt-8 pb-4 z-10">
                 <button
                   onClick={handleLoadMore}
                   disabled={isLoadingMore}
-                  className="h-11 px-6 rounded-xl bg-muted/50 border border-border/50 text-[0.95rem] font-semibold text-foreground hover:bg-muted hover:border-border transition-all disabled:opacity-50"
+                  className="h-11 px-8 rounded-full bg-background border-2 border-border/60 text-[0.95rem] font-bold text-foreground hover:bg-muted hover:border-border transition-all disabled:opacity-50 shadow-sm hover:shadow-md"
                 >
                   {isLoadingMore ? 'Loading...' : 'Load older activity'}
                 </button>
@@ -254,7 +278,6 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
             )}
           </div>
         )}
-      </div>
     </div>
   )
 }
