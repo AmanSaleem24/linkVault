@@ -74,8 +74,27 @@ export function LinkRow({
 
         {/* Favicon */}
         {!isCompact && (
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <Globe className="size-4" />
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground overflow-hidden ring-1 ring-border/50">
+            {(() => {
+              let domain = ''
+              try { domain = new URL(link.originalUrl).hostname } catch {}
+              return domain ? (
+                <img 
+                  src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`} 
+                  alt="favicon"
+                  className="size-5 rounded-[4px] object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    const next = e.currentTarget.nextElementSibling as HTMLElement;
+                    if (next) next.style.display = 'block';
+                  }}
+                />
+              ) : null
+            })()}
+            <Globe className="size-4" style={{ display: (() => {
+              try { if (new URL(link.originalUrl).hostname) return 'none' } catch {}
+              return 'block'
+            })() }} />
           </div>
         )}
 
@@ -189,7 +208,7 @@ export function LinkRow({
           href={link.originalUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand-500 hover:underline transition-colors truncate"
+          className="flex items-center gap-1.5 font-mono text-sm font-semibold text-brand-600 dark:text-brand-300 hover:underline transition-colors truncate"
         >
           {`${(process.env.NEXT_PUBLIC_APP_URL || 'https://link-vault-theta.vercel.app').replace(/^https?:\/\//, '')}/${link.slug}`}
         </a>
@@ -204,8 +223,8 @@ export function LinkRow({
 
       {/* Row 3: destination URL */}
       <div className="mt-1.5 flex items-center gap-1.5 pl-9">
-        <CornerDownRight className="size-3.5 shrink-0 text-muted-foreground" />
-        <span className="truncate text-sm text-muted-foreground">
+        <CornerDownRight className="size-3.5 shrink-0 text-muted-foreground/70" />
+        <span className="truncate text-sm text-foreground/80 dark:text-foreground/70 font-medium">
           {truncateUrl(link.originalUrl)}
         </span>
       </div>

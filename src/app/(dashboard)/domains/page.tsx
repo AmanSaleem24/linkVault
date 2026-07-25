@@ -32,10 +32,10 @@ export default function CustomDomainsPage() {
           Brand your links with your own domain name. Replace <strong className="text-foreground dark:text-muted-foreground/60">link-vault-theta.vercel.app</strong> with your own website&apos;s domain to increase trust and click-through rates.
         </p>
 
-        <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-brand-200/60 bg-brand-50/50 px-4 py-1.5 text-sm font-medium text-brand-700 dark:border-brand-800/40 dark:bg-brand-950/30 dark:text-brand-300">
+        <div className="mt-8 inline-flex items-center gap-2 rounded-full border border-brand-200/60 bg-brand-50 px-4 py-1.5 text-sm font-semibold text-brand-700 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-300">
           <span className="relative flex size-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand-400 opacity-75"></span>
-            <span className="relative inline-flex size-2 rounded-full bg-brand-500"></span>
+            <span className="relative inline-flex size-2 rounded-full bg-brand-500 dark:bg-brand-400"></span>
           </span>
           Coming soon
         </div>
