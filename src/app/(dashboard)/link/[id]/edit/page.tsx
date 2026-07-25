@@ -3,10 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Info, X, ExternalLink, Globe, Link2, Clock, CheckCircle2 } from 'lucide-react'
+import { X, ExternalLink, Globe, Link2, Clock, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ExpirySelector } from '@/components/home/expiry-selector'
 import { type ExpiryDuration } from '@/lib/validators'
 import { getLinkDetailAction } from '@/app/actions/links.analytics'
@@ -30,7 +29,6 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
   const [customUnit, setCustomUnit] = useState<'m' | 'h'>('m')
 
   // Warning banner
-  const [showWarning, setShowWarning] = useState(true)
 
   useEffect(() => {
     params.then((p) => setLinkId(p.id))

@@ -2,7 +2,7 @@
 
 import useSWR from 'swr'
 import Link from 'next/link'
-import { Zap, CheckCircle2, Clock, XCircle, CreditCard, Calendar, Shield, Sparkles, Receipt, ArrowRight, Check } from 'lucide-react'
+import { CheckCircle2, Clock, CreditCard, Receipt, Check, Zap, XCircle, Calendar, Shield, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PLANS } from '@/lib/plans'
 import { format } from 'date-fns'
@@ -19,24 +19,24 @@ export default function BillingPage() {
 
   if (isLoading || !result) {
     return (
-      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12 ">
-        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <div className="mx-auto max-w-5xl px-6 pt-12 pb-32 lg:pt-20">
+        <div className="mb-14 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <div className="h-10 w-48 skeleton rounded-md" />
-            <div className="mt-2 h-5 w-72 skeleton rounded-md" />
+            <div className="h-14 w-72 skeleton rounded-2xl" />
+            <div className="mt-4 h-6 w-96 skeleton rounded-xl" />
           </div>
         </div>
-        <div className="grid gap-8">
-          <div className="h-[300px] w-full skeleton rounded-3xl" />
-        </div>
+        <div className="h-[400px] w-full skeleton rounded-[3rem]" />
       </div>
     )
   }
 
   if (!result.success || !result.data) {
     return (
-      <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
-        <div className="text-red-500">Failed to load billing details. Please try again.</div>
+      <div className="mx-auto max-w-5xl px-6 pt-12 pb-32 lg:pt-20">
+        <div className="rounded-[2rem] border-2 border-red-200/50 bg-red-50 p-8 text-lg font-medium text-red-600 shadow-xl shadow-red-500/10 dark:border-red-900/30 dark:bg-red-950/20 dark:text-red-400">
+          Oops! We couldn&apos;t load your billing details right now. Please try again.
+        </div>
       </div>
     )
   }
@@ -44,116 +44,122 @@ export default function BillingPage() {
   const { subscription, isPro: pro } = result.data
 
   return (
-    <div className="mx-auto max-w-4xl px-6 pt-8 pb-24 lg:pt-12">
+    <div className="relative min-h-screen overflow-hidden">
+      
+      {/* ── Playful Mesh Gradient Background ── */}
+      <div className="pointer-events-none absolute inset-0 z-0 flex items-start justify-center overflow-hidden opacity-40 dark:opacity-20">
+        <div className="absolute top-[-10%] left-[-10%] h-[40rem] w-[40rem] animate-pulse rounded-full bg-brand-400/40 blur-[140px] mix-blend-multiply" />
+        <div className="absolute top-[0%] right-[-10%] h-[35rem] w-[35rem] animate-pulse rounded-full bg-violet-400/40 blur-[120px] mix-blend-multiply delay-1000" />
+        <div className="absolute top-[20%] left-[20%] h-[30rem] w-[30rem] animate-pulse rounded-full bg-fuchsia-400/30 blur-[100px] mix-blend-multiply delay-2000" />
+      </div>
 
-        {/* Header */}
-        <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pt-12 pb-32 lg:pt-20">
+        
+        {/* ── Header ── */}
+        <div className="mb-14 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
           <div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground dark:text-foreground sm:text-4xl">
-              Billing & Plan
+            <h1 className="text-5xl font-black tracking-tighter text-foreground sm:text-6xl">
+              Billing & <span className="bg-gradient-to-r from-brand-500 via-violet-500 to-fuchsia-500 bg-clip-text text-transparent">Plan</span>
             </h1>
-            <p className="mt-2 text-base text-muted-foreground dark:text-muted-foreground">
-              Manage your subscription, payment method, and billing history.
+            <p className="mt-4 text-lg font-medium text-muted-foreground sm:text-xl">
+              Manage your workspace, update payments, and view history.
             </p>
           </div>
           {!pro && (
             <Link href="/pricing">
-              <Button className="h-10 gap-2 rounded-xl bg-brand-500 px-5 text-sm font-semibold text-white hover:bg-brand-600 dark:bg-brand-400 dark:hover:bg-brand-500 shadow-sm shadow-brand-500/20">
-                <Zap className="size-4" fill="currentColor" />
+              <Button className="group h-12 gap-2 rounded-2xl bg-foreground px-6 text-base font-bold text-background shadow-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-105 hover:bg-brand-500 hover:text-white hover:shadow-brand-500/25">
+                <Sparkles className="size-5 transition-transform duration-500 group-hover:scale-110" />
                 Upgrade to Pro
               </Button>
             </Link>
           )}
         </div>
 
-        {/* Banners */}
+        {/* ── Banners ── */}
         {showSuccess && (
-          <div className="animate-in fade-in slide-in-from-top-4 mb-8 flex items-start gap-4 rounded-2xl border border-emerald-200/60 bg-emerald-50/80 p-5 shadow-sm backdrop-blur-md dark:border-emerald-800/40 dark:bg-emerald-950/40">
-            <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/60">
-              <Sparkles className="size-4.5 text-emerald-600 dark:text-emerald-400" />
+          <div className="mb-12 flex animate-in zoom-in-95 items-center gap-5 rounded-[2rem] bg-gradient-to-r from-emerald-400 to-emerald-500 p-6 text-white shadow-2xl shadow-emerald-500/20">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
+              <CheckCircle2 className="size-6 text-white" />
             </div>
             <div>
-              <p className="text-base font-bold text-emerald-800 dark:text-emerald-300">Welcome to Pro! 🎉</p>
-              <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-400/90">Your payment was successful. All Pro features are now instantly available.</p>
+              <p className="text-xl font-black tracking-tight">You&apos;re officially Pro! 🎉</p>
+              <p className="mt-1 text-emerald-50 font-medium">Payment successful. Your premium features are ready to use.</p>
             </div>
           </div>
         )}
 
         {showPending && (
-          <div className="animate-in fade-in slide-in-from-top-4 mb-8 flex items-start gap-4 rounded-2xl border border-blue-200/60 bg-blue-50/80 p-5 shadow-sm backdrop-blur-md dark:border-blue-800/40 dark:bg-blue-950/40">
-            <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/60">
-              <Clock className="size-4.5 text-blue-600 dark:text-blue-400" />
+          <div className="mb-12 flex animate-in zoom-in-95 items-center gap-5 rounded-[2rem] bg-gradient-to-r from-blue-400 to-blue-500 p-6 text-white shadow-2xl shadow-blue-500/20">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
+              <Clock className="size-6 animate-spin text-white" style={{ animationDuration: '3s' }} />
             </div>
             <div>
-              <p className="text-base font-bold text-blue-800 dark:text-blue-300">Activating your subscription…</p>
-              <p className="mt-1 text-sm text-blue-700 dark:text-blue-400/90">We&apos;re just waiting for the final confirmation from Razorpay. Give it a minute and refresh.</p>
+              <p className="text-xl font-black tracking-tight">Activating your superpowers...</p>
+              <p className="mt-1 text-blue-50 font-medium">Waiting for Razorpay to confirm the payment. Grab a coffee and refresh!</p>
             </div>
           </div>
         )}
 
         <div className="grid gap-8">
           
-          {/* ── 1. Subscription Overview Card ───────────────────────────── */}
+          {/* ── 1. The Hero Plan Card ── */}
           <section>
-            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">Current Plan</h2>
-            
-            <div className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm dark:border-border dark:bg-card">
+            <div className={`group relative overflow-hidden rounded-[2.5rem] border-2 bg-card/60 shadow-xl backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-2 hover:shadow-2xl dark:bg-slate-900/50 ${pro ? 'border-brand-200 hover:border-brand-400 hover:shadow-brand-500/20 dark:border-brand-900/50 dark:hover:border-brand-500/50' : 'border-border/50 hover:border-border hover:shadow-border/10 dark:border-white/10 dark:hover:border-white/20'}`}>
               
-              {/* Pro Gradient Strip */}
-              {pro && <div className="h-1.5 w-full bg-gradient-to-r from-brand-400 via-violet-400 to-brand-500" />}
-
-              <div className="p-6 sm:p-8">
-                <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+              <div className="p-8 sm:p-12">
+                <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
                   
                   {/* Left: Plan Info */}
-                  <div className="flex items-center gap-5">
-                    <div className={`flex size-14 shrink-0 items-center justify-center rounded-2xl ring-1 ring-inset ${pro ? 'bg-brand-50 ring-brand-200/50 dark:bg-brand-900/20 dark:ring-brand-800/50' : 'bg-muted/50 ring-slate-200 dark:bg-muted dark:ring-border'}`}>
-                      {pro ? <Zap className="size-6 text-brand-500 dark:text-brand-400" fill="currentColor" /> : <CreditCard className="size-6 text-muted-foreground" />}
+                  <div className="flex items-center gap-6">
+                    <div className={`flex size-20 shrink-0 items-center justify-center rounded-[1.5rem] shadow-inner transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 ${pro ? 'bg-gradient-to-br from-brand-400 to-violet-500 text-white shadow-brand-500/30' : 'bg-muted/80 text-muted-foreground dark:bg-slate-800'}`}>
+                      {pro ? <Zap className="size-10" fill="currentColor" /> : <CreditCard className="size-10" />}
                     </div>
                     <div>
-                      <div className="flex items-center gap-3">
-                        <h3 className="text-xl font-bold text-foreground dark:text-foreground">
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-3xl font-black tracking-tighter text-foreground sm:text-4xl">
                           {pro ? 'LinkVault Pro' : 'LinkVault Free'}
-                        </h3>
+                        </h2>
                         {pro ? (
                           subscription?.cancelAtPeriodEnd ? (
-                            <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
-                              <XCircle className="size-3" />
+                            <span className="flex items-center gap-1.5 rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-700 dark:bg-amber-500/20 dark:text-amber-400">
+                              <XCircle className="size-4" />
                               Cancels soon
                             </span>
                           ) : (
-                            <span className="flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400">
-                              <CheckCircle2 className="size-3" />
-                              Active
+                            <span className="flex items-center gap-1.5 rounded-full bg-brand-100 px-3 py-1 text-sm font-bold text-brand-700 dark:bg-brand-500/20 dark:text-brand-400">
+                              <div className="size-2 rounded-full bg-brand-500 animate-pulse" />
+                              Active Plan
                             </span>
                           )
                         ) : (
-                          <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-bold uppercase tracking-wide text-muted-foreground dark:bg-muted dark:text-muted-foreground">
+                          <span className="rounded-full bg-muted/80 px-3 py-1 text-sm font-bold text-muted-foreground">
                             Basic
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                      <div className="mt-2 flex items-baseline gap-2">
                         {pro ? (
                           <>
-                            <span className="text-foreground dark:text-foreground font-semibold">₹99.00</span> per month
+                            <span className="text-xl font-bold text-muted-foreground line-through opacity-50">₹199</span>
+                            <span className="bg-gradient-to-r from-brand-600 to-violet-600 bg-clip-text text-3xl font-black text-transparent dark:from-brand-400 dark:to-violet-400 sm:text-4xl">₹99</span>
+                            <span className="text-lg font-bold text-muted-foreground">/mo</span>
                           </>
                         ) : (
-                          'Free forever'
+                          <span className="text-2xl font-bold text-muted-foreground sm:text-3xl">Free forever</span>
                         )}
-                      </p>
+                      </div>
                     </div>
                   </div>
 
                   {/* Right: Billing Date */}
                   {pro && subscription?.currentPeriodEnd && (
-                    <div className="rounded-2xl border border-border bg-muted/50 p-4 text-sm dark:border-border dark:bg-muted/40 sm:text-right">
-                      <p className="font-semibold text-muted-foreground dark:text-muted-foreground">
+                    <div className="rounded-[1.5rem] bg-muted/40 p-6 text-sm ring-1 ring-inset ring-border/50 transition-colors duration-500 group-hover:bg-brand-50/50 dark:group-hover:bg-brand-900/10 sm:text-right">
+                      <p className="font-bold text-muted-foreground">
                         {subscription.cancelAtPeriodEnd ? 'Access ends on' : 'Next billing date'}
                       </p>
-                      <div className="mt-1 flex items-center gap-2 sm:justify-end">
-                        <Calendar className="size-4 text-brand-500 dark:text-brand-400" />
-                        <span className="font-bold text-foreground dark:text-foreground">
+                      <div className="mt-2 flex items-center gap-2 sm:justify-end">
+                        <Calendar className="size-5 text-brand-500 dark:text-brand-400" />
+                        <span className="text-xl font-black tracking-tight text-foreground">
                           {format(new Date(subscription.currentPeriodEnd), 'MMMM d, yyyy')}
                         </span>
                       </div>
@@ -164,10 +170,10 @@ export default function BillingPage() {
               </div>
 
               {/* Action Footer */}
-              <div className="flex flex-col gap-4 border-t border-border bg-muted/50/50 p-6 dark:border-border dark:bg-muted/20 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+              <div className="flex flex-col gap-6 bg-muted/30 p-8 dark:bg-slate-950/50 sm:flex-row sm:items-center sm:justify-between sm:px-12">
                 {pro && subscription ? (
                   <>
-                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-base font-medium text-muted-foreground">
                       {subscription.cancelAtPeriodEnd
                         ? 'Your plan will not renew. You will lose Pro features at the end of the billing cycle.'
                         : 'Your plan automatically renews every month.'}
@@ -179,11 +185,11 @@ export default function BillingPage() {
                   </>
                 ) : (
                   <>
-                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
+                    <p className="text-base font-medium text-muted-foreground">
                       You are currently on the Free plan. Upgrade to unlock unlimited features.
                     </p>
                     <Link href="/pricing" className="shrink-0">
-                      <Button className="h-10 bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800 dark:bg-foreground dark:text-background dark:hover:bg-foreground/90">
+                      <Button className="h-12 rounded-2xl bg-foreground px-8 font-bold text-background shadow-lg transition-all duration-300 hover:scale-105 hover:bg-brand-500 hover:text-white">
                         Upgrade to Pro
                       </Button>
                     </Link>
@@ -193,22 +199,21 @@ export default function BillingPage() {
             </div>
           </section>
 
-          {/* ── 2. Payment Method & History ─────────────────────────────────── */}
+          {/* ── 2. Payment & History Floating Cards ── */}
           {pro && (
             <div className="grid gap-8 md:grid-cols-2">
               
               <section>
-                <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">Payment Method</h2>
-                <div className="flex h-32 flex-col justify-center rounded-3xl border border-border/80 bg-card p-6 shadow-sm dark:border-border dark:bg-card">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-16 items-center justify-center rounded-lg bg-muted dark:bg-muted">
-                      <CreditCard className="size-6 text-muted-foreground" />
+                <div className="group flex h-[180px] flex-col justify-center rounded-[2.5rem] border-2 border-border/40 bg-card/40 p-10 shadow-lg backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-2 hover:border-brand-300 hover:shadow-2xl hover:shadow-brand-500/10 dark:border-white/10 dark:bg-slate-900/40 dark:hover:border-brand-500/50">
+                  <div className="flex items-center gap-6">
+                    <div className="flex size-16 shrink-0 items-center justify-center rounded-[1.25rem] bg-brand-50 text-brand-500 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6 dark:bg-brand-500/10 dark:text-brand-400">
+                      <CreditCard className="size-8" />
                     </div>
                     <div>
-                      <p className="font-semibold text-foreground dark:text-foreground">Razorpay Checkout</p>
-                      <p className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
-                        <Shield className="size-3" />
-                        Managed securely via Razorpay
+                      <p className="text-2xl font-black tracking-tight text-foreground">Razorpay</p>
+                      <p className="mt-1 flex items-center gap-2 text-base font-medium text-muted-foreground">
+                        <Shield className="size-4" />
+                        Secure Checkout
                       </p>
                     </div>
                   </div>
@@ -216,11 +221,12 @@ export default function BillingPage() {
               </section>
 
               <section>
-                <h2 className="mb-4 text-sm font-bold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">Billing History</h2>
-                <div className="flex h-32 flex-col items-center justify-center rounded-3xl border border-border/80 bg-card p-6 text-center shadow-sm dark:border-border dark:bg-card">
-                  <Receipt className="mb-2 size-6 text-muted-foreground/60 dark:text-muted-foreground/50" />
-                  <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
-                    Invoices are emailed directly to you by Razorpay.
+                <div className="group flex h-[180px] flex-col items-center justify-center rounded-[2.5rem] border-2 border-border/40 bg-card/40 p-10 text-center shadow-lg backdrop-blur-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-2 hover:border-violet-300 hover:shadow-2xl hover:shadow-violet-500/10 dark:border-white/10 dark:bg-slate-900/40 dark:hover:border-violet-500/50">
+                  <div className="mb-4 flex size-14 shrink-0 items-center justify-center rounded-[1.25rem] bg-violet-50 text-violet-500 transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-110 dark:bg-violet-500/10 dark:text-violet-400">
+                    <Receipt className="size-7" />
+                  </div>
+                  <p className="text-base font-medium text-muted-foreground">
+                    Invoices are emailed directly via Razorpay.
                   </p>
                 </div>
               </section>
@@ -228,43 +234,48 @@ export default function BillingPage() {
             </div>
           )}
 
-          {/* ── 3. Upsell / Benefits ────────────────────────────────────────── */}
+          {/* ── 3. The Stripe-style Upsell ── */}
           {!pro && (
-            <section className="mt-4 overflow-hidden rounded-3xl border border-brand-200/50 bg-gradient-to-br from-white to-brand-50/50 shadow-sm dark:border-brand-900/30 dark:from-card dark:to-brand-950/20">
-              <div className="p-8 sm:p-10">
-                <div className="mx-auto max-w-2xl text-center">
-                  <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/50">
-                    <Sparkles className="size-6 text-brand-600 dark:text-brand-400" />
+            <section className="relative mt-8 overflow-hidden rounded-[3rem] border-0 bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 p-[2px] shadow-2xl transition-all duration-500 hover:shadow-brand-500/30">
+              
+              <div className="relative flex h-full flex-col gap-10 rounded-[calc(3rem-2px)] bg-white/95 p-10 backdrop-blur-3xl dark:bg-slate-950/95 sm:p-14 md:flex-row md:items-center md:justify-between">
+                
+                {/* Background Decor */}
+                <div className="absolute top-0 right-0 h-full w-1/2 bg-gradient-to-l from-brand-100/50 to-transparent dark:from-brand-500/10" />
+
+                <div className="relative max-w-xl">
+                  <div className="mb-6 flex size-16 items-center justify-center rounded-[1.5rem] bg-gradient-to-br from-brand-400 to-violet-500 shadow-lg shadow-brand-500/20">
+                    <Sparkles className="size-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground dark:text-foreground">Ready for more power?</h3>
-                  <p className="mt-3 text-muted-foreground dark:text-muted-foreground">
-                    Upgrade to LinkVault Pro for just ₹99/month and supercharge your links.
+                  <h3 className="text-4xl font-black tracking-tighter text-foreground sm:text-5xl">Supercharge your workflow</h3>
+                  <p className="mt-5 text-xl font-medium text-muted-foreground">
+                    Upgrade to LinkVault Pro for just <span className="font-bold text-foreground">₹99/month</span>. Get advanced analytics, custom slugs, and team features today.
                   </p>
+                  
+                  <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {PLANS.pro.features.slice(0, 5).map(feature => (
+                      <div key={feature} className="flex items-center gap-3">
+                         <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/60">
+                            <Check className="size-4 font-bold text-brand-600 dark:text-brand-400" strokeWidth={3} />
+                         </div>
+                         <span className="text-base font-bold text-foreground/90">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
                 
-                <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {PLANS.pro.features.slice(0, 6).map((feature) => (
-                    <div key={feature} className="flex items-start gap-3 rounded-2xl bg-white/60 p-4 shadow-sm ring-1 ring-slate-100 dark:bg-card/40 dark:ring-border/50">
-                      <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-900/30">
-                        <Check className="size-3 text-brand-500 dark:text-brand-400" strokeWidth={3} />
-                      </div>
-                      <span className="text-sm font-semibold text-foreground dark:text-foreground/90">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-10 flex justify-center">
-                  <Link href="/pricing">
-                    <Button className="group h-12 gap-2 rounded-xl bg-slate-900 px-8 text-base font-bold text-white hover:bg-slate-800 dark:bg-foreground dark:text-background dark:hover:bg-foreground/90">
-                      View Pricing
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                    </Button>
-                  </Link>
+                <div className="relative flex shrink-0 items-center justify-center md:justify-end">
+                   <Link href="/pricing">
+                     <Button className="group h-16 rounded-[1.25rem] bg-gradient-to-br from-brand-500 to-violet-600 px-10 text-xl font-black text-white shadow-xl shadow-brand-500/20 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:scale-105 hover:shadow-2xl hover:shadow-brand-500/40">
+                       Upgrade to Pro
+                     </Button>
+                   </Link>
                 </div>
               </div>
             </section>
           )}
 
+        </div>
       </div>
     </div>
   )

@@ -3,10 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, ChevronRight, QrCode, History, Globe, CreditCard } from 'lucide-react'
+import { Home, Link2, BarChart3, Settings, Plus, ChevronLeft, QrCode, History, Globe, CreditCard } from 'lucide-react'
 import { type LucideIcon } from 'lucide-react'
 import Image from 'next/image'
-import { Button } from '@/components/ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
 
 /**

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { FileText, Plus, Pencil, Trash2, ExternalLink, ToggleRight, ToggleLeft, RefreshCw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import type { AuditLogEntry } from '@/app/actions/links.read'
@@ -138,12 +138,14 @@ interface AuditTimelineProps {
 
 export function AuditTimeline({ initialLogs, totalCount, onRefresh, isRefreshing }: AuditTimelineProps) {
   const [logs, setLogs] = useState<AuditLogEntry[]>(initialLogs)
+  const [prevInitialLogs, setPrevInitialLogs] = useState<AuditLogEntry[]>(initialLogs)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
 
   // Sync internal state when fresh data is fetched via SWR
-  useEffect(() => {
+  if (initialLogs !== prevInitialLogs) {
+    setPrevInitialLogs(initialLogs)
     setLogs(initialLogs)
-  }, [initialLogs])
+  }
 
   const hasMore = logs.length < totalCount
 
