@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { Info, X, ExternalLink, Pencil } from 'lucide-react'
+import { Info, X, ExternalLink, Globe, Link2, Clock, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -128,51 +128,58 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
 
   if (isLoading) {
     return (
-      <div className="global-content mb-12 mt-6">
+      <div className="global-content mb-12 mt-10">
         <div className="mx-auto max-w-5xl">
-          <div className="rounded-2xl border border-border/80 bg-card p-8 shadow-sm md:p-10">
-            {/* Header */}
-            <div className="mb-10 flex items-start gap-5">
-              <div className="size-12 rounded-xl skeleton shrink-0" />
-              <div className="space-y-2">
-                <div className="h-8 w-48 rounded skeleton" />
-                <div className="h-4 w-64 rounded skeleton" />
+          {/* Header Skeleton */}
+          <div className="mb-10 space-y-3">
+            <div className="h-10 w-64 rounded-lg skeleton" />
+            <div className="h-5 w-96 rounded-lg skeleton" />
+          </div>
+
+          <div className="space-y-8">
+            {/* Box 1 Skeleton */}
+            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+              <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="space-y-3 max-w-sm w-full">
+                  <div className="h-6 w-40 rounded skeleton" />
+                  <div className="h-4 w-64 rounded skeleton" />
+                </div>
+                <div className="h-12 max-w-lg w-full rounded-xl skeleton" />
               </div>
             </div>
 
-            <div className="space-y-8">
-              {/* Warning banner */}
-              <div className="h-24 w-full rounded-xl skeleton" />
-              
-              {/* Fields */}
-              <div className="grid gap-8 md:grid-cols-2">
-                <div className="space-y-4">
-                  <div className="h-5 w-24 rounded skeleton" />
-                  <div className="h-11 w-full rounded-xl skeleton" />
+            {/* Box 2 Skeleton */}
+            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+              <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div className="space-y-3 max-w-sm w-full">
+                  <div className="h-6 w-32 rounded skeleton" />
+                  <div className="h-4 w-full rounded skeleton" />
+                  <div className="h-4 w-4/5 rounded skeleton" />
                 </div>
-                <div className="space-y-4">
-                  <div className="h-5 w-32 rounded skeleton" />
-                  <div className="h-11 w-full rounded-xl skeleton" />
-                </div>
-              </div>
-              
-              <div className="my-8 h-px w-full bg-border/50" />
-
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div className="space-y-4">
-                  <div className="h-5 w-20 rounded skeleton" />
-                  <div className="h-12 w-full rounded-xl skeleton" />
-                </div>
-                <div className="space-y-4">
-                  <div className="h-5 w-32 rounded skeleton" />
+                <div className="max-w-lg w-full space-y-3">
                   <div className="h-12 w-full rounded-xl skeleton" />
                 </div>
               </div>
-
-              <div className="mt-10 flex justify-end gap-3 pt-4 border-t border-border/40">
-                <div className="h-11 w-24 rounded-xl skeleton" />
-                <div className="h-11 w-32 rounded-xl skeleton" />
+              <div className="bg-muted/30 px-6 py-4 border-t border-border/60">
+                <div className="h-4 w-48 rounded skeleton" />
               </div>
+            </div>
+
+            {/* Box 3 Skeleton */}
+            <div className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
+              <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
+                <div className="space-y-3 max-w-sm w-full">
+                  <div className="h-6 w-32 rounded skeleton" />
+                  <div className="h-4 w-56 rounded skeleton" />
+                </div>
+                <div className="h-12 max-w-lg w-full rounded-xl skeleton" />
+              </div>
+            </div>
+
+            {/* Footer Skeleton */}
+            <div className="mt-8 flex justify-end gap-4">
+              <div className="h-11 w-24 rounded-xl skeleton" />
+              <div className="h-11 w-36 rounded-xl skeleton" />
             </div>
           </div>
         </div>
@@ -189,82 +196,69 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="global-content mb-12 mt-6">
+    <div className="global-content mb-12 mt-10">
       <div className="mx-auto max-w-5xl">
-        <div className="rounded-2xl border border-border/80 bg-card p-8 shadow-sm md:p-10">
+        
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-foreground">
+            Settings for <span className="text-[var(--accent-brand)]">/{link.slug}</span>
+          </h1>
+          <p className="mt-3 text-[1.05rem] text-muted-foreground">
+            Manage routing, aliases, and expiration for this link.
+          </p>
+        </div>
+
+        <div className="space-y-8">
           
-          {/* Header */}
-          <div className="mb-10 flex items-start gap-5">
-            <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border/60 bg-gradient-to-b from-slate-50 to-slate-100/50 dark:from-slate-800 dark:to-slate-900/50 text-[var(--accent-brand)] shadow-sm">
-              <Pencil className="size-5" strokeWidth={2} />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight text-foreground">
-                Edit Short Link
-              </h1>
-              <p className="mt-1.5 text-base font-medium text-muted-foreground">
-                Modify your existing link details and expiration.
-              </p>
+          {/* Box 1: Current Destination */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-md">
+            <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div className="max-w-sm">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Globe className="size-4.5 text-[var(--accent-brand)]" />
+                  Current Destination
+                </h2>
+                <p className="mt-1.5 text-[0.9rem] text-muted-foreground leading-relaxed">
+                  The long URL this short link currently redirects to.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 bg-muted/40 px-4 py-3.5 rounded-xl border border-border/50 max-w-lg w-full">
+                <div className="flex-1 min-w-0">
+                  <span className="text-[0.95rem] font-medium text-foreground truncate block">{link.originalUrl}</span>
+                </div>
+                <button
+                  onClick={() => window.open(link.originalUrl, '_blank', 'noopener,noreferrer')}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[var(--accent-brand)] hover:text-[var(--accent-brand-hover)] transition-colors shrink-0 bg-[var(--accent-brand)]/10 px-3 py-1.5 rounded-md"
+                  title="Open destination in new tab"
+                >
+                  <ExternalLink className="size-3.5" />
+                  Test
+                </button>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-8">
-            {/* Warning banner */}
-            {showWarning && (
-              <div className="relative flex gap-3 rounded-xl border border-[var(--accent-brand)]/20 bg-[var(--accent-brand-subtle)] p-5 dark:bg-[var(--accent-brand)]/10">
-                <Info className="size-5 shrink-0 text-[var(--accent-brand)] mt-0.5" />
-                <p className="text-[0.95rem] text-foreground leading-relaxed pr-8">
-                  Editing your short link will create a <strong>new, separate</strong> short link.
-                  The current short link <strong>will remain active</strong> and continue to point to the same destination.
+          {/* Box 2: Custom Slug (Alias) */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-md border-l-4 border-l-[var(--accent-brand)]">
+            <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-start justify-between gap-8">
+              <div className="max-w-sm">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Link2 className="size-4.5 text-[var(--accent-brand)]" />
+                  Re-route with Alias
+                </h2>
+                <p className="mt-1.5 text-[0.9rem] text-muted-foreground leading-relaxed">
+                  Provide a new alias to re-route this destination. 
+                  <span className="block mt-2 font-medium text-foreground">
+                    Note: This will safely generate a new short link. Your existing <code className="bg-muted px-1.5 py-0.5 rounded text-[0.85rem]">/{link.slug}</code> link will remain fully active.
+                  </span>
                 </p>
-                <button
-                  onClick={() => setShowWarning(false)}
-                  className="absolute top-4 right-4 rounded-md p-1.5 text-[var(--accent-brand)] hover:bg-[var(--accent-brand)]/10 transition-colors"
-                  aria-label="Dismiss"
-                >
-                  <X className="size-4" />
-                </button>
               </div>
-            )}
-
-            <div className="grid gap-8 md:grid-cols-2">
-              {/* Short link section */}
-              <div>
-                <h2 className="text-[0.95rem] font-semibold text-foreground mb-2">Current Short Link</h2>
-                <span className="flex items-center h-11 px-4 rounded-xl bg-muted/50 text-[0.95rem] font-medium text-foreground border border-border/50 w-full">
-                  /{link.slug}
-                </span>
-              </div>
-
-              {/* Destination URL section */}
-              <div>
-                <h2 className="text-[0.95rem] font-semibold text-foreground mb-2">Destination URL</h2>
-                <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border/50 bg-muted/50">
-                  <span className="text-[0.95rem] text-muted-foreground truncate flex-1">{link.originalUrl}</span>
-                  <button
-                    onClick={() => window.open(link.originalUrl, '_blank', 'noopener,noreferrer')}
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--accent-brand)] hover:text-[var(--accent-brand-hover)] transition-colors shrink-0"
-                    title="Open destination in new tab"
-                  >
-                    <ExternalLink className="size-3.5" />
-                    Visit
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="h-px w-full bg-border/60 my-8" />
-
-            {/* Optional details */}
-            <div>
-              <h2 className="text-lg font-bold tracking-tight text-foreground mb-6">Optional details</h2>
-              <div className="grid gap-8 sm:grid-cols-2">
-                {/* Slug */}
-                <div className="space-y-2">
-                  <Label className="text-[0.95rem] font-semibold text-foreground flex items-center gap-2">
-                    Custom Slug
-                  </Label>
+              <div className="max-w-lg w-full space-y-3">
+                <div className="relative flex items-center">
+                  <span className="absolute left-4 text-muted-foreground font-semibold select-none text-[0.95rem]">
+                    /
+                  </span>
                   <Input
                     value={slug}
                     onChange={(e) => {
@@ -272,48 +266,75 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
                       setSlug(val)
                       if (slugError) validateSlug(val)
                     }}
-                    className="h-12 rounded-xl border-border/80 bg-background shadow-sm focus-visible:ring-[var(--accent-brand)]"
-                    placeholder="e.g. summer-sale"
-                  />
-                  {slugError && (
-                    <p className="text-xs font-medium text-red-500 mt-1.5">{slugError}</p>
-                  )}
-                </div>
-
-                {/* Expires in */}
-                <div className="space-y-2">
-                  <ExpirySelector
-                    value={expiresIn}
-                    onChange={setExpiresIn}
-                    customValue={customValue}
-                    customUnit={customUnit}
-                    onCustomValueChange={setCustomValue}
-                    onCustomUnitChange={setCustomUnit}
-                    label="Expiration"
+                    className="h-14 pl-8 rounded-xl border-border/80 bg-background font-semibold text-foreground text-[0.95rem] shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--accent-brand)] transition-all"
+                    placeholder="e.g. summer-promo"
                   />
                 </div>
+                {slugError && (
+                  <p className="text-[0.85rem] font-medium text-red-500 flex items-center gap-1.5">
+                    <X className="size-3.5" /> {slugError}
+                  </p>
+                )}
               </div>
             </div>
-
-            {/* Footer actions */}
-            <div className="mt-10 flex items-center justify-end gap-3 pt-4 border-t border-border/40">
-              <Button
-                variant="outline"
-                onClick={() => router.push('/link')}
-                disabled={isSaving}
-                className="h-11 px-6 rounded-xl text-[0.95rem] font-semibold border-border/80 hover:bg-muted/80 shadow-sm"
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleSave}
-                disabled={isSaving || !slug}
-                className="h-11 px-8 rounded-xl text-[0.95rem] font-semibold bg-[var(--accent-brand)] hover:bg-[var(--accent-brand-hover)] text-white shadow-md shadow-[var(--accent-brand)]/20 transition-all hover:shadow-lg active:scale-[0.97]"
-              >
-                {isSaving ? 'Saving...' : 'Save Changes'}
-              </Button>
+            <div className="bg-muted/30 px-6 py-3.5 border-t border-border/60 flex items-center justify-between">
+              <p className="text-[0.85rem] font-medium text-muted-foreground">
+                Only alphanumeric characters and hyphens are permitted.
+              </p>
             </div>
           </div>
+
+          {/* Box 3: Expiration */}
+          <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-sm transition-all hover:shadow-md">
+            <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-start justify-between gap-6">
+              <div className="max-w-sm">
+                <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+                  <Clock className="size-4.5 text-[var(--accent-brand)]" />
+                  Expiration
+                </h2>
+                <p className="mt-1.5 text-[0.9rem] text-muted-foreground leading-relaxed">
+                  Set a strict time limit for the new link to remain active. Once expired, the link will redirect to a 404 page.
+                </p>
+              </div>
+              <div className="max-w-lg w-full">
+                <ExpirySelector
+                  value={expiresIn}
+                  onChange={setExpiresIn}
+                  customValue={customValue}
+                  customUnit={customUnit}
+                  onCustomValueChange={setCustomValue}
+                  onCustomUnitChange={setCustomUnit}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Footer */}
+          <div className="flex justify-end gap-4 pt-6">
+            <Button
+              variant="ghost"
+              onClick={() => router.push('/link')}
+              disabled={isSaving}
+              className="h-12 px-6 rounded-xl text-[0.95rem] font-semibold hover:bg-muted text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving || !slug}
+              className="h-12 px-8 rounded-xl text-[0.95rem] font-semibold bg-[var(--accent-brand)] hover:bg-[var(--accent-brand-hover)] text-white shadow-md shadow-[var(--accent-brand)]/20 transition-all hover:shadow-lg active:scale-[0.97]"
+            >
+              {isSaving ? (
+                'Saving...'
+              ) : (
+                <>
+                  <CheckCircle2 className="size-4.5 mr-2" />
+                  Save Changes
+                </>
+              )}
+            </Button>
+          </div>
+
         </div>
       </div>
     </div>
