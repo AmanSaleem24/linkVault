@@ -189,8 +189,8 @@ export function DateFilterPopover({
         onClick={() => setOpen(!open)}
         className={`inline-flex h-10 items-center gap-2 rounded-lg border px-4 text-[0.875rem] font-medium shadow-sm transition-all ${
           activeLabel
-            ? 'border-[#3D52A0]/30 bg-[#3D52A0]/5 text-[#3D52A0]'
-            : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50'
+            ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/5 text-[var(--accent-brand)]'
+            : 'border-border bg-card text-foreground hover:border-border hover:bg-muted/50'
         }`}
       >
         <Calendar className="size-4" />
@@ -199,27 +199,27 @@ export function DateFilterPopover({
           <span
             role="button"
             onClick={(e) => { e.stopPropagation(); handleClear(); }}
-            className="ml-1 rounded-full p-0.5 hover:bg-[#3D52A0]/10"
+            className="ml-1 rounded-full p-0.5 hover:bg-[var(--accent-brand)]/10"
           >
             <X className="size-3" />
           </span>
         )}
-        <ChevronDown className={`size-3.5 text-slate-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`size-3.5 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
 
       {/* Popover Content */}
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 z-50 mt-2 w-[340px] rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] ring-1 ring-slate-200/60 animate-in fade-in slide-in-from-top-2 duration-200 origin-top">
+          <div className="absolute top-full left-0 z-50 mt-2 w-[340px] rounded-2xl border border-border bg-popover p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] ring-1 ring-white/8 animate-in fade-in slide-in-from-top-2 duration-200 origin-top">
             
             {/* Mode tabs */}
-            <div className="mb-4 flex rounded-lg border border-slate-200 bg-slate-50 p-1">
+            <div className="mb-4 flex rounded-lg border border-border bg-muted/50 p-1">
               <button
                 onClick={() => setMode('preset')}
                 className={cn(
                   "flex-1 rounded-md py-1.5 text-xs font-medium transition-all duration-200",
-                  mode === 'preset' ? "bg-white text-[#3D52A0] shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  mode === 'preset' ? "bg-card text-[var(--accent-brand)] shadow-sm" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Quick select
@@ -228,7 +228,7 @@ export function DateFilterPopover({
                 onClick={() => setMode('custom')}
                 className={cn(
                   "flex-1 rounded-md py-1.5 text-xs font-medium transition-all duration-200",
-                  mode === 'custom' ? "bg-white text-[#3D52A0] shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  mode === 'custom' ? "bg-card text-[var(--accent-brand)] shadow-sm" : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 Custom range
@@ -241,7 +241,7 @@ export function DateFilterPopover({
                   <button
                     key={preset.label}
                     onClick={() => handlePreset(preset)}
-                    className="rounded-lg px-3 py-2 text-left text-[0.85rem] font-medium text-slate-700 transition-colors hover:bg-[#3D52A0]/5 hover:text-[#3D52A0]"
+                    className="rounded-lg px-3 py-2 text-left text-[0.85rem] font-medium text-foreground transition-colors hover:bg-[var(--accent-brand)]/5 hover:text-[var(--accent-brand)]"
                   >
                     {preset.label}
                   </button>
@@ -254,7 +254,7 @@ export function DateFilterPopover({
                   <div className="relative flex-1">
                     <Calendar className={cn(
                       "absolute left-2.5 top-2.5 size-4 transition-colors", 
-                      activeInput === 'from' ? "text-[#3D52A0]" : "text-slate-400"
+                      activeInput === 'from' ? "text-[#3D52A0]" : "text-muted-foreground"
                     )} />
                     <input
                       type="text"
@@ -265,16 +265,16 @@ export function DateFilterPopover({
                       className={cn(
                         "w-full h-9 pl-9 pr-3 rounded-lg border text-[0.85rem] cursor-pointer outline-none transition-all duration-200",
                         activeInput === 'from' 
-                          ? "border-[#3D52A0] ring-2 ring-[#3D52A0]/20 bg-white" 
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
+                          ? "border-[#3D52A0] ring-2 ring-[#3D52A0]/20 bg-card" 
+                          : "border-border bg-muted/50 text-muted-foreground hover:border-border"
                       )}
                     />
-                    <label className="absolute -top-2 left-2 px-1 bg-white text-[0.65rem] font-semibold text-slate-400">From</label>
+                    <label className="absolute -top-2 left-2 px-1 bg-popover text-[0.65rem] font-semibold text-muted-foreground">From</label>
                   </div>
                   <div className="relative flex-1">
                     <Calendar className={cn(
                       "absolute left-2.5 top-2.5 size-4 transition-colors", 
-                      activeInput === 'to' ? "text-[#3D52A0]" : "text-slate-400"
+                      activeInput === 'to' ? "text-[#3D52A0]" : "text-muted-foreground"
                     )} />
                     <input
                       type="text"
@@ -285,11 +285,11 @@ export function DateFilterPopover({
                       className={cn(
                         "w-full h-9 pl-9 pr-3 rounded-lg border text-[0.85rem] cursor-pointer outline-none transition-all duration-200",
                         activeInput === 'to' 
-                          ? "border-[#3D52A0] ring-2 ring-[#3D52A0]/20 bg-white" 
-                          : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
+                          ? "border-[#3D52A0] ring-2 ring-[#3D52A0]/20 bg-card" 
+                          : "border-border bg-muted/50 text-muted-foreground hover:border-border"
                       )}
                     />
-                    <label className="absolute -top-2 left-2 px-1 bg-white text-[0.65rem] font-semibold text-slate-400">To</label>
+                    <label className="absolute -top-2 left-2 px-1 bg-popover text-[0.65rem] font-semibold text-muted-foreground">To</label>
                   </div>
                 </div>
 
@@ -297,16 +297,16 @@ export function DateFilterPopover({
                 <div className="flex items-center justify-between mb-4">
                   <button 
                     onClick={() => setCurrentMonth(new Date(year, month - 1, 1))}
-                    className="p-1 hover:bg-slate-100 rounded-md transition-colors text-slate-500 hover:text-slate-900"
+                    className="p-1 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
-                  <div className="text-[0.85rem] font-semibold text-slate-900">
+                  <div className="text-[0.85rem] font-semibold text-foreground">
                     {MONTH_NAMES[month]} {year}
                   </div>
                   <button 
                     onClick={() => setCurrentMonth(new Date(year, month + 1, 1))}
-                    className="p-1 hover:bg-slate-100 rounded-md transition-colors text-slate-500 hover:text-slate-900"
+                    className="p-1 hover:bg-muted rounded-md transition-colors text-muted-foreground hover:text-foreground"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
@@ -315,7 +315,7 @@ export function DateFilterPopover({
                 {/* Day Headers */}
                 <div className="grid grid-cols-7 mb-2">
                   {DAY_HEADERS.map((day, i) => (
-                    <div key={i} className="text-center text-[0.65rem] font-bold text-slate-400">
+                    <div key={i} className="text-center text-[0.65rem] font-bold text-muted-foreground">
                       {day}
                     </div>
                   ))}
@@ -336,16 +336,16 @@ export function DateFilterPopover({
                     return (
                       <div key={i} className="relative flex items-center justify-center">
                         {isWithinRange && (
-                          <div className="absolute inset-0 bg-[#3D52A0]/10 rounded-sm" />
+                          <div className="absolute inset-0 bg-[var(--accent-brand)]/10 rounded-sm" />
                         )}
                         <button
                           onClick={() => handleDateSelect(dayObj.date)}
                           className={cn(
                             "relative w-7 h-7 flex items-center justify-center rounded-full text-[0.8rem] transition-all duration-200",
-                            !dayObj.isCurrentMonth && "text-slate-300",
-                            dayObj.isCurrentMonth && !isSelected && !isWithinRange && "text-slate-700 hover:bg-slate-100",
-                            dayObj.isCurrentMonth && !isSelected && isWithinRange && "text-slate-800 hover:bg-[#3D52A0]/20",
-                            isSelected && "bg-[#3D52A0] text-white font-medium shadow-md shadow-[#3D52A0]/30 scale-105",
+                            !dayObj.isCurrentMonth && "text-muted-foreground/60",
+                            dayObj.isCurrentMonth && !isSelected && !isWithinRange && "text-foreground hover:bg-muted",
+                            dayObj.isCurrentMonth && !isSelected && isWithinRange && "text-foreground hover:bg-[var(--accent-brand)]/20",
+                            isSelected && "bg-[var(--accent-brand)] text-white font-medium shadow-md shadow-[var(--accent-brand)]/30 scale-105",
                             isTodayDate && !isSelected && "text-[#3D52A0] font-bold",
                           )}
                         >
@@ -357,7 +357,7 @@ export function DateFilterPopover({
                 </div>
 
                 {/* Footer Actions */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                <div className="flex items-center justify-between pt-3 border-t border-border">
                   <div className="flex gap-3">
                     <button 
                       onClick={() => {
@@ -365,7 +365,7 @@ export function DateFilterPopover({
                         setLocalTo(null)
                         setActiveInput('from')
                       }}
-                      className="text-[0.75rem] font-medium text-slate-500 hover:text-slate-900 transition-colors"
+                      className="text-[0.75rem] font-medium text-muted-foreground hover:text-foreground transition-colors"
                     >
                       Clear
                     </button>
@@ -379,7 +379,7 @@ export function DateFilterPopover({
                   <Button 
                     onClick={handleCustomApply}
                     size="sm"
-                    className="h-8 px-4 bg-[#3D52A0] hover:bg-brand-500 text-white text-xs rounded-md shadow-sm"
+                    className="h-8 px-4 bg-[var(--accent-brand)] hover:bg-[var(--accent-brand-hover)] text-white text-xs rounded-md shadow-sm"
                   >
                     Apply
                   </Button>

@@ -160,14 +160,14 @@ export function QuickCreateCard({
   const showQrQuota = qrCode && qrCodesRemainingThisMonth !== null
 
   return (
-    <div className="rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-border/80 bg-card p-6 shadow-sm">
       {/* ── Card header: right-aligned link quota for free users ── */}
       {showLinkQuota && (
         <div className="mb-3 flex items-center justify-end">
           <p
             id="quick-create-link-quota"
             className={`text-[0.78rem] font-medium ${
-              isLinkLimitReached ? 'text-red-500' : 'text-slate-400'
+              isLinkLimitReached ? 'text-red-500' : 'text-muted-foreground'
             }`}
           >
             {isLinkLimitReached
@@ -192,10 +192,10 @@ export function QuickCreateCard({
             }}
             onKeyDown={handleKeyDown}
             disabled={isLinkLimitReached || isPending}
-            className={`h-11 w-full rounded-xl border bg-white px-4 text-[0.95rem] text-slate-900 placeholder:text-slate-400 shadow-sm transition-all focus:outline-none focus:ring-[3px] disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`h-11 w-full rounded-xl border bg-card px-4 text-[0.95rem] text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:outline-none focus:ring-[3px] disabled:opacity-50 disabled:cursor-not-allowed ${
               urlError
                 ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
-                : 'border-slate-200 hover:border-slate-300 focus:border-[#2B0094] focus:ring-[#2B0094]/15'
+                : 'border-border hover:border-border focus:border-[var(--accent-brand)] focus:ring-[var(--accent-brand)]/15'
             }`}
           />
         </div>
@@ -203,7 +203,7 @@ export function QuickCreateCard({
           id="quick-create-submit"
           onClick={handleShorten}
           disabled={isLinkLimitReached || isPending}
-          className="flex h-11 items-center gap-2 rounded-xl border border-[#23007A] bg-gradient-to-b from-[#3D00D1] to-[#2B0094] px-5 text-[0.95rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all hover:from-[#4300E6] hover:to-[#3100A8] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+          className="flex h-11 items-center gap-2 rounded-xl border border-[var(--accent-brand-hover)] bg-gradient-to-b from-[var(--accent-brand)] to-[var(--accent-brand)] px-5 text-[0.95rem] font-semibold text-white shadow-[0_2px_5px_rgba(43,0,148,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] transition-all hover:from-[var(--accent-brand-active)] hover:to-[var(--accent-brand)] active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
         >
           {isPending ? (
             <Loader2 className="size-4 animate-spin" />
@@ -222,12 +222,12 @@ export function QuickCreateCard({
       {/* ── QR checkbox row ── */}
       <div className="mt-3">
         {isQrLimitReached ? (
-          <p id="quick-create-qr-limit" className="flex items-center gap-1.5 text-[0.8rem] text-slate-400">
+          <p id="quick-create-qr-limit" className="flex items-center gap-1.5 text-[0.8rem] text-muted-foreground">
             <QrCode className="size-3.5 shrink-0" />
             QR limit reached —{' '}
             <Link
               href="/pricing"
-              className="font-semibold text-[#2B0094] underline-offset-2 hover:underline"
+              className="font-semibold text-[var(--accent-brand)] underline-offset-2 hover:underline"
             >
               Upgrade to Pro
             </Link>
@@ -245,10 +245,10 @@ export function QuickCreateCard({
               checked={qrCode}
               onChange={(e) => setQrCode(e.target.checked)}
               disabled={isLinkLimitReached || isPending}
-              className="size-4 rounded border-slate-300 accent-[#2B0094] disabled:cursor-not-allowed"
+              className="size-4 rounded border-border accent-[var(--accent-brand)] disabled:cursor-not-allowed"
             />
-            <span className="flex items-center gap-1.5 text-[0.85rem] font-medium text-slate-700">
-              <QrCode className="size-3.5 text-slate-500" />
+            <span className="flex items-center gap-1.5 text-[0.85rem] font-medium text-foreground">
+              <QrCode className="size-3.5 text-muted-foreground" />
               Also create a QR code
             </span>
 
@@ -256,7 +256,7 @@ export function QuickCreateCard({
             {showQrQuota && (
               <span
                 id="quick-create-qr-remaining"
-                className="text-[0.75rem] text-slate-400"
+                className="text-[0.75rem] text-muted-foreground"
               >
                 ({qrCodesRemainingThisMonth} QR code{qrCodesRemainingThisMonth === 1 ? '' : 's'} left this month)
               </span>
@@ -280,14 +280,14 @@ export function QuickCreateCard({
       {created && (
         <div className="mt-4 animate-in fade-in slide-in-from-top-1 duration-200">
           {/* Short URL + Copy */}
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#2B0094]/20 bg-[#ECEEFE] px-4 py-2.5">
-            <span className="truncate font-mono text-[0.9rem] font-semibold text-[#2B0094]">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--accent-brand)]/20 bg-[var(--accent-brand-subtle)] px-4 py-2.5">
+            <span className="truncate font-mono text-[0.9rem] font-semibold text-[var(--accent-brand)]">
               {created.shortUrl}
             </span>
             <button
               onClick={handleCopy}
               title="Copy"
-              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-[#2B0094] px-3 py-1.5 text-[0.78rem] font-semibold text-white transition-all hover:bg-[#1f006b]"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg bg-[var(--accent-brand)] px-3 py-1.5 text-[0.78rem] font-semibold text-white transition-all hover:bg-[var(--accent-brand-hover)]"
             >
               {copied ? <CheckCheck className="size-3.5" /> : <Copy className="size-3.5" />}
               {copied ? 'Copied!' : 'Copy'}
@@ -296,12 +296,12 @@ export function QuickCreateCard({
 
           {/* QR code — shown when hasQr is true */}
           {created.hasQr && (
-            <div className="mt-3 flex items-start gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+            <div className="mt-3 flex items-start gap-4 rounded-xl border border-border bg-muted/50 p-4">
               {/* QR thumbnail */}
               <div
                 ref={qrRef}
                 id="quick-create-qr-preview"
-                className="shrink-0 rounded-xl border border-slate-200 bg-white p-2.5 shadow-sm"
+                className="shrink-0 rounded-xl border border-border bg-card p-2.5 shadow-sm"
               >
                 <QRCode
                   value={created.shortUrl}
@@ -313,8 +313,8 @@ export function QuickCreateCard({
               {/* Label + download */}
               <div className="flex flex-col justify-between gap-3 py-1">
                 <div>
-                  <p className="text-[0.82rem] font-semibold text-slate-700">QR code ready</p>
-                  <p className="mt-0.5 text-[0.75rem] text-slate-400">
+                  <p className="text-[0.82rem] font-semibold text-foreground">QR code ready</p>
+                  <p className="mt-0.5 text-[0.75rem] text-muted-foreground">
                     Scan to open{' '}
                     <span className="font-mono font-medium">
                       {created.shortUrl.replace(/^https?:\/\//, '')}
@@ -324,7 +324,7 @@ export function QuickCreateCard({
                 <button
                   id="quick-create-qr-download"
                   onClick={handleDownloadQr}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[0.78rem] font-semibold text-slate-700 shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-[0.78rem] font-semibold text-foreground shadow-sm transition-all hover:border-border hover:bg-muted/50 hover:text-foreground"
                 >
                   <Download className="size-3.5" />
                   Download PNG
@@ -337,11 +337,11 @@ export function QuickCreateCard({
 
       {/* ── Advanced create link ── */}
       {!isLinkLimitReached && (
-        <p className="mt-3 text-[0.82rem] text-slate-500">
+        <p className="mt-3 text-[0.82rem] text-muted-foreground">
           Need a custom alias or expiration?{' '}
           <Link
             href="/links/new"
-            className="inline-flex items-center gap-0.5 font-semibold text-[#2B0094] underline-offset-2 hover:underline"
+            className="inline-flex items-center gap-0.5 font-semibold text-[var(--accent-brand)] underline-offset-2 hover:underline"
           >
             Open advanced create
             <ArrowRight className="size-3" />

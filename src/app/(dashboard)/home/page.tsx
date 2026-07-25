@@ -12,19 +12,19 @@ export default function HomePage() {
 
   if (isLoading || !result) {
     return (
-      <div className="global-content py-8 animate-pulse">
+      <div className="global-content py-8 ">
         <div className="mb-8">
-          <div className="h-9 w-64 bg-slate-200 rounded-md" />
-          <div className="mt-1.5 h-5 w-48 bg-slate-200 rounded-md" />
+          <div className="h-9 w-64 skeleton rounded-md" />
+          <div className="mt-1.5 h-5 w-48 skeleton rounded-md" />
         </div>
-        <div className="mb-6 h-[100px] w-full bg-slate-200 rounded-3xl" />
+        <div className="mb-6 h-[100px] w-full skeleton rounded-3xl" />
         <div className="mb-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="h-28 bg-slate-200 rounded-3xl" />
-          <div className="h-28 bg-slate-200 rounded-3xl" />
-          <div className="h-28 bg-slate-200 rounded-3xl" />
-          <div className="h-28 bg-slate-200 rounded-3xl" />
+          <div className="h-28 skeleton rounded-3xl" />
+          <div className="h-28 skeleton rounded-3xl" />
+          <div className="h-28 skeleton rounded-3xl" />
+          <div className="h-28 skeleton rounded-3xl" />
         </div>
-        <div className="mt-12 h-64 w-full bg-slate-200 rounded-3xl" />
+        <div className="mt-12 h-64 w-full skeleton rounded-3xl" />
       </div>
     )
   }
@@ -33,7 +33,7 @@ export default function HomePage() {
   if (!result.success || !result.data) {
     return (
       <div className="global-content py-12">
-        <p className="text-slate-500">Failed to load dashboard. Please refresh.</p>
+        <p className="text-muted-foreground">Failed to load dashboard. Please refresh.</p>
       </div>
     )
   }
@@ -52,10 +52,10 @@ export default function HomePage() {
     <div className="global-content py-8">
       {/* ── 1. Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">
           Welcome back, {firstName}
         </h1>
-        <p className="mt-1.5 text-base text-slate-500">
+        <p className="mt-1.5 text-base text-muted-foreground">
           Here&apos;s what&apos;s happening with your links.
         </p>
       </div>

@@ -16,7 +16,7 @@ export function FaviconImg({ url, size = 20 }: { url: string; size?: number }) {
   if (!hostname || errored) {
     return (
       <div
-        className="flex items-center justify-center rounded bg-slate-100 text-slate-400 shrink-0"
+        className="flex items-center justify-center rounded bg-muted text-muted-foreground shrink-0"
         style={{ width: size, height: size }}
       >
         <Globe className="size-3.5" />

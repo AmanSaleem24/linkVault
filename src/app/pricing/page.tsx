@@ -17,7 +17,7 @@ export default async function PricingPage() {
   const isPro = subscription?.status === 'ACTIVE'
 
   return (
-    <div className="relative min-h-screen bg-slate-50 dark:bg-background overflow-hidden">
+    <div className="relative min-h-screen bg-muted/50 dark:bg-background overflow-hidden">
       {/* Premium Background Effects */}
       <div className="pointer-events-none absolute inset-0 flex justify-center">
         <div className="absolute -top-40 h-[600px] w-[1000px] rounded-full bg-brand-400/10 blur-[100px] dark:bg-brand-400/15"></div>
@@ -29,9 +29,9 @@ export default async function PricingPage() {
         
         <Link
           href="/home"
-          className="group mb-12 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground"
+          className="group mb-12 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
         >
-          <div className="flex size-7 items-center justify-center rounded-full border border-slate-200 bg-white shadow-sm transition-all group-hover:border-slate-300 dark:border-border dark:bg-card">
+          <div className="flex size-7 items-center justify-center rounded-full border border-border bg-white shadow-sm transition-all group-hover:border-border dark:border-border dark:bg-card">
             <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
           </div>
           Back to dashboard
@@ -44,10 +44,10 @@ export default async function PricingPage() {
               <Sparkles className="size-3.5" />
               Simple Pricing
             </div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 dark:text-foreground sm:text-5xl md:text-6xl">
+            <h1 className="text-4xl font-extrabold tracking-tight text-foreground dark:text-foreground sm:text-5xl md:text-6xl">
               Upgrade your <span className="bg-gradient-to-r from-brand-500 to-violet-500 bg-clip-text text-transparent dark:from-brand-300 dark:to-violet-400">link game</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-500 dark:text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground dark:text-muted-foreground">
               Start free and scale as you grow. The Pro plan unlocks the full power of LinkVault for true professionals.
             </p>
           </div>
@@ -63,10 +63,10 @@ export default async function PricingPage() {
                 <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-emerald-50 ring-8 ring-emerald-50/50 dark:bg-emerald-950/40 dark:ring-emerald-900/20">
                   <CheckCircle2 className="size-10 text-emerald-500 dark:text-emerald-400" />
                 </div>
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-foreground">
+                <h2 className="text-2xl font-bold text-foreground dark:text-foreground">
                   You&apos;re already on Pro!
                 </h2>
-                <p className="mt-3 text-base text-slate-500 dark:text-muted-foreground">
+                <p className="mt-3 text-base text-muted-foreground dark:text-muted-foreground">
                   Enjoy unlimited links, full analytics, and all premium features.
                 </p>
                 <Link href="/billing" className="mt-8 w-full">

@@ -23,16 +23,16 @@ export function StatCard({ label, value, icon, isPro = true, isLocked }: StatCar
   const Icon = ICON_MAP[icon] ?? BarChart3
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-slate-500 mb-3">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-sm">
+      <div className="flex items-center gap-2 text-muted-foreground mb-3">
         <Icon className="size-5" />
         <span className="text-sm font-medium uppercase tracking-wider">{label}</span>
-        {isLocked && !isPro && <Lock className="size-4 text-slate-400 ml-auto" />}
+        {isLocked && !isPro && <Lock className="size-4 text-muted-foreground ml-auto" />}
       </div>
       {isLocked && !isPro ? (
         <div className="h-10 w-24 rounded-md bg-slate-200/70 blur-[3px]" />
       ) : (
-        <p className="text-3xl font-bold tracking-tight text-slate-900">{value}</p>
+        <p className="text-3xl font-bold tracking-tight text-foreground">{value}</p>
       )}
     </div>
   )

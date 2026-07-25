@@ -64,23 +64,23 @@ export function LinkRow({
   const isCompact = viewMode === 'compact'
 
   return (
-    <div className="group rounded-xl border border-slate-200 bg-white px-5 py-4 shadow-sm transition-all hover:border-slate-300 hover:shadow-md">
+    <div className="group rounded-xl border border-border bg-card px-5 py-4 shadow-sm transition-all hover:border-border hover:shadow-md">
       {/* Row 1: checkbox, favicon, title, action icons */}
       <div className="flex items-center gap-3">
         <input
           type="checkbox"
-          className="size-4 shrink-0 rounded border-slate-300 accent-[#3D52A0] cursor-pointer"
+          className="size-4 shrink-0 rounded border-border accent-[#3D52A0] cursor-pointer"
         />
 
         {/* Favicon */}
         {!isCompact && (
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
             <Globe className="size-4" />
           </div>
         )}
 
         {/* Title */}
-        <span className="flex-1 truncate text-base font-semibold text-slate-900">
+        <span className="flex-1 truncate text-base font-semibold text-foreground">
           {getLinkTitle(link.originalUrl)}
         </span>
 
@@ -92,7 +92,7 @@ export function LinkRow({
           >
             <button
               title="Share"
-              className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               onClick={(e) => e.stopPropagation()}
             >
               <Share2 className="size-4" />
@@ -101,7 +101,7 @@ export function LinkRow({
           <button
             onClick={onEdit}
             title="Edit"
-            className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700"
+            className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
           >
             <Pencil className="size-4" />
           </button>
@@ -110,8 +110,8 @@ export function LinkRow({
             title={isPro ? 'View analytics' : 'Upgrade to see click analytics'}
             className={`flex size-8 items-center justify-center rounded-lg transition-colors ${
               isPro
-                ? 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 cursor-pointer'
-                : 'text-slate-300 cursor-not-allowed'
+                ? 'text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer'
+                : 'text-muted-foreground/60 cursor-not-allowed'
             }`}
           >
             {isPro ? (
@@ -121,46 +121,46 @@ export function LinkRow({
             )}
           </button>
           <DropdownMenu>
-            <DropdownMenuTrigger className="flex size-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 focus:outline-none">
+            <DropdownMenuTrigger className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none">
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg shadow-slate-200/50 ring-1 ring-slate-200/60">
+            <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
               <DropdownMenuItem
                 onClick={onCopy}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"
               >
-                <Copy className="size-4 text-slate-500" />
+                <Copy className="size-4 text-muted-foreground" />
                 Copy link
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={onOpen}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"
               >
-                <ExternalLink className="size-4 text-slate-500" />
+                <ExternalLink className="size-4 text-muted-foreground" />
                 Open link
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={onViewDetails}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"
               >
-                <Eye className="size-4 text-slate-500" />
+                <Eye className="size-4 text-muted-foreground" />
                 View details
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="my-1 bg-slate-100" />
+              <DropdownMenuSeparator className="my-1 bg-muted" />
               <DropdownMenuItem
                 onClick={onEdit}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"
               >
-                <Pencil className="size-4 text-slate-500" />
+                <Pencil className="size-4 text-muted-foreground" />
                 Edit link
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={onToggleStatus}
-                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-slate-700 hover:bg-slate-50 cursor-pointer"
+                className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"
               >
                 {link.status === 'active' ? (
                   <>
-                    <ToggleLeft className="size-4 text-slate-500" />
+                    <ToggleLeft className="size-4 text-muted-foreground" />
                     Disable link
                   </>
                 ) : (
@@ -170,7 +170,7 @@ export function LinkRow({
                   </>
                 )}
               </DropdownMenuItem>
-              <DropdownMenuSeparator className="my-1 bg-slate-100" />
+              <DropdownMenuSeparator className="my-1 bg-muted" />
               <DropdownMenuItem
                 onClick={onDelete}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-red-600 hover:bg-red-50 cursor-pointer"
@@ -196,7 +196,7 @@ export function LinkRow({
         <button
           onClick={(e) => { e.stopPropagation(); onCopy() }}
           title="Copy short link"
-          className="shrink-0 rounded p-0.5 text-slate-500 transition-colors hover:text-slate-700"
+          className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:text-foreground"
         >
           <Copy className="size-3.5" />
         </button>
@@ -204,8 +204,8 @@ export function LinkRow({
 
       {/* Row 3: destination URL */}
       <div className="mt-1.5 flex items-center gap-1.5 pl-9">
-        <CornerDownRight className="size-3.5 shrink-0 text-slate-500" />
-        <span className="truncate text-sm text-slate-600">
+        <CornerDownRight className="size-3.5 shrink-0 text-muted-foreground" />
+        <span className="truncate text-sm text-muted-foreground">
           {truncateUrl(link.originalUrl)}
         </span>
       </div>
@@ -216,21 +216,21 @@ export function LinkRow({
         {isPro ? (
           <button
             onClick={onViewDetails}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[0.75rem] font-medium text-slate-600 transition-colors hover:border-brand-400/30 hover:bg-brand-400/5 hover:text-brand-400 cursor-pointer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-2.5 py-1 text-[0.75rem] font-medium text-muted-foreground transition-colors hover:border-brand-400/30 hover:bg-brand-400/5 hover:text-brand-400 cursor-pointer"
           >
-            <BarChart2 className="size-3.5 text-slate-500" />
+            <BarChart2 className="size-3.5 text-muted-foreground" />
             {link.clickCount.toLocaleString()} clicks
           </button>
         ) : (
-          <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-100 bg-slate-50/50 px-2.5 py-1 text-[0.75rem] font-medium text-slate-500 cursor-not-allowed">
-            <Lock className="size-3.5 text-slate-400" />
+          <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/50/50 px-2.5 py-1 text-[0.75rem] font-medium text-muted-foreground cursor-not-allowed">
+            <Lock className="size-3.5 text-muted-foreground" />
             Click data
           </span>
         )}
 
         {/* Date pill */}
-        <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-[0.75rem] font-medium text-slate-600">
-          <Calendar className="size-3.5 text-slate-500" />
+        <span className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-muted/50 px-2.5 py-1 text-[0.75rem] font-medium text-muted-foreground">
+          <Calendar className="size-3.5 text-muted-foreground" />
           {formatDate(link.createdAt)}
         </span>
       </div>

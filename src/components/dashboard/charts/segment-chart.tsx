@@ -19,11 +19,11 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
   const circumference = 2 * Math.PI * radius
 
   return (
-    <div className="flex h-full flex-col rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="mb-4 shrink-0 text-lg font-bold text-slate-900">{title}</h3>
+    <div className="flex h-full flex-col rounded-xl border border-border bg-card p-6 shadow-sm">
+      <h3 className="mb-4 shrink-0 text-lg font-bold text-foreground">{title}</h3>
 
       {total === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center text-slate-400">
+        <div className="flex flex-1 flex-col items-center justify-center text-muted-foreground">
           <p className="text-sm font-medium">No data yet</p>
           <p className="mt-1 text-xs">Clicks will appear here</p>
         </div>
@@ -41,7 +41,8 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
                 cy={size / 2}
                 r={radius}
                 fill="none"
-                stroke="#f1f5f9"
+                stroke="currentColor"
+                className="text-border"
                 strokeWidth={strokeWidth}
               />
               {data.map((d, i) => {
@@ -73,15 +74,15 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
             <div className="pointer-events-none absolute inset-0 sm:pl-4 flex flex-col items-center justify-center text-center">
               {hoveredData ? (
                 <div className="animate-in fade-in zoom-in-95 duration-150">
-                  <p className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500 mb-0.5">{hoveredData.name}</p>
+                  <p className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">{hoveredData.name}</p>
                   <p className="text-3xl font-black tabular-nums tracking-tight" style={{ color: hoveredData.color }}>
                     {hoveredData.count.toLocaleString()}
                   </p>
                 </div>
               ) : (
                 <div className="animate-in fade-in duration-300">
-                  <p className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">Total</p>
-                  <p className="text-2xl font-bold tabular-nums tracking-tight text-slate-800">
+                  <p className="text-[0.65rem] font-bold uppercase tracking-wider text-muted-foreground/70 mb-0.5">Total</p>
+                  <p className="text-2xl font-bold tabular-nums tracking-tight text-foreground">
                     {total.toLocaleString()}
                   </p>
                 </div>
@@ -97,9 +98,9 @@ export function SegmentChart({ title, data, colors }: SegmentChartProps) {
                     className="size-2.5 shrink-0 rounded-[2px]"
                     style={{ backgroundColor: colors[i % colors.length] }}
                   />
-                  <span className="truncate text-xs font-medium text-slate-600">{d.name}</span>
+                  <span className="truncate text-xs font-medium text-muted-foreground">{d.name}</span>
                 </div>
-                <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-slate-900">
+                <span className="ml-2 shrink-0 tabular-nums text-xs font-semibold text-foreground">
                   {d.count.toLocaleString()}
                 </span>
               </div>

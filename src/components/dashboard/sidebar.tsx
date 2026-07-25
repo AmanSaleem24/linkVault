@@ -39,7 +39,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
   return (
     <aside
       className={`
-        relative hidden shrink-0 border-r border-sidebar-border bg-white text-sidebar-foreground dark:bg-sidebar
+        relative hidden shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground
         transition-[width] duration-200 ease-in-out md:flex md:flex-col
         ${collapsed ? 'w-16' : 'w-64'}
       `}
@@ -48,8 +48,8 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
       <button
         onClick={() => setCollapsed(!collapsed)}
         className={`
-          absolute -right-3.5 top-6 z-10 flex size-7 items-center justify-center rounded-full border border-sidebar-border bg-white text-muted-foreground shadow-sm
-          transition-colors hover:bg-gray-50 hover:text-foreground dark:bg-sidebar dark:hover:bg-sidebar-accent
+          absolute -right-3.5 top-6 z-10 flex size-7 items-center justify-center rounded-full border border-sidebar-border bg-sidebar text-muted-foreground shadow-sm
+          transition-colors hover:bg-sidebar-accent hover:text-foreground
         `}
         title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
@@ -61,7 +61,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
           <Link href="/home" className="flex items-center gap-1.5">
             <Image src="/logo.svg" alt="LinkVault" width={40} height={40} className="rounded-md w-auto h-10" />
             <span className="text-2xl font-extrabold tracking-tight">
-              <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+              <span className="text-[var(--accent-brand)] dark:text-[var(--accent-brand)]">Link</span><span className="text-foreground">Vault</span>
             </span>
           </Link>
         ) : (
@@ -77,7 +77,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
           <Link href="/links/new" title="Create new">
             <Button
               size="icon"
-              className="mx-auto flex size-10 rounded-md bg-[#2B0094] text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
+              className="mx-auto flex size-10 rounded-md bg-[var(--accent-brand)] text-white shadow-sm hover:bg-[var(--accent-brand-hover)] dark:bg-[var(--accent-brand)] dark:hover:bg-[var(--accent-brand-hover)]"
             >
               <Plus className="size-5" />
             </Button>
@@ -85,7 +85,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
         ) : (
           <Link href="/links/new" className="block">
             <Button
-              className="h-10 w-full rounded-md bg-[#2B0094] text-[0.95rem] font-semibold text-white shadow-sm hover:bg-[#1f006b] dark:bg-brand-500 dark:hover:bg-brand-600"
+              className="h-10 w-full rounded-md bg-[var(--accent-brand)] text-[0.95rem] font-semibold text-white shadow-sm hover:bg-[var(--accent-brand-hover)]"
             >
               Create new
             </Button>
@@ -109,7 +109,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
                 <span
                   title={collapsed ? item.label : undefined}
                   className={`
-                    flex cursor-not-allowed items-center rounded-md text-[0.93rem] font-medium text-slate-900 dark:text-muted-foreground
+                    flex cursor-not-allowed items-center rounded-md text-[0.93rem] font-medium text-foreground dark:text-muted-foreground
                     ${collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}
                   `}
                 >
@@ -118,7 +118,7 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
                     <>
                       <span>{item.label}</span>
                       {item.badge && (
-                        <span className="ml-auto text-[0.7rem] font-medium text-slate-500">
+                        <span className="ml-auto text-[0.7rem] font-medium text-muted-foreground">
                           {item.badge}
                         </span>
                       )}
@@ -134,21 +134,21 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
                     transition-colors duration-150
                     ${collapsed ? 'justify-center px-0 py-2.5' : 'gap-3 px-3 py-2.5'}
                     ${isActive
-                      ? 'bg-[#ECEEFE] text-[#2B0094] dark:bg-brand-400/20 dark:text-brand-300'
-                      : 'text-slate-900 hover:bg-slate-100 dark:text-sidebar-foreground dark:hover:bg-sidebar-accent/50'
+                      ? 'bg-[var(--accent-brand-subtle)] text-[var(--accent-brand)] dark:bg-[var(--accent-brand-subtle)] dark:text-[var(--accent-brand)]'
+                      : 'text-sidebar-foreground hover:bg-sidebar-accent'
                     }
                   `}
                 >
                   {/* Active indicator bar - inside the button */}
                   {isActive && (
-                    <span className="absolute left-0 top-1/2 h-[60%] w-1 -translate-y-1/2 rounded-r-full bg-[#2B0094] dark:bg-brand-300" />
+                    <span className="absolute left-0 top-1/2 h-[60%] w-1 -translate-y-1/2 rounded-r-full bg-[var(--accent-brand)]" />
                   )}
                   <Icon className="size-5 shrink-0" />
                   {!collapsed && (
                     <>
                       <span>{item.label}</span>
                       {item.badge && (
-                        <span className="ml-auto text-[0.7rem] font-medium text-slate-500">
+                        <span className="ml-auto text-[0.7rem] font-medium text-muted-foreground">
                           {item.badge}
                         </span>
                       )}
@@ -169,10 +169,10 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
               // Dispatch a custom event to open the palette
               window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true, ctrlKey: true }))
             }}
-            className="flex w-full items-center justify-between rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500 hover:border-slate-300 hover:bg-slate-50 transition-colors"
+            className="flex w-full items-center justify-between rounded-lg border border-border bg-sidebar-accent px-3 py-2 text-xs text-muted-foreground hover:border-border-strong hover:bg-sidebar-accent/80 transition-colors"
           >
             <span>Command palette</span>
-            <kbd className="rounded border border-slate-200 bg-slate-50 px-1.5 py-0.5 text-[0.65rem] font-semibold text-slate-400">
+            <kbd className="rounded border border-border bg-background px-1.5 py-0.5 text-[0.65rem] font-semibold text-muted-foreground">
               ⌘K
             </kbd>
           </button>

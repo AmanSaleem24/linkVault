@@ -71,8 +71,8 @@ export default function AllLinksPage() {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">All Links</h1>
-          <p className="mt-1.5 text-base text-slate-500">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">All Links</h1>
+          <p className="mt-1.5 text-base text-muted-foreground">
             {totalCount} link{totalCount !== 1 ? 's' : ''} total
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function AllLinksPage() {
           onClick={handleExport}
           disabled={isExporting || isLoading}
           variant="outline"
-          className="h-10 gap-2 bg-[#3D52A0] px-5 text-[0.875rem] font-semibold text-white shadow-sm hover:bg-brand-500 hover:text-white focus:outline-none focus:ring-2 focus:ring-[#3D52A0]/40 rounded-lg"
+          className="h-10 gap-2 bg-[var(--accent-brand)] px-5 text-[0.875rem] font-semibold text-white shadow-sm hover:bg-[var(--accent-brand-hover)] hover:text-white focus:outline-none focus:ring-2 focus:ring-[var(--accent-brand)]/40 rounded-lg"
         >
           {isExporting ? (
             <Loader2 className="size-4 animate-spin" />
@@ -111,11 +111,11 @@ export default function AllLinksPage() {
         {isLoading && links.length === 0 && (
           <div className="flex flex-col gap-2">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm animate-pulse">
-                <div className="size-9 shrink-0 rounded-lg bg-slate-100" />
+              <div key={i} className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 shadow-sm ">
+                <div className="size-9 shrink-0 rounded-lg bg-muted" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 w-40 rounded bg-slate-100" />
-                  <div className="h-3 w-64 rounded bg-slate-100" />
+                  <div className="h-4 w-40 rounded bg-muted" />
+                  <div className="h-3 w-64 rounded bg-muted" />
                 </div>
               </div>
             ))}
@@ -124,12 +124,12 @@ export default function AllLinksPage() {
 
         {/* Empty state */}
         {!isLoading && links.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-slate-200 bg-white py-20 text-center shadow-sm">
-            <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-slate-100">
-              <LinkIcon className="size-6 text-slate-400" />
+          <div className="flex flex-col items-center justify-center rounded-xl border border-border bg-card py-20 text-center shadow-sm">
+            <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-muted">
+              <LinkIcon className="size-6 text-muted-foreground" />
             </div>
-            <p className="text-[1rem] font-semibold text-slate-700">No links found</p>
-            <p className="mt-1.5 text-[0.875rem] text-slate-400">
+            <p className="text-[1rem] font-semibold text-foreground">No links found</p>
+            <p className="mt-1.5 text-[0.875rem] text-muted-foreground">
               {search || statusFilter !== 'all' || dateFilter.from || dateFilter.to
                 ? 'Try adjusting your search or filters'
                 : 'Create your first short link to get started'}
@@ -137,7 +137,7 @@ export default function AllLinksPage() {
             {!search && statusFilter === 'all' && !dateFilter.from && !dateFilter.to && (
               <Button
                 onClick={() => router.push('/links/new')}
-                className="mt-5 h-9 gap-1.5 bg-[#3D52A0] px-4 text-[0.875rem] font-semibold text-white hover:bg-brand-500 rounded-lg"
+                className="mt-5 h-9 gap-1.5 bg-[var(--accent-brand)] px-4 text-[0.875rem] font-semibold text-white hover:bg-[var(--accent-brand-hover)] rounded-lg"
               >
                 <Plus className="size-4" />
                 Create link
@@ -167,7 +167,7 @@ export default function AllLinksPage() {
         {/* Load more spinner */}
         {isLoading && links.length > 0 && (
           <div className="flex items-center justify-center py-4">
-            <Loader2 className="size-5 animate-spin text-[#3D52A0]" />
+            <Loader2 className="size-5 animate-spin text-[var(--accent-brand)]" />
           </div>
         )}
       </div>
@@ -175,18 +175,18 @@ export default function AllLinksPage() {
       {/* Load More / End of list */}
       {!isLoading && links.length > 0 && (
         <div className="mt-8 flex items-center justify-center gap-4">
-          <span className="h-px w-16 bg-slate-200" />
+          <span className="h-px w-16 skeleton" />
           {hasMore ? (
             <button
               onClick={handleLoadMore}
-              className="text-[0.85rem] font-medium text-slate-500 hover:text-[#3D52A0] transition-colors"
+              className="text-[0.85rem] font-medium text-muted-foreground hover:text-[var(--accent-brand)] transition-colors"
             >
               Load more links
             </button>
           ) : (
-            <span className="text-[0.85rem] text-slate-400">You{`'`}ve reached the end</span>
+            <span className="text-[0.85rem] text-muted-foreground">You{`'`}ve reached the end</span>
           )}
-          <span className="h-px w-16 bg-slate-200" />
+          <span className="h-px w-16 skeleton" />
         </div>
       )}
     </div>

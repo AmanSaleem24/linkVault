@@ -62,50 +62,50 @@ const features: Feature[] = [
     title: "Smart Shortening",
     description:
       "Transform long URLs into clean, memorable short links with custom slugs and smart redirection.",
-    accent: "#3D52A0",
+    accent: "var(--accent-brand)",
   },
   {
     icon: BarChart3,
     title: "Deep Analytics",
     description:
       "Track clicks by browser, OS, device, country, and referrer. Understand your audience like never before.",
-    accent: "#7091E6",
+    accent: "var(--accent-brand-muted)",
   },
   {
     icon: QrCode,
     title: "QR Code Generator",
     description:
       "Generate customizable QR codes for any link. Download in high-resolution PNG for print and digital.",
-    accent: "#ADBBDA",
+    accent: "var(--color-brand-100)",
   },
   {
     icon: Zap,
     title: "Edge Cached",
     description:
       "Sub-50ms redirects powered by Upstash Redis edge caching. Your links load fast everywhere.",
-    accent: "#3D52A0",
+    accent: "var(--accent-brand)",
   },
   {
     icon: Shield,
     title: "Enterprise Security",
     description:
       "JWT authentication, row-level access control, bcrypt password hashing. Your data stays safe.",
-    accent: "#7091E6",
+    accent: "var(--accent-brand-muted)",
   },
   {
     icon: Globe,
     title: "Custom Domains",
     description:
       "Brand your short links with your own domain. Build trust and increase click-through rates.",
-    accent: "#ADBBDA",
+    accent: "var(--color-brand-100)",
   },
 ];
 
 const stats = [
-  { value: 50, suffix: "ms", label: "Avg Redirect Time", icon: Zap, accent: "#3D52A0" },
-  { value: 99.9, suffix: "%", label: "Uptime SLA", icon: TrendingUp, accent: "#7091E6" },
-  { value: 10, suffix: "K+", label: "Links Created", icon: Link2, accent: "#ADBBDA" },
-  { value: 150, suffix: "+", label: "Countries Reached", icon: Globe, accent: "#3D52A0" },
+  { value: 50, suffix: "ms", label: "Avg Redirect Time", icon: Zap, accent: "var(--accent-brand)" },
+  { value: 99.9, suffix: "%", label: "Uptime SLA", icon: TrendingUp, accent: "var(--accent-brand-muted)" },
+  { value: 10, suffix: "K+", label: "Links Created", icon: Link2, accent: "var(--color-brand-100)" },
+  { value: 150, suffix: "+", label: "Countries Reached", icon: Globe, accent: "var(--accent-brand)" },
 ];
 
 const steps: HowItWorksStep[] = [
@@ -115,7 +115,7 @@ const steps: HowItWorksStep[] = [
     description:
       "Sign up in seconds with email or Google OAuth. No credit card required for the free plan.",
     icon: Users,
-    accent: "#3D52A0",
+    accent: "var(--accent-brand)",
   },
   {
     step: "02",
@@ -123,7 +123,7 @@ const steps: HowItWorksStep[] = [
     description:
       "Paste any URL, set a custom slug, add QR codes, and configure expiration dates.",
     icon: Link2,
-    accent: "#7091E6",
+    accent: "var(--accent-brand-muted)",
   },
   {
     step: "03",
@@ -131,7 +131,7 @@ const steps: HowItWorksStep[] = [
     description:
       "Distribute your links anywhere. Watch real-time analytics roll in with deep insights.",
     icon: BarChart3,
-    accent: "#ADBBDA",
+    accent: "var(--color-brand-100)",
   },
 ];
 
@@ -142,7 +142,7 @@ const testimonials: Testimonial[] = [
     content:
       "LinkVault transformed how we track campaign performance. The analytics are incredibly detailed.",
     avatar: "SC",
-    avatarBg: "bg-[#3D52A0]",
+    avatarBg: "bg-[var(--accent-brand)]",
   },
   {
     name: "Marcus Johnson",
@@ -150,7 +150,7 @@ const testimonials: Testimonial[] = [
     content:
       "The fastest URL shortener I've used. The edge caching makes a real difference for our global audience.",
     avatar: "MJ",
-    avatarBg: "bg-[#7091E6]",
+    avatarBg: "bg-[var(--accent-brand-muted)]",
   },
   {
     name: "Emily Rodriguez",
@@ -158,7 +158,7 @@ const testimonials: Testimonial[] = [
     content:
       "QR code generation and custom domains helped us rebrand our entire link strategy in a day.",
     avatar: "ER",
-    avatarBg: "bg-[#ADBBDA]",
+    avatarBg: "bg-[var(--color-brand-100)]",
   },
 ];
 
@@ -230,7 +230,7 @@ function SectionHeader({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.5, ease: "easeOut" }}
-        className="inline-flex items-center rounded-full bg-[#EDE8F5] px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[#3D52A0] dark:bg-[#3D52A0]/15 dark:text-[#7091E6]"
+        className="inline-flex items-center rounded-full bg-[var(--accent-brand-subtle)] px-3 py-1 text-xs font-semibold tracking-wider uppercase text-[var(--accent-brand)] dark:bg-[var(--accent-brand)]/15 dark:text-[var(--accent-brand)]"
       >
         {tag}
       </motion.span>
@@ -239,7 +239,7 @@ function SectionHeader({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-60px" }}
         transition={{ duration: 0.6, delay: 0.05, ease: "easeOut" }}
-        className="mt-4 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl lg:text-5xl"
+        className="mt-4 text-3xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-4xl lg:text-5xl"
       >
         {title}
       </motion.h2>
@@ -249,7 +249,7 @@ function SectionHeader({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-60px" }}
           transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="mt-4 text-lg leading-relaxed text-slate-500 dark:text-slate-400"
+          className="mt-4 text-lg leading-relaxed text-muted-foreground dark:text-muted-foreground"
         >
           {subtitle}
         </motion.p>
@@ -274,7 +274,7 @@ function LogoMarquee() {
         {extended.map((name, i) => (
           <span
             key={i}
-            className="text-lg font-bold text-slate-300 dark:text-slate-600 select-none tracking-wide"
+            className="text-lg font-bold text-muted-foreground/60 dark:text-muted-foreground select-none tracking-wide"
           >
             {name}
           </span>
@@ -315,15 +315,15 @@ function PricingCard({
       className="relative h-full"
     >
       <div
-        className={`relative flex h-full flex-col rounded-2xl border bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl dark:bg-slate-800 ${
+        className={`relative flex h-full flex-col rounded-2xl border bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl dark:bg-card ${
           highlighted
-            ? "border-[#3D52A0] shadow-[#3D52A0]/10 dark:shadow-[#3D52A0]/20"
-            : "border-slate-200 dark:border-slate-700"
+            ? "border-[var(--accent-brand)] shadow-[var(--accent-brand)]/10 dark:shadow-[var(--accent-brand)]/20"
+            : "border-border dark:border-slate-700"
         }`}
       >
         {highlighted && (
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#3D52A0] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[#3D52A0]/30">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent-brand)] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[var(--accent-brand)]/30">
               <Sparkles className="h-3.5 w-3.5" />
               Most Popular
             </span>
@@ -331,15 +331,15 @@ function PricingCard({
         )}
 
         <div className="flex flex-1 flex-col p-8">
-          <h3 className="text-lg font-bold text-slate-900 dark:text-white">{name}</h3>
-          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{description}</p>
+          <h3 className="text-lg font-bold text-foreground dark:text-white">{name}</h3>
+          <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground">{description}</p>
 
           <div className="mt-6 flex items-baseline gap-1">
-            <span className="text-4xl font-extrabold text-slate-900 dark:text-white">
+            <span className="text-4xl font-extrabold text-foreground dark:text-white">
               {price}
             </span>
             {price !== "Custom" && (
-              <span className="text-sm font-medium text-slate-500 dark:text-slate-400">/month</span>
+              <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">/month</span>
             )}
           </div>
 
@@ -347,8 +347,8 @@ function PricingCard({
             href={href}
             className={`mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl text-sm font-bold transition-all duration-200 ${
               highlighted
-                ? "bg-[#3D52A0] text-white shadow-lg shadow-[#3D52A0]/25 hover:bg-[#2E3F80] hover:shadow-xl hover:shadow-[#3D52A0]/30 active:scale-[0.98]"
-                : "border-2 border-slate-200 bg-white text-slate-700 hover:border-[#3D52A0]/40 hover:bg-[#EDE8F5]/50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-[#3D52A0]/50 dark:hover:bg-[#3D52A0]/10 active:scale-[0.98]"
+                ? "bg-[var(--accent-brand)] text-white shadow-lg shadow-[var(--accent-brand)]/25 hover:bg-[var(--accent-brand-hover)] hover:shadow-xl hover:shadow-[var(--accent-brand)]/30 active:scale-[0.98]"
+                : "border-2 border-border bg-white text-foreground hover:border-[var(--accent-brand)]/40 hover:bg-[var(--accent-brand-subtle)]/50 dark:border-border dark:bg-card dark:text-foreground dark:hover:border-[var(--accent-brand)]/50 dark:hover:bg-[var(--accent-brand)]/10 active:scale-[0.98]"
             }`}
           >
             {cta}
@@ -359,7 +359,7 @@ function PricingCard({
             {planFeatures.map((feature) => (
               <li key={feature} className="flex items-start gap-3">
                 <CheckCircle2 className="mt-0.5 h-4.5 w-4.5 shrink-0 text-emerald-500" />
-                <span className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+                <span className="text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground/60">
                   {feature}
                 </span>
               </li>
@@ -398,7 +398,7 @@ function Navbar() {
     <motion.header
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90"
+          ? "border-b border-border bg-white/90 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90"
           : "border-b border-transparent bg-white/80 backdrop-blur-sm dark:bg-slate-900/80"
       }`}
     >
@@ -406,7 +406,7 @@ function Navbar() {
         <Link href="/" className="flex items-center gap-1.5" prefetch={false}>
           <Image src="/logo.svg" alt="LinkVault" width={40} height={40} className="rounded-md w-auto h-10" />
           <span className="text-2xl font-extrabold tracking-tight">
-            <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+            <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-foreground dark:text-white">Vault</span>
           </span>
         </Link>
 
@@ -415,7 +415,7 @@ function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-slate-600 transition-colors hover:text-[#3D52A0] dark:text-slate-400 dark:hover:text-[#7091E6]"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-[var(--accent-brand)] dark:text-muted-foreground dark:hover:text-[var(--accent-brand)]"
               prefetch={false}
             >
               {link.label}
@@ -426,13 +426,13 @@ function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="text-sm font-semibold text-slate-600 transition-colors hover:text-[#3D52A0] dark:text-slate-400 dark:hover:text-[#7091E6]"
+            className="text-sm font-semibold text-muted-foreground transition-colors hover:text-[var(--accent-brand)] dark:text-muted-foreground dark:hover:text-[var(--accent-brand)]"
           >
             Log In
           </Link>
           <Link
             href="/signup"
-            className="inline-flex h-10 items-center rounded-xl bg-[#3D52A0] px-5 text-sm font-bold text-white shadow-md shadow-[#3D52A0]/20 transition-all duration-200 hover:bg-[#2E3F80] hover:shadow-lg hover:shadow-[#3D52A0]/30 active:scale-[0.97]"
+            className="inline-flex h-10 items-center rounded-xl bg-[var(--accent-brand)] px-5 text-sm font-bold text-white shadow-md shadow-[var(--accent-brand)]/20 transition-all duration-200 hover:bg-[var(--accent-brand-hover)] hover:shadow-lg hover:shadow-[var(--accent-brand)]/30 active:scale-[0.97]"
           >
             Get Started
             <ArrowRight className="ml-2 h-4 w-4" />
@@ -442,7 +442,7 @@ function Navbar() {
         {/* Mobile menu toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-slate-600 dark:text-slate-400 md:hidden"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground dark:text-muted-foreground md:hidden"
           aria-label="Toggle menu"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>}
@@ -454,13 +454,13 @@ function Navbar() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="border-t border-slate-200 bg-white/95 px-6 pb-6 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 md:hidden"
+          className="border-t border-border bg-white/95 px-6 pb-6 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 md:hidden"
         >
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block py-3 text-sm font-medium text-slate-600 dark:text-slate-400"
+              className="block py-3 text-sm font-medium text-muted-foreground dark:text-muted-foreground"
               onClick={() => setMobileOpen(false)}
               prefetch={false}
             >
@@ -468,10 +468,10 @@ function Navbar() {
             </Link>
           ))}
           <div className="mt-4 flex flex-col gap-3">
-            <Link href="/login" className="block text-center text-sm font-semibold text-slate-600 dark:text-slate-400">Log In</Link>
+            <Link href="/login" className="block text-center text-sm font-semibold text-muted-foreground dark:text-muted-foreground">Log In</Link>
             <Link
               href="/signup"
-              className="flex h-11 items-center justify-center rounded-xl bg-[#3D52A0] text-sm font-bold text-white"
+              className="flex h-11 items-center justify-center rounded-xl bg-[var(--accent-brand)] text-sm font-bold text-white"
               onClick={() => setMobileOpen(false)}
             >
               Get Started
@@ -496,7 +496,7 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease: "easeOut" }}
       whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 22 } }}
-      className="group relative flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-xl dark:border-slate-700 dark:bg-slate-800 dark:hover:shadow-[#3D52A0]/15"
+      className="group relative flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-xl dark:border-slate-700 dark:bg-card dark:hover:shadow-[var(--accent-brand)]/15"
     >
       {/* Icon */}
       <div
@@ -507,10 +507,10 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       </div>
 
       {/* Content */}
-      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+      <h3 className="text-lg font-bold text-foreground dark:text-white">
         {feature.title}
       </h3>
-      <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground">
         {feature.description}
       </p>
 
@@ -553,24 +553,24 @@ function DashboardPreview() {
 
           <div className="relative mx-auto max-w-5xl">
             {/* Browser chrome */}
-            <div className="rounded-t-xl border border-b-0 border-slate-200 bg-slate-100 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
+            <div className="rounded-t-xl border border-b-0 border-border bg-muted px-4 py-3 dark:border-slate-700 dark:bg-card">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="h-3 w-3 rounded-full bg-red-400 dark:bg-red-500" />
                   <div className="h-3 w-3 rounded-full bg-amber-400 dark:bg-amber-500" />
                   <div className="h-3 w-3 rounded-full bg-green-400 dark:bg-green-500" />
                 </div>
-                <div className="ml-4 flex-1 rounded-md bg-white px-3 py-1 text-xs text-slate-400 dark:bg-slate-700 dark:text-slate-500">
+                <div className="ml-4 flex-1 rounded-md bg-white px-3 py-1 text-xs text-muted-foreground dark:bg-slate-700 dark:text-muted-foreground">
                   link-vault-theta.vercel.app/dashboard
                 </div>
               </div>
             </div>
 
             {/* Dashboard content */}
-            <div className="rounded-b-xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/50 dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50">
+            <div className="rounded-b-xl border border-border bg-white shadow-2xl shadow-slate-200/50 dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50">
               <div className="grid grid-cols-12">
                 {/* Sidebar mock */}
-                <div className="hidden md:col-span-3 md:flex md:flex-col md:border-r md:border-slate-200 md:dark:border-slate-700 md:p-4 md:gap-1">
+                <div className="hidden md:col-span-3 md:flex md:flex-col md:border-r md:border-border md:dark:border-slate-700 md:p-4 md:gap-1">
                   {["Overview", "All Links", "Analytics", "QR Codes", "Activity", "Settings"].map((item, i) => (
                     <motion.div
                       key={item}
@@ -579,13 +579,13 @@ function DashboardPreview() {
                       transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
                       className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm ${
                         i === 0
-                          ? "bg-[#ECEEFE] text-[#2B0094] dark:bg-[#3D52A0]/20 dark:text-[#7091E6]"
-                          : "text-slate-500 dark:text-slate-400"
+                          ? "bg-[var(--accent-brand-subtle)] text-[var(--accent-brand)] dark:bg-[var(--accent-brand)]/20 dark:text-[var(--accent-brand)]"
+                          : "text-muted-foreground dark:text-muted-foreground"
                       }`}
                     >
                       <div
                         className={`h-2 w-2 rounded-full ${
-                          i === 0 ? "bg-[#2B0094] dark:bg-[#7091E6]" : "bg-slate-300 dark:bg-slate-600"
+                          i === 0 ? "bg-[var(--accent-brand)] dark:bg-[#7091E6]" : "bg-slate-300 dark:bg-slate-600"
                         }`}
                       />
                       {item}
@@ -608,12 +608,12 @@ function DashboardPreview() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
-                        className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/80"
+                        className="rounded-xl border border-border bg-muted/50/80 p-4 dark:border-slate-700 dark:bg-card/80"
                       >
-                        <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                        <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">
                           {stat.label}
                         </p>
-                        <p className="mt-1.5 text-lg font-bold text-slate-900 dark:text-white">
+                        <p className="mt-1.5 text-lg font-bold text-foreground dark:text-white">
                           {stat.value}
                         </p>
                         {stat.change && (
@@ -630,14 +630,14 @@ function DashboardPreview() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.9, duration: 0.5 }}
-                    className="mt-4 rounded-xl border border-slate-200 bg-slate-50/80 p-5 dark:border-slate-700 dark:bg-slate-800/80"
+                    className="mt-4 rounded-xl border border-border bg-muted/50/80 p-5 dark:border-slate-700 dark:bg-card/80"
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                        <p className="text-sm font-semibold text-foreground dark:text-white">
                           Clicks Over Time
                         </p>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                           Last 30 days
                         </p>
                       </div>
@@ -647,8 +647,8 @@ function DashboardPreview() {
                             key={d}
                             className={`rounded-md px-2 py-0.5 text-xs font-medium ${
                               i === 1
-                                ? "bg-[#3D52A0] text-white"
-                                : "text-slate-500 dark:text-slate-400"
+                                ? "bg-[var(--accent-brand)] text-white"
+                                : "text-muted-foreground dark:text-muted-foreground"
                             }`}
                           >
                             {d}
@@ -679,10 +679,10 @@ function DashboardPreview() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 1.2, duration: 0.5 }}
-                    className="mt-4 rounded-xl border border-slate-200 bg-slate-50/80 dark:border-slate-700 dark:bg-slate-800/80 overflow-hidden"
+                    className="mt-4 rounded-xl border border-border bg-muted/50/80 dark:border-slate-700 dark:bg-card/80 overflow-hidden"
                   >
-                    <div className="border-b border-slate-200 px-5 py-3 dark:border-slate-700">
-                      <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                    <div className="border-b border-border px-5 py-3 dark:border-slate-700">
+                      <p className="text-sm font-semibold text-foreground dark:text-white">
                         Recent Links
                       </p>
                     </div>
@@ -693,15 +693,15 @@ function DashboardPreview() {
                     ].map((link) => (
                       <div
                         key={link.slug}
-                        className="flex items-center justify-between border-b border-slate-100 px-5 py-3 last:border-0 dark:border-slate-700/50"
+                        className="flex items-center justify-between border-b border-border px-5 py-3 last:border-0 dark:border-slate-700/50"
                       >
                         <div className="flex items-center gap-3">
                           <div className="h-2 w-2 rounded-full bg-emerald-500" />
-                          <span className="font-mono text-sm text-[#2B0094] dark:text-[#7091E6]">
+                          <span className="font-mono text-sm text-[var(--accent-brand)] dark:text-[var(--accent-brand)]">
                             /{link.slug}
                           </span>
                         </div>
-                        <span className="text-xs text-slate-500 dark:text-slate-400">
+                        <span className="text-xs text-muted-foreground dark:text-muted-foreground">
                           {link.clicks} clicks
                         </span>
                       </div>
@@ -742,15 +742,15 @@ function StepCard({ step, index }: { step: HowItWorksStep; index: number }) {
       </motion.div>
 
       {/* Icon */}
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
-        <step.icon className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-muted dark:bg-slate-700">
+        <step.icon className="h-5 w-5 text-muted-foreground dark:text-muted-foreground/60" />
       </div>
 
       {/* Content */}
-      <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+      <h3 className="text-lg font-bold text-foreground dark:text-white">
         {step.title}
       </h3>
-      <p className="mt-2 max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+      <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground">
         {step.description}
       </p>
 
@@ -776,10 +776,10 @@ function TestimonialCard({ testimonial, index }: { testimonial: Testimonial; ind
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
-      className="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:border-slate-700 dark:bg-slate-800"
+      className="flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:border-slate-700 dark:bg-card"
     >
-      <Quote className="mb-4 h-8 w-8 text-[#3D52A0]/20 dark:text-[#7091E6]/20" />
-      <p className="flex-1 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+      <Quote className="mb-4 h-8 w-8 text-[var(--accent-brand)]/20 dark:text-[var(--accent-brand)]/20" />
+      <p className="flex-1 text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground/60">
         &ldquo;{testimonial.content}&rdquo;
       </p>
       <div className="mt-6 flex items-center gap-3">
@@ -789,10 +789,10 @@ function TestimonialCard({ testimonial, index }: { testimonial: Testimonial; ind
           {testimonial.avatar}
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-900 dark:text-white">
+          <p className="text-sm font-semibold text-foreground dark:text-white">
             {testimonial.name}
           </p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             {testimonial.role}
           </p>
         </div>
@@ -816,7 +816,7 @@ export default function Home() {
           <motion.div
             animate={{ y: [0, -30, 0], x: [0, 20, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute -left-32 top-20 h-[500px] w-[500px] rounded-full bg-[#3D52A0]/12 blur-[120px] dark:bg-[#3D52A0]/18"
+            className="absolute -left-32 top-20 h-[500px] w-[500px] rounded-full bg-[var(--accent-brand)]/12 blur-[120px] dark:bg-[var(--accent-brand)]/18"
           />
           <motion.div
             animate={{ y: [0, 40, 0], x: [0, -30, 0] }}
@@ -826,7 +826,7 @@ export default function Home() {
           <motion.div
             animate={{ y: [0, -20, 0], x: [0, -15, 0] }}
             transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-            className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-[#ADBBDA]/8 blur-[100px] dark:bg-[#ADBBDA]/12"
+            className="absolute bottom-0 left-1/3 h-[300px] w-[300px] rounded-full bg-[var(--color-brand-100)]/8 blur-[100px] dark:bg-[var(--color-brand-100)]/12"
           />
         </div>
 
@@ -838,13 +838,13 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="inline-flex items-center gap-2 rounded-full bg-[#EDE8F5] px-4 py-1.5 dark:bg-[#3D52A0]/15"
+                className="inline-flex items-center gap-2 rounded-full bg-[var(--accent-brand-subtle)] px-4 py-1.5 dark:bg-[var(--accent-brand)]/15"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                 </span>
-                <span className="text-xs font-semibold text-[#3D52A0] dark:text-[#7091E6]">
+                <span className="text-xs font-semibold text-[var(--accent-brand)] dark:text-[var(--accent-brand)]">
                   Now in Public Beta
                 </span>
               </motion.div>
@@ -853,7 +853,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-                className="mt-6 text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-5xl lg:text-6xl"
+                className="mt-6 text-4xl font-extrabold tracking-tight text-foreground dark:text-white sm:text-5xl lg:text-6xl"
               >
                 Shorten links that{" "}
                 <span className="relative">
@@ -870,7 +870,7 @@ export default function Home() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
-                className="mt-6 text-lg leading-relaxed text-slate-500 dark:text-slate-400"
+                className="mt-6 text-lg leading-relaxed text-muted-foreground dark:text-muted-foreground"
               >
                 Powerful URL shortening with deep analytics, custom branded links, and QR codes.
                 Trusted by marketing teams and developers who demand performance.
@@ -884,14 +884,14 @@ export default function Home() {
               >
                 <Link
                   href="/signup"
-                  className="group inline-flex h-14 items-center rounded-2xl bg-[#3D52A0] px-8 text-base font-bold text-white shadow-xl shadow-[#3D52A0]/25 transition-all duration-200 hover:bg-[#2E3F80] hover:shadow-2xl hover:shadow-[#3D52A0]/30 active:scale-[0.97]"
+                  className="group inline-flex h-14 items-center rounded-2xl bg-[var(--accent-brand)] px-8 text-base font-bold text-white shadow-xl shadow-[var(--accent-brand)]/25 transition-all duration-200 hover:bg-[var(--accent-brand-hover)] hover:shadow-2xl hover:shadow-[var(--accent-brand)]/30 active:scale-[0.97]"
                 >
                   Get Started Free
                   <ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
                 </Link>
                 <Link
                   href="#how-it-works"
-                  className="inline-flex h-14 items-center rounded-2xl border-2 border-slate-200 bg-white px-8 text-base font-bold text-slate-700 transition-all duration-200 hover:border-[#3D52A0]/30 hover:bg-[#EDE8F5]/50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-[#3D52A0]/50 dark:hover:bg-[#3D52A0]/10 active:scale-[0.97]"
+                  className="inline-flex h-14 items-center rounded-2xl border-2 border-border bg-white px-8 text-base font-bold text-foreground transition-all duration-200 hover:border-[var(--accent-brand)]/30 hover:bg-[var(--accent-brand-subtle)]/50 dark:border-slate-700 dark:bg-card dark:text-foreground dark:hover:border-[var(--accent-brand)]/50 dark:hover:bg-[var(--accent-brand)]/10 active:scale-[0.97]"
                   prefetch={false}
                 >
                   See How It Works
@@ -905,7 +905,7 @@ export default function Home() {
                 className="mt-8 flex items-center gap-4"
               >
                 <div className="flex -space-x-2">
-                  {["bg-[#3D52A0]", "bg-[#7091E6]", "bg-[#ADBBDA]", "bg-[#8697C4]"].map((color, i) => (
+                  {["bg-[var(--accent-brand)]", "bg-[#7091E6]", "bg-[#ADBBDA]", "bg-[#8697C4]"].map((color, i) => (
                     <div key={i} className={`h-8 w-8 rounded-full border-2 border-white ${color} dark:border-slate-800`} />
                   ))}
                 </div>
@@ -915,7 +915,7 @@ export default function Home() {
                       <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="mt-0.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <p className="mt-0.5 text-xs font-medium text-muted-foreground dark:text-muted-foreground">
                     Loved by 2,000+ teams worldwide
                   </p>
                 </div>
@@ -936,9 +936,9 @@ export default function Home() {
       </section>
 
       {/* ── Logo Marquee ───────────────────────────────────────────────── */}
-      <section className="border-y border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-800/30">
+      <section className="border-y border-border bg-muted/50/80 dark:border-slate-800 dark:bg-card/30">
         <div className="global-content">
-          <p className="py-6 text-center text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500">
+          <p className="py-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">
             Trusted by innovative teams worldwide
           </p>
           <LogoMarquee />
@@ -948,7 +948,7 @@ export default function Home() {
       {/* ── Stats Section ──────────────────────────────────────────────── */}
       <section className="relative overflow-hidden py-20">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#3D52A0]/5 blur-[150px] dark:bg-[#3D52A0]/8" />
+          <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--accent-brand)]/5 blur-[150px] dark:bg-[var(--accent-brand)]/8" />
         </div>
 
         <div className="global-content relative z-10">
@@ -968,10 +968,10 @@ export default function Home() {
                 >
                   <stat.icon className="h-6 w-6" style={{ color: stat.accent }} />
                 </div>
-                <p className="text-3xl font-extrabold text-slate-900 dark:text-white sm:text-4xl">
+                <p className="text-3xl font-extrabold text-foreground dark:text-white sm:text-4xl">
                   <AnimatedCounter value={stat.value} suffix={stat.suffix} />
                 </p>
-                <p className="mt-1.5 text-sm font-medium text-slate-500 dark:text-slate-400">
+                <p className="mt-1.5 text-sm font-medium text-muted-foreground dark:text-muted-foreground">
                   {stat.label}
                 </p>
               </motion.div>
@@ -1001,7 +1001,7 @@ export default function Home() {
       <DashboardPreview />
 
       {/* ── How It Works ───────────────────────────────────────────────── */}
-      <section id="how-it-works" className="relative overflow-hidden bg-slate-50 py-24 dark:bg-slate-800/30">
+      <section id="how-it-works" className="relative overflow-hidden bg-muted/50 py-24 dark:bg-card/30">
         <div className="global-content relative z-10">
           <SectionHeader
             tag="How It Works"
@@ -1035,7 +1035,7 @@ export default function Home() {
       </section>
 
       {/* ── Pricing ────────────────────────────────────────────────────── */}
-      <section id="pricing" className="relative overflow-hidden bg-slate-50 py-24 dark:bg-slate-800/30">
+      <section id="pricing" className="relative overflow-hidden bg-muted/50 py-24 dark:bg-card/30">
         <div className="global-content relative z-10">
           <SectionHeader
             tag="Pricing"
@@ -1063,7 +1063,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl bg-gradient-to-br from-[#3D52A0] to-[#1F2C5C] px-8 py-16 text-center shadow-2xl shadow-[#3D52A0]/25 dark:shadow-[#3D52A0]/30 sm:px-16"
+            className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl bg-gradient-to-br from-[#3D52A0] to-[var(--accent-brand-hover)] px-8 py-16 text-center shadow-2xl shadow-[var(--accent-brand)]/25 dark:shadow-[var(--accent-brand)]/30 sm:px-16"
           >
             {/* Decorative */}
             <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
@@ -1087,7 +1087,7 @@ export default function Home() {
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/signup"
-                  className="group inline-flex h-14 items-center rounded-2xl bg-white px-8 text-base font-bold text-[#3D52A0] shadow-lg transition-all duration-200 hover:bg-[#EDE8F5] hover:shadow-xl active:scale-[0.97]"
+                  className="group inline-flex h-14 items-center rounded-2xl bg-white px-8 text-base font-bold text-[var(--accent-brand)] shadow-lg transition-all duration-200 hover:bg-[var(--accent-brand-subtle)] hover:shadow-xl active:scale-[0.97]"
                 >
                   Start Building for Free
                   <ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
@@ -1108,22 +1108,22 @@ export default function Home() {
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <footer className="border-t border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-900">
+      <footer className="border-t border-border bg-muted/50 dark:border-slate-800 dark:bg-slate-900">
         <div className="global-content py-16 md:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
             {/* Brand column */}
             <div className="lg:col-span-2">
               <Link href="/" className="flex items-center gap-2.5" prefetch={false}>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#3D52A0] shadow-md shadow-[#3D52A0]/25">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent-brand)] shadow-md shadow-[var(--accent-brand)]/25">
                   <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                   </svg>
                 </div>
-                <span className="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white">
+                <span className="text-lg font-extrabold tracking-tight text-foreground dark:text-white">
                   LinkVault
                 </span>
               </Link>
-              <p className="mt-4 max-w-xs text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+              <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground">
                 Smart URL shortener with analytics, custom slugs, and QR code generation.
                 Built for teams that ship.
               </p>
@@ -1137,7 +1137,7 @@ export default function Home() {
                     key={social.name}
                     href={social.href}
                     aria-label={social.name}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-slate-200 hover:text-muted-foreground dark:hover:bg-slate-800 dark:hover:text-muted-foreground/60"
                   >
                     <social.icon className="h-4 w-4" />
                   </Link>
@@ -1147,7 +1147,7 @@ export default function Home() {
 
             {/* Product */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground dark:text-white">
                 Product
               </h3>
               <ul className="mt-4 space-y-3">
@@ -1155,7 +1155,7 @@ export default function Home() {
                   <li key={item}>
                     <Link
                       href="/pricing"
-                      className="text-sm text-slate-500 transition-colors hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-white"
                       prefetch={false}
                     >
                       {item}
@@ -1167,13 +1167,13 @@ export default function Home() {
 
             {/* Company */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground dark:text-white">
                 Company
               </h3>
               <ul className="mt-4 space-y-3">
                 {["About", "Blog", "Contact", "Careers"].map((item) => (
                   <li key={item}>
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                       {item}
                     </span>
                   </li>
@@ -1183,13 +1183,13 @@ export default function Home() {
 
             {/* Legal */}
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-900 dark:text-white">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground dark:text-white">
                 Legal
               </h3>
               <ul className="mt-4 space-y-3">
                 {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
                   <li key={item}>
-                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                       {item}
                     </span>
                   </li>
@@ -1198,12 +1198,12 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-slate-200 pt-8 dark:border-slate-800">
+          <div className="mt-16 border-t border-border pt-8 dark:border-slate-800">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 &copy; {new Date().getFullYear()} LinkVault. All rights reserved.
               </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500">
+              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                 Built with Next.js, Prisma, and edge caching
               </p>
             </div>

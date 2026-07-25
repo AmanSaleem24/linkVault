@@ -81,8 +81,8 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-foreground">QR Codes</h1>
-          <p className="text-sm text-slate-500 dark:text-muted-foreground">
+          <h1 className="text-2xl font-bold text-foreground dark:text-foreground">QR Codes</h1>
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
             Manage your custom QR codes for easy sharing.
           </p>
         </div>
@@ -120,12 +120,12 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
       )}
 
       {qrCodes.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-24 text-center dark:border-border dark:bg-card">
-          <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-slate-100 dark:bg-muted">
-            <QrCodeIcon className="size-6 text-slate-400" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/50 py-24 text-center dark:border-border dark:bg-card">
+          <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-muted dark:bg-muted">
+            <QrCodeIcon className="size-6 text-muted-foreground" />
           </div>
-          <h3 className="text-lg font-semibold text-slate-900 dark:text-foreground">No QR codes yet</h3>
-          <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+          <h3 className="text-lg font-semibold text-foreground dark:text-foreground">No QR codes yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
             Create your first QR code to easily share your links offline.
           </p>
           <Button
@@ -153,12 +153,12 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
             return (
               <div
                 key={qr.id}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md dark:border-border dark:bg-card"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all hover:shadow-md dark:border-border dark:bg-card"
               >
-                <div className="flex items-center justify-center bg-slate-50 p-8 dark:bg-muted/30">
+                <div className="flex items-center justify-center bg-muted/50 p-8 dark:bg-muted/30">
                   <button 
                     onClick={() => setExpandedQr(qr.id)}
-                    className="group relative cursor-pointer overflow-hidden rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-xl dark:bg-white dark:ring-0"
+                    className="group relative cursor-pointer overflow-hidden rounded-2xl bg-card p-4 shadow-sm ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-xl dark:bg-white dark:ring-0"
                     title="Click to enlarge"
                   >
                     <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
@@ -178,54 +178,54 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                   <div>
                     {isRaw ? (
                       <>
-                        <h4 className="flex items-center gap-1.5 font-semibold text-slate-900 dark:text-foreground">
-                          <Globe className="size-4 text-slate-400" />
+                        <h4 className="flex items-center gap-1.5 font-semibold text-foreground dark:text-foreground">
+                          <Globe className="size-4 text-muted-foreground" />
                           Raw URL
                         </h4>
-                        <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-muted-foreground">
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground dark:text-muted-foreground">
                           {qrUrl}
                         </p>
                       </>
                     ) : (
                       <>
-                        <h4 className="font-semibold text-slate-900 dark:text-foreground">/{qr.link!.slug}</h4>
-                        <p className="mt-1 line-clamp-1 text-xs text-slate-500 dark:text-muted-foreground">
+                        <h4 className="font-semibold text-foreground dark:text-foreground">/{qr.link!.slug}</h4>
+                        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground dark:text-muted-foreground">
                           {qr.link!.originalUrl}
                         </p>
                       </>
                     )}
                   </div>
 
-                  <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-border">
-                    <span className="text-xs font-medium text-slate-500 dark:text-muted-foreground">
+                  <div className="mt-6 flex items-center justify-between border-t border-border pt-4 dark:border-border">
+                    <span className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">
                       {isRaw ? 'No tracking' : `${qr.link!.clickCount} scans`}
                     </span>
                     <div className="flex gap-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger 
-                          className="flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:hover:bg-muted"
+                          className="flex size-8 items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:hover:bg-muted"
                           title="Download"
                         >
-                          <Download className="size-4 text-slate-500" />
+                          <Download className="size-4 text-muted-foreground" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 shadow-xl ring-1 ring-slate-100 dark:bg-card dark:ring-border">
+                        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 shadow-xl ring-1 ring-white/8 dark:ring-white/8">
                           <DropdownMenuItem 
                             onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'png')}
-                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/50 dark:text-muted-foreground/60 dark:hover:bg-muted/50"
                           >
                             <ImageIcon className="size-4 text-brand-500 dark:text-brand-400" />
                             Download PNG
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'jpeg')}
-                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/50 dark:text-muted-foreground/60 dark:hover:bg-muted/50"
                           >
                             <FileImage className="size-4 text-emerald-500 dark:text-emerald-400" />
                             Download JPEG
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'pdf')}
-                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-muted/50"
+                            className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/50 dark:text-muted-foreground/60 dark:hover:bg-muted/50"
                           >
                             <FileText className="size-4 text-amber-500 dark:text-amber-400" />
                             Download PDF
@@ -241,9 +241,9 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                         title="Delete"
                       >
                         {isDeleting === qr.id ? (
-                          <Loader2 className="size-4 animate-spin text-slate-400" />
+                          <Loader2 className="size-4 animate-spin text-muted-foreground" />
                         ) : (
-                          <Trash2 className="size-4 text-slate-500 hover:text-red-500" />
+                          <Trash2 className="size-4 text-muted-foreground hover:text-red-500" />
                         )}
                       </Button>
                     </div>
@@ -267,7 +267,7 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
             onClick={() => setExpandedQr(null)}
           >
             <div 
-              className="rounded-[2.5rem] bg-white p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
+              className="rounded-[2.5rem] bg-card p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               <QRCode

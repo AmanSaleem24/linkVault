@@ -5,9 +5,9 @@ export default async function DisabledPage({ params }: { params: Promise<{ slug:
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-4">
       <div className="text-center">
-        <p className="text-sm font-medium text-slate-400 mb-1 whitespace-nowrap">/{slug}</p>
-        <h1 className="text-3xl font-bold text-slate-900">This link is disabled</h1>
-        <p className="mt-3 text-slate-500 max-w-sm">
+        <p className="text-sm font-medium text-muted-foreground mb-1 whitespace-nowrap">/{slug}</p>
+        <h1 className="text-3xl font-bold text-foreground">This link is disabled</h1>
+        <p className="mt-3 text-muted-foreground max-w-sm">
           The owner has temporarily disabled this short link. It may become available again later.
         </p>
       </div>

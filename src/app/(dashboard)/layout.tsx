@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { AccountMenu } from '@/components/dashboard/account-menu'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Search } from 'lucide-react'
@@ -49,12 +50,12 @@ export default async function DashboardLayout({
       {/* ── Main area ───────────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* ── Top Navbar ──────────────────────────────────────────────────── */}
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-white px-4 md:px-6 dark:bg-background">
+        <header className="flex h-16 shrink-0 items-center justify-between border-b border-border bg-background px-4 md:px-6">
           {/* Mobile: logo (sidebar is hidden on mobile) */}
           <Link href="/home" className="flex items-center gap-1.5 md:hidden">
             <Image src="/logo.svg" alt="LinkVault" width={32} height={32} className="rounded-md w-auto h-8" />
             <span className="text-xl font-extrabold tracking-tight">
-              <span className="text-indigo-600 dark:text-indigo-500">Link</span><span className="text-slate-900 dark:text-white">Vault</span>
+              <span className="text-[var(--accent-brand)]">Link</span><span className="text-foreground">Vault</span>
             </span>
           </Link>
 
@@ -65,7 +66,7 @@ export default async function DashboardLayout({
               <input
                 type="search"
                 placeholder="Search links..."
-                className="h-10 w-full rounded-sm border border-input bg-white pl-10 pr-4 text-[0.95rem] text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30 dark:bg-muted/40"
+                className="h-10 w-full rounded-sm border border-input bg-background pl-10 pr-4 text-[0.95rem] text-foreground placeholder:text-muted-foreground shadow-sm focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/30"
               />
               <kbd className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 rounded-sm border border-border bg-muted/50 px-1.5 py-0.5 text-[0.65rem] font-medium text-muted-foreground shadow-sm lg:inline-block">
                 ⌘K
@@ -80,14 +81,16 @@ export default async function DashboardLayout({
             </button>
 
             {isPro ? (
-              <span className="hidden rounded bg-[#ECEEFE] px-3 py-1.5 text-[0.75rem] font-bold text-[#2B0094] dark:bg-brand-400/20 dark:text-brand-300 md:flex">Pro</span>
+              <span className="hidden rounded bg-[var(--accent-brand-subtle)] px-3 py-1.5 text-[0.75rem] font-bold text-[var(--accent-brand)] md:flex">Pro</span>
             ) : (
               <Link href="/pricing" className="hidden md:block">
-                <Button className="h-10 bg-[#ECEEFE] px-5 text-[0.95rem] font-semibold text-[#2B0094] shadow-none hover:bg-[#e0e4fd] dark:bg-brand-400/20 dark:text-brand-300">
+                <Button className="h-10 bg-[var(--accent-brand-subtle)] px-5 text-[0.95rem] font-semibold text-[var(--accent-brand)] shadow-none hover:bg-[var(--accent-brand-subtle)]/80">
                   Upgrade
                 </Button>
               </Link>
             )}
+
+            <ThemeToggle />
 
             <AccountMenu
               name={user.name ?? 'User'}
@@ -98,7 +101,7 @@ export default async function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto bg-[#F4F6FA] dark:bg-background">
+        <main className="flex-1 overflow-y-auto bg-background">
           {children}
         </main>
       </div>

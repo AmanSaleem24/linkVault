@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { CommandPalette } from '@/components/dashboard/command-palette'
 import { AnimatedBackground } from "@/components/home/animated-background";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -129,17 +130,34 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
-      <body className="page-dot-grid relative min-h-full flex flex-col font-sans">
-        <AnimatedBackground />
-        {children}
-        <CommandPalette />
-        <Toaster />
+      {/* FOWT-prevention: read localStorage before React hydrates */}
+      <head>
         <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`
+          }}
         />
+      </head>
+      <body className="page-dot-grid relative min-h-full flex flex-col font-sans">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          storageKey="theme"
+          disableTransitionOnChange={false}
+        >
+          <AnimatedBackground />
+          {children}
+          <CommandPalette />
+          <Toaster />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          />
+        </ThemeProvider>
       </body>
     </html>
   );

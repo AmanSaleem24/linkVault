@@ -14,12 +14,12 @@ export default function QrPage() {
 
   if (isLoading || !result) {
     return (
-      <div className="mx-auto max-w-6xl space-y-6 pt-8 pb-24 lg:pt-12 animate-pulse">
-        <div className="h-10 w-48 bg-slate-200 rounded-md" />
+      <div className="mx-auto max-w-6xl space-y-6 pt-8 pb-24 lg:pt-12 ">
+        <div className="h-10 w-48 skeleton rounded-md" />
         <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <div className="h-[300px] bg-slate-200 rounded-3xl" />
-          <div className="h-[300px] bg-slate-200 rounded-3xl" />
-          <div className="h-[300px] bg-slate-200 rounded-3xl" />
+          <div className="h-[300px] skeleton rounded-3xl" />
+          <div className="h-[300px] skeleton rounded-3xl" />
+          <div className="h-[300px] skeleton rounded-3xl" />
         </div>
       </div>
     )

@@ -133,7 +133,7 @@ export function CommandPalette() {
                 >
                   <Search className="mr-2 size-4 text-indigo-500" />
                   <span className="truncate">/{link.slug}</span>
-                  <span className="ml-auto text-xs text-slate-400 truncate max-w-[200px]">
+                  <span className="ml-auto text-xs text-muted-foreground truncate max-w-[200px]">
                     {link.originalUrl}
                   </span>
                 </CommandItem>
@@ -146,7 +146,7 @@ export function CommandPalette() {
 
         <CommandGroup heading="Account">
           <CommandItem onSelect={() => handleNavigate('/settings')}>
-            <Settings className="mr-2 size-4 text-slate-600" />
+            <Settings className="mr-2 size-4 text-muted-foreground" />
             <span>Settings</span>
           </CommandItem>
           <CommandItem onSelect={handleSignOut}>

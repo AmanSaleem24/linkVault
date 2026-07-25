@@ -51,12 +51,12 @@ export function SortDropdown({ sort, onSort }: SortDropdownProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex h-10 items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 text-[0.875rem] font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-300 hover:bg-slate-50 focus:outline-none">
-        <ArrowUpDown className="size-4 text-slate-400" />
+      <DropdownMenuTrigger className="inline-flex h-10 items-center gap-2 rounded-lg border border-border bg-card px-4 text-[0.875rem] font-semibold text-foreground shadow-sm transition-colors hover:border-border hover:bg-muted/50 focus:outline-none">
+        <ArrowUpDown className="size-4 text-muted-foreground" />
         {activeRow ? SORT_TRIGGER_LABEL[sort.field]?.(sort.order) ?? 'Sort' : 'Sort'}
-        <ChevronDown className="size-3.5 text-slate-400" />
+        <ChevronDown className="size-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 rounded-xl border border-slate-200 bg-white p-1 shadow-lg shadow-slate-200/50 ring-1 ring-slate-200/60">
+      <DropdownMenuContent align="end" className="w-52 rounded-xl border border-border bg-popover p-1 shadow-lg shadow-black/20 ring-1 ring-white/8">
         {SORT_ROWS.map(row => {
           const isActive = sort.field === row.value
           return (
@@ -66,7 +66,7 @@ export function SortDropdown({ sort, onSort }: SortDropdownProps) {
               className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-[0.85rem] font-medium transition-colors cursor-pointer ${
                 isActive
                   ? 'bg-brand-400/10 text-brand-400'
-                  : 'text-slate-700 hover:bg-slate-50'
+                  : 'text-foreground hover:bg-muted/50'
               }`}
             >
               {row.label}

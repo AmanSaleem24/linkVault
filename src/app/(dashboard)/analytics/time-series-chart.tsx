@@ -5,6 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import { DateFilterPopover, type DateFilter } from '@/components/home/date-filter-popover'
 import { ChartTooltip } from '@/components/dashboard/charts/chart-tooltip'
 import { BarChart3 } from 'lucide-react'
+import { useTheme } from 'next-themes'
 
 type TimeSeriesChartProps = {
   data: Array<{ date: string; count: number }>
@@ -17,6 +18,13 @@ export function TimeSeriesChart({ data }: TimeSeriesChartProps) {
     from.setDate(from.getDate() - 30)
     return { preset: 'Last 30 days', from: from.toISOString(), to: to.toISOString() }
   })
+
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+  const tickColor = isDark ? '#6b7280' : '#94a3b8'
+  const axisColor = isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'
+  const activeBarColor = isDark ? '#7091E6' : '#06b6d4'
+  const emptyBarColor = isDark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'
 
   const handleApply = useCallback((from: string, to: string, preset?: string) => {
     setDateFilter({ preset: preset ?? null, from, to })
@@ -32,9 +40,9 @@ export function TimeSeriesChart({ data }: TimeSeriesChartProps) {
   const hasData = data.some((d) => d.count > 0)
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-slate-900">Clicks over time</h2>
+        <h2 className="text-xl font-bold text-foreground">Clicks over time</h2>
       </div>
 
       <div className="mb-5">
@@ -53,9 +61,9 @@ export function TimeSeriesChart({ data }: TimeSeriesChartProps) {
             <BarChart data={data} margin={{ top: 5, right: 5, bottom: 0, left: -15 }}>
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
+                tick={{ fontSize: 11, fill: tickColor }}
                 tickLine={false}
-                axisLine={{ stroke: '#e2e8f0' }}
+                axisLine={{ stroke: axisColor }}
                 tickFormatter={(val: string) => {
                   const d = new Date(val + 'T00:00:00')
                   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -65,21 +73,21 @@ export function TimeSeriesChart({ data }: TimeSeriesChartProps) {
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fontSize: 11, fill: '#94a3b8' }}
+                tick={{ fontSize: 11, fill: tickColor }}
                 tickLine={false}
                 axisLine={false}
               />
               <Tooltip content={<ChartTooltip />} cursor={{ fill: 'transparent' }} />
               <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={32}>
                 {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.count > 0 ? '#06b6d4' : '#e2e8f0'} />
+                  <Cell key={`cell-${index}`} fill={entry.count > 0 ? activeBarColor : emptyBarColor} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center text-slate-400">
-            <BarChart3 className="size-10 mb-2 text-slate-300" />
+          <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+            <BarChart3 className="size-10 mb-2 text-muted-foreground/60" />
             <p className="text-sm font-medium">No clicks yet in this period</p>
           </div>
         )}

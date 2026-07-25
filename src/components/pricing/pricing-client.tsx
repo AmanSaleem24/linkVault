@@ -172,23 +172,23 @@ export function PricingClient({ freePlan, proPlan }: PricingClientProps) {
       <div className="grid items-center gap-6 lg:grid-cols-2 lg:gap-8">
 
         {/* ── Free ───────────────────────────────────────────────── */}
-        <div className="relative flex flex-col rounded-[2.5rem] border border-slate-200/60 bg-white/60 p-8 backdrop-blur-xl transition-all duration-300 hover:border-slate-300/80 hover:bg-white/80 dark:border-border/50 dark:bg-card/40 dark:hover:border-border dark:hover:bg-card/60 sm:p-10">
+        <div className="relative flex flex-col rounded-[2.5rem] border border-border/60 bg-white/60 p-8 backdrop-blur-xl transition-all duration-300 hover:border-border/80 hover:bg-white/80 dark:border-border/50 dark:bg-card/40 dark:hover:border-border dark:hover:bg-card/60 sm:p-10">
           <div>
-            <p className="text-sm font-bold uppercase tracking-widest text-slate-400 dark:text-muted-foreground">Free</p>
+            <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">Free</p>
             <div className="mt-4 flex items-end gap-1.5">
-              <span className="text-5xl font-black tracking-tight text-slate-900 dark:text-foreground">₹0</span>
-              <span className="mb-1.5 text-base font-medium text-slate-400 dark:text-muted-foreground">/mo</span>
+              <span className="text-5xl font-black tracking-tight text-foreground dark:text-foreground">₹0</span>
+              <span className="mb-1.5 text-base font-medium text-muted-foreground dark:text-muted-foreground">/mo</span>
             </div>
-            <p className="mt-2 text-sm text-slate-500 dark:text-muted-foreground">Perfect for trying out LinkVault.</p>
+            <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground">Perfect for trying out LinkVault.</p>
           </div>
 
           <ul className="mt-10 flex-1 space-y-4">
             {freePlan.features.map((feature) => (
               <li key={feature} className="flex items-start gap-3">
-                <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-muted">
-                  <Check className="size-3 text-slate-400 dark:text-muted-foreground" />
+                <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-muted dark:bg-muted">
+                  <Check className="size-3 text-muted-foreground dark:text-muted-foreground" />
                 </div>
-                <span className="text-sm font-medium text-slate-600 dark:text-muted-foreground/90">{feature}</span>
+                <span className="text-sm font-medium text-muted-foreground dark:text-muted-foreground/90">{feature}</span>
               </li>
             ))}
           </ul>
@@ -201,11 +201,11 @@ export function PricingClient({ freePlan, proPlan }: PricingClientProps) {
         </div>
 
         {/* ── Pro ────────────────────────────────────────────────── */}
-        <div className="group relative flex flex-col rounded-[2.5rem] bg-white shadow-2xl shadow-brand-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-brand-500/20 dark:bg-card dark:shadow-none">
+        <div className="group relative flex flex-col rounded-[2.5rem] bg-card shadow-2xl shadow-brand-500/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-brand-500/20 dark:bg-card dark:shadow-none">
           {/* Animated gradient border container */}
           <div className="absolute inset-0 rounded-[2.5rem] bg-gradient-to-br from-brand-400 via-violet-400 to-brand-600 opacity-100 p-[2px] transition-opacity duration-500 group-hover:from-brand-300 group-hover:via-fuchsia-400 group-hover:to-brand-500">
             {/* Inner background to mask the gradient except for the border */}
-            <div className="absolute inset-[2px] rounded-[2.4rem] bg-white dark:bg-card" />
+            <div className="absolute inset-[2px] rounded-[2.4rem] bg-card dark:bg-card" />
           </div>
 
           {/* Recommended pill */}
@@ -220,10 +220,10 @@ export function PricingClient({ freePlan, proPlan }: PricingClientProps) {
             <div>
               <p className="text-sm font-bold uppercase tracking-widest text-brand-500 dark:text-brand-400">Pro</p>
               <div className="mt-4 flex items-end gap-1.5">
-                <span className="text-5xl font-black tracking-tight text-slate-900 dark:text-foreground">₹99</span>
-                <span className="mb-1.5 text-base font-medium text-slate-400 dark:text-muted-foreground">/mo</span>
+                <span className="text-5xl font-black tracking-tight text-foreground dark:text-foreground">₹99</span>
+                <span className="mb-1.5 text-base font-medium text-muted-foreground dark:text-muted-foreground">/mo</span>
               </div>
-              <p className="mt-2 text-sm text-slate-500 dark:text-muted-foreground">For true professionals. Cancel anytime.</p>
+              <p className="mt-2 text-sm text-muted-foreground dark:text-muted-foreground">For true professionals. Cancel anytime.</p>
             </div>
 
             <ul className="mt-10 flex-1 space-y-4">
@@ -232,7 +232,7 @@ export function PricingClient({ freePlan, proPlan }: PricingClientProps) {
                   <div className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-400/15">
                     <Check className="size-3.5 text-brand-500 dark:text-brand-400" strokeWidth={3} />
                   </div>
-                  <span className="text-sm font-semibold text-slate-700 dark:text-foreground/90">{feature}</span>
+                  <span className="text-sm font-semibold text-foreground dark:text-foreground/90">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -268,7 +268,7 @@ export function PricingClient({ freePlan, proPlan }: PricingClientProps) {
       {/* Trust badges */}
       <div className="mt-12 flex flex-wrap items-center justify-center gap-3 sm:gap-6">
         {TRUST_BADGES.map(({ icon: Icon, text }) => (
-          <div key={text} className="flex items-center gap-2 rounded-full border border-slate-200/60 bg-white/40 px-4 py-2 text-xs font-semibold text-slate-500 backdrop-blur-sm dark:border-border/50 dark:bg-card/20 dark:text-muted-foreground">
+          <div key={text} className="flex items-center gap-2 rounded-full border border-border/60 bg-white/40 px-4 py-2 text-xs font-semibold text-muted-foreground backdrop-blur-sm dark:border-border/50 dark:bg-card/20 dark:text-muted-foreground">
             <Icon className="size-4" />
             {text}
           </div>

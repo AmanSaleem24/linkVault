@@ -45,7 +45,7 @@ export function BillingActions({ cancelAtPeriodEnd }: BillingActionsProps) {
   if (cancelAtPeriodEnd) {
     return (
       <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-slate-500 dark:text-muted-foreground">
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
           Cancellation is scheduled. You keep Pro access until the end of your billing period.
         </p>
         <Button variant="outline" disabled className="shrink-0 text-sm">
@@ -58,12 +58,12 @@ export function BillingActions({ cancelAtPeriodEnd }: BillingActionsProps) {
   return (
     <>
       <div className="flex items-center justify-between gap-4">
-        <p className="text-sm text-slate-500 dark:text-muted-foreground">
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
           Cancel anytime. You keep Pro access until the end of your current billing period.
         </p>
         <Button
           variant="outline"
-          className="shrink-0 border-slate-200 text-sm text-slate-700 hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:border-border dark:text-foreground dark:hover:border-destructive/40 dark:hover:bg-destructive/10 dark:hover:text-destructive"
+          className="shrink-0 border-border text-sm text-foreground hover:border-red-300 hover:bg-red-50 hover:text-red-600 dark:border-border dark:text-foreground dark:hover:border-destructive/40 dark:hover:bg-destructive/10 dark:hover:text-destructive"
           onClick={() => setShowConfirm(true)}
         >
           Cancel plan

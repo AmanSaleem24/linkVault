@@ -65,9 +65,9 @@ export function ShareDialog({ url, title, children }: ShareDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={children as React.ReactElement} />
-      <DialogContent className="sm:max-w-[480px] rounded-3xl p-0 overflow-hidden gap-0 border-slate-200 shadow-xl bg-white">
+      <DialogContent className="sm:max-w-[480px] rounded-3xl p-0 overflow-hidden gap-0 border-border shadow-xl bg-card">
         <DialogHeader className="p-8 pb-2">
-          <DialogTitle className="text-2xl font-extrabold text-slate-900 tracking-tight">Share your LinkVault Link</DialogTitle>
+          <DialogTitle className="text-2xl font-extrabold text-foreground tracking-tight">Share your LinkVault Link</DialogTitle>
         </DialogHeader>
         
         <svg width="0" height="0" style={{ position: 'absolute' }}>
@@ -90,22 +90,22 @@ export function ShareDialog({ url, title, children }: ShareDialogProps) {
                     href={platform.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex size-[68px] items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+                    className="flex size-[68px] items-center justify-center rounded-2xl border border-border bg-card shadow-sm transition-all hover:border-border hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
                     title={`Share on ${platform.name}`}
                   >
                   <Icon size={32} style={{ fill: platform.color }} />
                 </a>
-                  <span className="text-[13px] font-medium text-slate-600">{platform.name}</span>
+                  <span className="text-[13px] font-medium text-muted-foreground">{platform.name}</span>
                 </div>
               )
             })}
           </div>
 
-          <div className="flex w-full min-w-0 items-center justify-between rounded-xl border border-slate-300 bg-white p-1.5 pl-5 shadow-sm transition-colors hover:border-slate-400">
-            <span className="flex-1 min-w-0 truncate text-[15px] font-medium text-slate-700 pr-4">{url}</span>
+          <div className="flex w-full min-w-0 items-center justify-between rounded-xl border border-border bg-card p-1.5 pl-5 shadow-sm transition-colors hover:border-slate-400">
+            <span className="flex-1 min-w-0 truncate text-[15px] font-medium text-foreground pr-4">{url}</span>
             <button 
               onClick={handleCopy} 
-              className={`shrink-0 rounded-lg px-6 py-2.5 text-sm font-bold transition-colors ${copied ? 'bg-emerald-50 text-emerald-700' : 'bg-[#F0F2F5] text-slate-800 hover:bg-[#E4E6EB]'}`}
+              className={`shrink-0 rounded-lg px-6 py-2.5 text-sm font-bold transition-colors ${copied ? 'bg-emerald-50 text-emerald-700' : 'bg-muted text-foreground hover:bg-muted/70'}`}
             >
               {copied ? 'Copied!' : 'Copy'}
             </button>

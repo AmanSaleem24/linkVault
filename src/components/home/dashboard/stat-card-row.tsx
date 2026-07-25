@@ -29,14 +29,14 @@ function StatCard({ label, value, locked = false, id }: StatCardProps) {
   return (
     <div
       id={id}
-      className="relative rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm"
+      className="relative rounded-2xl border border-border/80 bg-card p-5 shadow-sm"
     >
-      <p className="text-[0.82rem] font-medium text-slate-500">{label}</p>
+      <p className="text-[0.82rem] font-medium text-muted-foreground">{label}</p>
 
       <div className="relative mt-2 inline-block">
         {/* The value — blurred if locked */}
         <p
-          className={`text-3xl font-bold tracking-tight text-slate-900 transition-all ${
+          className={`text-3xl font-bold tracking-tight text-foreground transition-all ${
             locked ? 'select-none blur-[6px]' : ''
           }`}
           aria-hidden={locked}
@@ -53,9 +53,9 @@ function StatCard({ label, value, locked = false, id }: StatCardProps) {
 
       {/* Lock badge — top-right corner */}
       {locked && (
-        <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 shadow-sm">
-          <Lock className="size-3 text-slate-500" />
-          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-slate-500">
+        <div className="absolute right-3 top-3 flex items-center gap-1 rounded-full border border-border bg-card px-2 py-0.5 shadow-sm">
+          <Lock className="size-3 text-muted-foreground" />
+          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground">
             Pro
           </span>
         </div>

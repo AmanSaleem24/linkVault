@@ -38,6 +38,8 @@ import { LocationsTable } from '@/components/dashboard/charts/locations-table'
 import { LockedSection } from '@/components/dashboard/charts/locked-section'
 import { ChartTooltip } from '@/components/dashboard/charts/chart-tooltip'
 import { FaviconImg } from '@/components/dashboard/charts/favicon-img'
+import { useChartColors } from '@/hooks/use-chart-colors'
+import { useTheme } from 'next-themes'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -50,14 +52,22 @@ export default function LinkAnalyticsPage() {
   const params = useParams()
   const router = useRouter()
   const linkId = params.id as string
+  const { segmentColors } = useChartColors()
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+  const tickColor = isDark ? '#6b7280' : '#94a3b8'
+  const axisColor = isDark ? 'rgba(255,255,255,0.1)' : '#e2e8f0'
+  const barColor = isDark ? '#7091E6' : '#3D52A0'
+  const emptyBarColor = isDark ? 'rgba(255,255,255,0.07)' : '#e2e8f0'
 
+  const [isPro, setIsPro] = useState(false)
   const [dateFilter, setDateFilter] = useState<DateFilter>(() => {
     const to = new Date()
     const from = new Date(to)
     from.setDate(from.getDate() - 30)
     return { preset: 'Last 30 days', from: from.toISOString(), to: to.toISOString() }
   })
-  const [isPro, setIsPro] = useState(false)
+
   const [isLoading, setIsLoading] = useState(true)
   const [link, setLink] = useState<LinkDetailData | null>(null)
   const [analytics, setAnalytics] = useState<ClickAnalytics | null>(null)
@@ -138,15 +148,15 @@ export default function LinkAnalyticsPage() {
   if (isLoading || !link) {
     return (
       <div className="global-content py-8">
-        <div className="animate-pulse space-y-6">
-          <div className="h-8 w-40 rounded bg-slate-200" />
-          <div className="h-40 rounded-2xl bg-slate-200" />
+        <div className=" space-y-6">
+          <div className="h-8 w-40 rounded skeleton" />
+          <div className="h-40 rounded-2xl skeleton" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-28 rounded-xl bg-slate-200" />
+              <div key={i} className="h-28 rounded-xl skeleton" />
             ))}
           </div>
-          <div className="h-80 rounded-2xl bg-slate-200" />
+          <div className="h-80 rounded-2xl skeleton" />
         </div>
       </div>
     )
@@ -159,20 +169,20 @@ export default function LinkAnalyticsPage() {
       {/* ── Back Link ──────────────────────────────────────────────────────── */}
       <button
         onClick={() => router.push('/link')}
-        className="mb-5 inline-flex items-center gap-1 text-[13px] font-bold text-slate-600 hover:text-slate-900 transition-colors"
+        className="mb-5 inline-flex items-center gap-1 text-[13px] font-bold text-muted-foreground hover:text-foreground transition-colors"
       >
         <ChevronLeft className="size-4" />
         Back to list
       </button>
 
       {/* ── Link Info Card ─────────────────────────────────────────────────── */}
-      <div className="rounded-xl border border-slate-200 bg-white shadow-sm mb-8">
+      <div className="rounded-xl border border-border bg-card shadow-sm mb-8">
         <div className="p-8">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
             <div className="flex items-start gap-5">
               <FaviconImg url={link.originalUrl} />
               <div className="flex-1">
-                <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight tracking-tight mb-5">
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground leading-tight tracking-tight mb-5">
                   {getLinkTitle(link.originalUrl) || link.originalUrl}
                 </h1>
 
@@ -188,7 +198,7 @@ export default function LinkAnalyticsPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[15px] text-slate-500">
+                  <div className="flex items-center gap-2 text-[15px] text-muted-foreground">
                     <CornerDownRight className="size-4" />
                     <span className="truncate">{link.originalUrl}</span>
                   </div>
@@ -198,15 +208,15 @@ export default function LinkAnalyticsPage() {
 
             <div className="flex shrink-0 items-center gap-2">
               <DropdownMenu>
-                <DropdownMenuTrigger className="flex size-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">
+                <DropdownMenuTrigger className="flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted/50 transition-colors">
                   <MoreHorizontal className="size-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 rounded-xl border border-slate-200 bg-white p-1.5 shadow-lg">
-                  <DropdownMenuItem onClick={handleCopy} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 cursor-pointer">
-                    <Copy className="size-4 text-slate-500" /> Copy link
+                <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+                  <DropdownMenuItem onClick={handleCopy} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground cursor-pointer">
+                    <Copy className="size-4 text-muted-foreground" /> Copy link
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => window.open(link.originalUrl, '_blank')} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 cursor-pointer">
-                    <Globe className="size-4 text-slate-500" /> Open link
+                  <DropdownMenuItem onClick={() => window.open(link.originalUrl, '_blank')} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground cursor-pointer">
+                    <Globe className="size-4 text-muted-foreground" /> Open link
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -214,7 +224,7 @@ export default function LinkAnalyticsPage() {
               <button
                 onClick={() => router.push(`/link/${link.id}/edit`)}
                 title="Edit"
-                className="flex size-9 items-center justify-center rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+                className="flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted/50 transition-colors"
               >
                 <Pencil className="size-4" />
               </button>
@@ -225,7 +235,7 @@ export default function LinkAnalyticsPage() {
               >
                 <button
                   title="Share"
-                  className="inline-flex items-center gap-2 h-9 rounded-md bg-slate-100 px-3 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 cursor-pointer"
+                  className="inline-flex items-center gap-2 h-9 rounded-md bg-muted px-3 text-sm font-semibold text-foreground transition-colors hover:bg-slate-200 cursor-pointer"
                 >
                   <Share2 className="size-4" />
                   <span className="hidden sm:inline">Share</span>
@@ -235,12 +245,12 @@ export default function LinkAnalyticsPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-100 px-6 py-3">
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-500">
+        <div className="flex items-center justify-between border-t border-border px-6 py-3">
+          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
             <Tag className="size-4" />
             <span>No tags</span>
           </div>
-          <span className="text-sm font-medium text-slate-500">
+          <span className="text-sm font-medium text-muted-foreground">
             {new Date(link.createdAt).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZoneName: 'short' })}
           </span>
         </div>
@@ -278,13 +288,13 @@ export default function LinkAnalyticsPage() {
       </div>
 
       {/* ── Engagements Over Time ────────────────────────────────────────── */}
-      <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm mb-6">
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-sm mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-          <h2 className="text-xl font-bold text-slate-900">Engagements over time</h2>
+          <h2 className="text-xl font-bold text-foreground">Engagements over time</h2>
           <div className="flex items-center gap-2.5">
             <button
               onClick={handleUpgrade}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-white px-3 py-1.5 text-xs font-bold text-indigo-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-md border border-indigo-200 bg-card px-3 py-1.5 text-xs font-bold text-indigo-700 shadow-sm hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
             >
               <Sparkles className="size-3.5 text-fuchsia-500" />
               What{`'`}s driving engagement?
@@ -324,9 +334,9 @@ export default function LinkAnalyticsPage() {
               <BarChart data={timeSeries} margin={{ top: 5, right: 5, bottom: 0, left: -15 }}>
                 <XAxis
                   dataKey="date"
-                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  tick={{ fontSize: 11, fill: tickColor }}
                   tickLine={false}
-                  axisLine={{ stroke: '#e2e8f0' }}
+                  axisLine={{ stroke: axisColor }}
                   tickFormatter={(val: string) => {
                     const d = new Date(val + 'T00:00:00')
                     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
@@ -336,21 +346,21 @@ export default function LinkAnalyticsPage() {
                 />
                 <YAxis
                   allowDecimals={false}
-                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  tick={{ fontSize: 11, fill: tickColor }}
                   tickLine={false}
                   axisLine={false}
                 />
                 <Tooltip content={<ChartTooltip />} cursor={{ fill: 'transparent' }} />
                 <Bar dataKey="count" radius={[4, 4, 0, 0]} maxBarSize={32}>
                   {timeSeries.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.count > 0 ? '#06b6d4' : '#e2e8f0'} />
+                    <Cell key={`cell-${index}`} fill={entry.count > 0 ? barColor : emptyBarColor} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           ) : (
-            <div className="flex h-full flex-col items-center justify-center text-slate-400">
-              <BarChart3 className="size-10 mb-2 text-slate-300" />
+            <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+              <BarChart3 className="size-10 mb-2 text-muted-foreground/60" />
               <p className="text-sm font-medium">No clicks yet in this period</p>
             </div>
           )}
@@ -365,9 +375,9 @@ export default function LinkAnalyticsPage() {
             title="Locations" 
             data={locations} 
             action={
-              <div className="flex items-center rounded-full bg-slate-100 p-1">
-                <button className="rounded-full bg-white px-3 py-1 text-xs font-bold text-slate-700 shadow-sm">Countries</button>
-                <button className="rounded-full px-3 py-1 text-xs font-bold text-slate-500 hover:text-slate-700 transition-colors">Cities</button>
+              <div className="flex items-center rounded-full bg-muted p-1">
+                <button className="rounded-full bg-card px-3 py-1 text-xs font-bold text-foreground shadow-sm">Countries</button>
+                <button className="rounded-full px-3 py-1 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">Cities</button>
               </div>
             }
           />
@@ -380,7 +390,7 @@ export default function LinkAnalyticsPage() {
           <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
             <SegmentChart
               data={referrers}
-              colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+              colors={segmentColors}
               title="Referrers"
             />
           </LockedSection>
@@ -390,7 +400,7 @@ export default function LinkAnalyticsPage() {
           <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
             <SegmentChart
               data={devices}
-              colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+              colors={segmentColors}
               title="Devices"
             />
           </LockedSection>
@@ -404,7 +414,7 @@ export default function LinkAnalyticsPage() {
             <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
               <SegmentChart
                 data={utm.campaigns}
-                colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+                colors={segmentColors}
                 title="Top Campaigns"
               />
             </LockedSection>
@@ -414,7 +424,7 @@ export default function LinkAnalyticsPage() {
             <LockedSection isPro={isPro} onUpgradeClick={handleUpgrade}>
               <SegmentChart
                 data={utm.sources}
-                colors={['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']}
+                colors={segmentColors}
                 title="Top Sources"
               />
             </LockedSection>

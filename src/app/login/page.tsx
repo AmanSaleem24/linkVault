@@ -83,10 +83,10 @@ function LoginForm() {
 
   return (
     <AuthShell>
-      <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-slate-900">
+      <h1 className="mb-3 text-4xl font-extrabold tracking-tight text-foreground">
         Log in and start sharing
       </h1>
-      <p className="mb-10 text-base text-slate-500">
+      <p className="mb-10 text-base text-muted-foreground">
         Don&apos;t have an account?{' '}
         <Link href="/signup" className="font-medium text-brand hover:text-brand-500 hover:underline transition-colors">
           Sign up
@@ -96,7 +96,7 @@ function LoginForm() {
       <button
         type="button"
         onClick={() => googleSignInAction()}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-sm border-2 border-[#dadce0] bg-white text-[15px] font-medium text-slate-700 shadow-sm transition-all hover:border-[#d2e3fc] hover:bg-[#f8faff] hover:shadow-md active:scale-[0.98]"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-sm border-2 border-border bg-card text-[15px] font-medium text-foreground shadow-sm transition-all hover:border-[var(--accent-brand-muted)] hover:bg-muted/50 hover:shadow-md active:scale-[0.98]"
       >
         <svg width="20" height="20" viewBox="0 0 48 48">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -109,7 +109,7 @@ function LoginForm() {
 
       <div className="flex items-center gap-4 my-2">
         <div className="h-px flex-1 bg-slate-200" />
-        <span className="text-[13px] font-medium text-slate-400">OR</span>
+        <span className="text-[13px] font-medium text-muted-foreground">OR</span>
         <div className="h-px flex-1 bg-slate-200" />
       </div>
 
@@ -167,11 +167,11 @@ function LoginForm() {
         </Button>
       </form>
 
-      <p className="mt-8 text-[12px] leading-relaxed text-[#555]">
+      <p className="mt-8 text-[12px] leading-relaxed text-muted-foreground">
         By logging in with an account, you agree to LinkVault&apos;s{' '}
-        <a href="#" className="underline hover:text-[#2a2e30]">Terms of Service</a>,{' '}
-        <a href="#" className="underline hover:text-[#2a2e30]">Privacy Policy</a> and{' '}
-        <a href="#" className="underline hover:text-[#2a2e30]">Acceptable Use Policy</a>.
+        <a href="#" className="underline hover:text-foreground">Terms of Service</a>,{' '}
+        <a href="#" className="underline hover:text-foreground">Privacy Policy</a> and{' '}
+        <a href="#" className="underline hover:text-foreground">Acceptable Use Policy</a>.
       </p>
     </AuthShell>
   )

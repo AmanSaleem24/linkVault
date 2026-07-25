@@ -117,33 +117,33 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
     <div className="mx-auto max-w-5xl">
       <Link
         href="/qr"
-        className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition-colors hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground"
+        className="group mb-8 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground"
       >
-        <div className="flex size-7 items-center justify-center rounded-full bg-white shadow-sm ring-1 ring-slate-200 transition-all group-hover:ring-slate-300 dark:bg-card dark:ring-border">
+        <div className="flex size-7 items-center justify-center rounded-full bg-card shadow-sm ring-1 ring-slate-200 transition-all group-hover:ring-slate-300 dark:bg-card dark:ring-border">
           <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
         </div>
         Back to QR Codes
       </Link>
 
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-foreground">Create QR Code</h1>
-        <p className="text-sm text-slate-500 dark:text-muted-foreground">Design a custom QR code in multiple formats.</p>
+        <h1 className="text-2xl font-bold text-foreground dark:text-foreground">Create QR Code</h1>
+        <p className="text-sm text-muted-foreground dark:text-muted-foreground">Design a custom QR code in multiple formats.</p>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-5">
         
         {/* Left: Configuration Form */}
-        <div className="space-y-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm dark:border-border dark:bg-card sm:p-8 lg:col-span-3">
+        <div className="space-y-8 rounded-3xl border border-border bg-card p-6 shadow-sm dark:border-border dark:bg-card sm:p-8 lg:col-span-3">
           
           {/* Mode Selector */}
           <div className="space-y-4">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
               Select QR Type
             </label>
-            <div className="grid grid-cols-2 gap-2 rounded-xl bg-slate-100/50 p-1.5 dark:bg-muted/50">
+            <div className="grid grid-cols-2 gap-2 rounded-xl bg-muted/50 p-1.5 dark:bg-muted/50">
               <button
                 onClick={() => setMode('new')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === 'new' ? 'bg-white text-slate-900 shadow-sm dark:bg-card dark:text-foreground ring-1 ring-slate-200 dark:ring-border' : 'text-slate-500 hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground'}`}
+                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === 'new' ? 'bg-white text-foreground shadow-sm dark:bg-card dark:text-foreground ring-1 ring-slate-200 dark:ring-border' : 'text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground'}`}
               >
                 <Plus className="size-4" />
                 <span>New Link</span>
@@ -151,7 +151,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
 
               <button
                 onClick={() => setMode('existing')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === 'existing' ? 'bg-white text-slate-900 shadow-sm dark:bg-card dark:text-foreground ring-1 ring-slate-200 dark:ring-border' : 'text-slate-500 hover:text-slate-900 dark:text-muted-foreground dark:hover:text-foreground'}`}
+                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-sm font-medium transition-all ${mode === 'existing' ? 'bg-white text-foreground shadow-sm dark:bg-card dark:text-foreground ring-1 ring-slate-200 dark:ring-border' : 'text-muted-foreground hover:text-foreground dark:text-muted-foreground dark:hover:text-foreground'}`}
               >
                 <Link2 className="size-4" />
                 <span>Existing Link</span>
@@ -159,18 +159,18 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
             </div>
           </div>
 
-          <hr className="border-slate-100 dark:border-border" />
+          <hr className="border-border dark:border-border" />
 
           {/* Destination Input */}
           <div className="space-y-4">
-            <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
               {mode === 'existing' ? 'Select your link' : 'Destination URL'}
             </label>
             
             {mode === 'existing' ? (
               loadingLinks ? (
-                <div className="flex h-11 items-center justify-center rounded-xl border border-slate-200 bg-slate-50 dark:border-border dark:bg-muted/50">
-                  <Loader2 className="size-4 animate-spin text-slate-400" />
+                <div className="flex h-11 items-center justify-center rounded-xl border border-border bg-muted/50 dark:border-border dark:bg-muted/50">
+                  <Loader2 className="size-4 animate-spin text-muted-foreground" />
                 </div>
               ) : links.length === 0 ? (
                 <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-400">
@@ -180,7 +180,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                 <select
                   value={linkId}
                   onChange={(e) => setLinkId(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 px-3 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                 >
                   {links.map((link) => (
                     <option key={link.id} value={link.id}>
@@ -196,12 +196,12 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                   value={rawUrl}
                   onChange={(e) => setRawUrl(e.target.value)}
                   placeholder="Original URL (e.g., https://example.com)"
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
                 
                 <div>
                   <div className="mb-2 flex items-center justify-between">
-                    <label className="text-xs font-medium text-slate-500 dark:text-muted-foreground">Custom Alias</label>
+                    <label className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">Custom Alias</label>
                     {!isPro && (
                       <span className="flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold tracking-wide text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 uppercase">
                         <Lock className="size-3" /> Pro Feature
@@ -210,7 +210,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                   </div>
                   <div className="relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                      <span className="text-sm text-slate-400">link-vault-theta.vercel.app/</span>
+                      <span className="text-sm text-muted-foreground">link-vault-theta.vercel.app/</span>
                     </div>
                     <input
                       type="text"
@@ -218,11 +218,11 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                       value={alias}
                       onChange={(e) => setAlias(e.target.value)}
                       placeholder={isPro ? "custom-name" : "Upgrade to unlock"}
-                      className={`h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-28 pr-10 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background ${!isPro ? 'cursor-not-allowed opacity-70' : ''}`}
+                      className={`h-11 w-full rounded-xl border border-border bg-muted/50 pl-28 pr-10 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background ${!isPro ? 'cursor-not-allowed opacity-70' : ''}`}
                     />
                     {aliasChecking && (
                       <div className="absolute inset-y-0 right-3 flex items-center">
-                        <Loader2 className="size-4 animate-spin text-slate-400" />
+                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
                       </div>
                     )}
                   </div>
@@ -235,8 +235,8 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                 </div>
 
                 {/* UTM Tags */}
-                <div className={`mt-2 rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[#2B0094]/30 bg-[#2B0094]/2' : 'border-slate-200 bg-white dark:border-border dark:bg-card'}`}>
-                  <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${showUtms && isPro ? '' : 'hover:-translate-y-px hover:border-slate-300 hover:shadow-md dark:hover:border-slate-600'}`}>
+                <div className={`mt-2 rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/2' : 'border-border bg-card dark:border-border dark:bg-card'}`}>
+                  <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${showUtms && isPro ? '' : 'hover:-translate-y-px hover:border-border hover:shadow-md dark:hover:border-slate-600'}`}>
                     <div className="flex items-center gap-3.5">
                       <div className="relative flex size-4.5 items-center justify-center">
                         <input
@@ -253,21 +253,21 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                             }
                           }}
                           disabled={!isPro}
-                          className="peer size-4.5 rounded border-slate-300 text-[#2B0094] focus:ring-[#2B0094]/20 disabled:cursor-not-allowed dark:border-slate-600 dark:bg-background"
+                          className="peer size-4.5 rounded border-border text-[var(--accent-brand)] focus:ring-[var(--accent-brand)]/20 disabled:cursor-not-allowed dark:border-slate-600 dark:bg-background"
                         />
                       </div>
-                      <span className="flex items-center gap-2 text-[0.95rem] font-medium text-slate-800 dark:text-slate-200">
-                        <Tag className="size-4 text-[#2B0094]" />
+                      <span className="flex items-center gap-2 text-[0.95rem] font-medium text-foreground dark:text-slate-200">
+                        <Tag className="size-4 text-[var(--accent-brand)]" />
                         UTM Tags
                       </span>
                     </div>
                     {!isPro ? (
-                      <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-slate-500 dark:text-muted-foreground">
+                      <span className="flex items-center gap-1.5 text-[0.8rem] font-semibold text-muted-foreground dark:text-muted-foreground">
                         Upgrade to Pro
                       </span>
                     ) : (
                       showUtms && (utmSource || utmMedium || utmCampaign) && (
-                        <span className="rounded-md bg-[#2B0094]/10 px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-[#2B0094] dark:bg-[#2B0094]/20">
+                        <span className="rounded-md bg-[var(--accent-brand)]/10 px-2.5 py-1 text-[0.7rem] font-bold uppercase tracking-wider text-[var(--accent-brand)] dark:bg-[var(--accent-brand)]/20">
                           Configured
                         </span>
                       )
@@ -276,37 +276,37 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
 
                   {showUtms && isPro && (
                     <div className="animate-in slide-in-from-top-2 duration-200">
-                      <div className="mx-4 mb-4 h-px bg-[#2B0094]/10 dark:bg-[#2B0094]/20" />
+                      <div className="mx-4 mb-4 h-px bg-[var(--accent-brand)]/10 dark:bg-[var(--accent-brand)]/20" />
                       <div className="px-4 pb-4">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
                           <div className="flex-1 space-y-1">
-                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Source</label>
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground">Source</label>
                             <input
                               type="text"
                               placeholder="e.g. twitter"
                               value={utmSource}
                               onChange={(e) => setUtmSource(e.target.value)}
-                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                              className="h-10 w-full rounded-lg border border-border bg-card px-3 text-[0.9rem] font-medium text-foreground shadow-sm transition-all hover:border-border focus:border-[var(--accent-brand)] focus:outline-none focus:ring-[3px] focus:ring-[var(--accent-brand)]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
                             />
                           </div>
                           <div className="flex-1 space-y-1">
-                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Medium</label>
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground">Medium</label>
                             <input
                               type="text"
                               placeholder="e.g. social"
                               value={utmMedium}
                               onChange={(e) => setUtmMedium(e.target.value)}
-                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                              className="h-10 w-full rounded-lg border border-border bg-card px-3 text-[0.9rem] font-medium text-foreground shadow-sm transition-all hover:border-border focus:border-[var(--accent-brand)] focus:outline-none focus:ring-[3px] focus:ring-[var(--accent-brand)]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
                             />
                           </div>
                           <div className="flex-1 space-y-1">
-                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-slate-500 dark:text-muted-foreground">Campaign</label>
+                            <label className="text-[0.75rem] font-semibold uppercase tracking-wider text-muted-foreground dark:text-muted-foreground">Campaign</label>
                             <input
                               type="text"
                               placeholder="e.g. summer_sale"
                               value={utmCampaign}
                               onChange={(e) => setUtmCampaign(e.target.value)}
-                              className="h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-[0.9rem] font-medium text-slate-700 shadow-sm transition-all hover:border-slate-300 focus:border-[#2B0094] focus:outline-none focus:ring-[3px] focus:ring-[#2B0094]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
+                              className="h-10 w-full rounded-lg border border-border bg-card px-3 text-[0.9rem] font-medium text-foreground shadow-sm transition-all hover:border-border focus:border-[var(--accent-brand)] focus:outline-none focus:ring-[3px] focus:ring-[var(--accent-brand)]/15 dark:border-border dark:bg-background dark:text-foreground dark:hover:border-slate-600"
                             />
                           </div>
                         </div>
@@ -318,18 +318,18 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
             )}
           </div>
 
-          <hr className="border-slate-100 dark:border-border" />
+          <hr className="border-border dark:border-border" />
 
           {/* Style Customization */}
           <div className="space-y-6">
-            <label className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
-              <Palette className="size-4 text-slate-400" />
+            <label className="flex items-center gap-2 text-sm font-medium text-foreground dark:text-muted-foreground/60">
+              <Palette className="size-4 text-muted-foreground" />
               Customize Appearance
             </label>
             
             <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="mb-2 block text-xs font-medium text-slate-500 dark:text-muted-foreground">Foreground Color</label>
+                <label className="mb-2 block text-xs font-medium text-muted-foreground dark:text-muted-foreground">Foreground Color</label>
                 <div className="flex items-center gap-3">
                   <input
                     type="color"
@@ -341,13 +341,13 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                     type="text"
                     value={fgColor.toUpperCase()}
                     onChange={(e) => setFgColor(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-medium uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background"
+                    className="h-10 w-full rounded-xl border border-border px-3 text-sm font-medium uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background"
                     pattern="^#[0-9A-Fa-f]{6}$"
                   />
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-xs font-medium text-slate-500 dark:text-muted-foreground">Background Color</label>
+                <label className="mb-2 block text-xs font-medium text-muted-foreground dark:text-muted-foreground">Background Color</label>
                 <div className="flex items-center gap-3">
                   <input
                     type="color"
@@ -359,7 +359,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                     type="text"
                     value={bgColor.toUpperCase()}
                     onChange={(e) => setBgColor(e.target.value)}
-                    className="h-10 w-full rounded-xl border border-slate-200 px-3 text-sm font-medium uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background"
+                    className="h-10 w-full rounded-xl border border-border px-3 text-sm font-medium uppercase focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background"
                     pattern="^#[0-9A-Fa-f]{6}$"
                   />
                 </div>
@@ -367,18 +367,18 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
             </div>
 
             <div className="pt-1">
-              <label className="mb-3 block text-xs font-medium text-slate-500 dark:text-muted-foreground">Pattern Style</label>
+              <label className="mb-3 block text-xs font-medium text-muted-foreground dark:text-muted-foreground">Pattern Style</label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setStyle('squares')}
-                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border transition-all ${style === 'squares' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500/50 dark:bg-brand-500/10 dark:text-brand-400' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-border dark:bg-card dark:text-muted-foreground'}`}
+                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border transition-all ${style === 'squares' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500/50 dark:bg-brand-500/10 dark:text-brand-400' : 'border-border bg-card text-muted-foreground hover:border-border dark:border-border dark:bg-card dark:text-muted-foreground'}`}
                 >
                   <Grid className="size-4" />
                   <span className="text-sm font-medium">Squares</span>
                 </button>
                 <button
                   onClick={() => setStyle('dots')}
-                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border transition-all ${style === 'dots' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500/50 dark:bg-brand-500/10 dark:text-brand-400' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 dark:border-border dark:bg-card dark:text-muted-foreground'}`}
+                  className={`flex h-11 items-center justify-center gap-2 rounded-xl border transition-all ${style === 'dots' ? 'border-brand-500 bg-brand-50 text-brand-700 dark:border-brand-500/50 dark:bg-brand-500/10 dark:text-brand-400' : 'border-border bg-card text-muted-foreground hover:border-border dark:border-border dark:bg-card dark:text-muted-foreground'}`}
                 >
                   <CircleDot className="size-4" />
                   <span className="text-sm font-medium">Dots</span>
@@ -388,7 +388,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
 
             {/* Presets */}
             <div className="pt-2">
-              <label className="mb-3 block text-xs font-medium text-slate-500 dark:text-muted-foreground">Quick Colors</label>
+              <label className="mb-3 block text-xs font-medium text-muted-foreground dark:text-muted-foreground">Quick Colors</label>
               <div className="flex flex-wrap gap-2.5">
                 {PRESET_COLORS.map((c) => (
                   <button
@@ -424,10 +424,10 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
 
         {/* Right: Live Preview */}
         <div className="lg:col-span-2">
-          <div className="sticky top-8 flex flex-col items-center justify-center rounded-3xl border border-slate-200 bg-slate-50 py-16 shadow-inner dark:border-border dark:bg-muted/30">
+          <div className="sticky top-8 flex flex-col items-center justify-center rounded-3xl border border-border bg-muted/50 py-16 shadow-inner dark:border-border dark:bg-muted/30">
             <button
               onClick={() => setIsPreviewExpanded(true)}
-              className="group relative cursor-pointer overflow-hidden rounded-3xl bg-white p-6 shadow-xl ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-2xl dark:bg-white dark:ring-0"
+              className="group relative cursor-pointer overflow-hidden rounded-3xl bg-card p-6 shadow-xl ring-1 ring-slate-100 transition-all hover:scale-105 hover:shadow-2xl dark:bg-white dark:ring-0"
               title="Click to enlarge"
             >
               <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
@@ -440,7 +440,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
                 eyeRadius={style === 'dots' ? 10 : 0}
               />
             </button>
-            <p className="mt-8 rounded-full bg-slate-200/50 px-4 py-1.5 text-sm font-medium text-slate-500 dark:bg-muted dark:text-muted-foreground">Click to enlarge</p>
+            <p className="mt-8 rounded-full bg-slate-200/50 px-4 py-1.5 text-sm font-medium text-muted-foreground dark:bg-muted dark:text-muted-foreground">Click to enlarge</p>
           </div>
         </div>
         
@@ -453,7 +453,7 @@ export function QrCreator({ appUrl, isPro = false }: QrCreatorProps) {
           onClick={() => setIsPreviewExpanded(false)}
         >
           <div 
-            className="rounded-[2.5rem] bg-white p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
+            className="rounded-[2.5rem] bg-card p-8 shadow-2xl ring-1 ring-black/5 animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             <QRCode

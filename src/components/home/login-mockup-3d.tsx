@@ -10,16 +10,16 @@ export function HeroDashboardMockup() {
 
       <motion.div
         whileHover={{ y: -4, transition: { type: "spring", stiffness: 300, damping: 22 } }}
-        className="relative h-full w-full rounded-2xl bg-white shadow-2xl shadow-[#3D52A0]/10 dark:bg-slate-800 dark:shadow-[#3D52A0]/20 overflow-hidden"
+        className="relative h-full w-full rounded-2xl bg-card shadow-2xl shadow-[#3D52A0]/10 dark:bg-slate-800 dark:shadow-[#3D52A0]/20 overflow-hidden"
       >
         {/* Browser chrome */}
-        <div className="flex items-center gap-2 border-b border-slate-200 bg-slate-100 px-4 py-2.5 dark:border-slate-700 dark:bg-slate-700/50">
+        <div className="flex items-center gap-2 border-b border-border bg-muted px-4 py-2.5 dark:border-slate-700 dark:bg-slate-700/50">
           <div className="flex gap-1.5">
             <div className="h-3 w-3 rounded-full bg-red-400 dark:bg-red-500" />
             <div className="h-3 w-3 rounded-full bg-amber-400 dark:bg-amber-500" />
             <div className="h-3 w-3 rounded-full bg-green-400 dark:bg-green-500" />
           </div>
-          <div className="flex-1 rounded-md bg-white px-3 py-1 text-xs text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+          <div className="flex-1 rounded-md bg-card px-3 py-1 text-xs text-muted-foreground dark:bg-slate-800 dark:text-muted-foreground">
             vault.app/dashboard
           </div>
         </div>
@@ -39,13 +39,13 @@ export function HeroDashboardMockup() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 + i * 0.08, duration: 0.4 }}
-                className="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-800/80"
+                className="rounded-xl border border-border bg-muted/50/80 p-3 dark:border-slate-700 dark:bg-slate-800/80"
               >
-                <p className="text-[10px] font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <p className="text-[10px] font-medium text-muted-foreground dark:text-muted-foreground uppercase tracking-wider">
                   {stat.label}
                 </p>
                 <div className="mt-1 flex items-baseline gap-1.5">
-                  <p className="text-base font-extrabold text-slate-900 dark:text-white">
+                  <p className="text-base font-extrabold text-foreground dark:text-white">
                     {stat.value}
                   </p>
                   {stat.change && (
@@ -63,14 +63,14 @@ export function HeroDashboardMockup() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7, duration: 0.4 }}
-            className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 dark:border-slate-700 dark:bg-slate-800/80"
+            className="rounded-xl border border-border bg-muted/50/80 p-4 dark:border-slate-700 dark:bg-slate-800/80"
           >
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-semibold text-slate-900 dark:text-white">
+                <p className="text-xs font-semibold text-foreground dark:text-white">
                   Clicks Over Time
                 </p>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">
                   Last 30 days
                 </p>
               </div>
@@ -81,7 +81,7 @@ export function HeroDashboardMockup() {
                     className={`rounded-md px-2 py-0.5 text-[10px] font-medium ${
                       i === 1
                         ? "bg-[#3D52A0] text-white"
-                        : "text-slate-500 dark:text-slate-400"
+                        : "text-muted-foreground dark:text-muted-foreground"
                     }`}
                   >
                     {d}
@@ -115,10 +115,10 @@ export function HeroDashboardMockup() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.4 }}
-            className="rounded-xl border border-slate-200 bg-slate-50/80 dark:border-slate-700 dark:bg-slate-800/80 overflow-hidden"
+            className="rounded-xl border border-border bg-muted/50/80 dark:border-slate-700 dark:bg-slate-800/80 overflow-hidden"
           >
-            <div className="border-b border-slate-200 px-4 py-2.5 dark:border-slate-700">
-              <p className="text-xs font-semibold text-slate-900 dark:text-white">
+            <div className="border-b border-border px-4 py-2.5 dark:border-slate-700">
+              <p className="text-xs font-semibold text-foreground dark:text-white">
                 Recent Links
               </p>
             </div>
@@ -132,7 +132,7 @@ export function HeroDashboardMockup() {
                 initial={{ opacity: 0, x: -8 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 1.3 + i * 0.08, duration: 0.3 }}
-                className="flex items-center justify-between border-b border-slate-100 px-4 py-2 last:border-0 dark:border-slate-700/50"
+                className="flex items-center justify-between border-b border-border px-4 py-2 last:border-0 dark:border-slate-700/50"
               >
                 <div className="flex items-center gap-2.5">
                   <div className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -140,7 +140,7 @@ export function HeroDashboardMockup() {
                     /{link.slug}
                   </span>
                 </div>
-                <span className="text-[10px] font-medium text-slate-500 dark:text-slate-400">
+                <span className="text-[10px] font-medium text-muted-foreground dark:text-muted-foreground">
                   {link.clicks} clicks
                 </span>
               </motion.div>

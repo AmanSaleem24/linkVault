@@ -9,9 +9,7 @@ import { FaviconImg } from '@/components/dashboard/charts/favicon-img'
 import { TimeSeriesChart } from './time-series-chart'
 import { rangeFromDays } from '@/lib/analytics-helpers'
 import { LockedPage } from '@/components/dashboard/locked-page'
-
-const SEGMENT_COLORS = ['#06b6d4', '#f97316', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981']
-const STATUS_COLORS = ['#10b981', '#94a3b8', '#ef4444']
+import { useChartColors } from '@/hooks/use-chart-colors'
 
 export default function AnalyticsPage() {
   const range = rangeFromDays(30)
@@ -20,23 +18,24 @@ export default function AnalyticsPage() {
     () => getFullAccountAnalyticsAction(range),
     { revalidateOnFocus: true }
   )
+  const { segmentColors, statusColors } = useChartColors()
 
   if (isLoading || !result) {
     return (
-      <div className="global-content py-8 space-y-8 animate-pulse">
+      <div className="global-content py-8 space-y-8">
         <div>
-          <div className="h-8 w-48 bg-slate-200 rounded-md" />
-          <div className="h-4 w-64 bg-slate-200 rounded-md mt-2" />
+          <div className="skeleton h-8 w-48 rounded-md" />
+          <div className="skeleton h-4 w-64 rounded-md mt-2" />
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-28 bg-slate-200 rounded-2xl" />
+            <div key={i} className="skeleton h-28 rounded-2xl" />
           ))}
         </div>
-        <div className="h-[360px] bg-slate-200 rounded-2xl" />
+        <div className="skeleton h-[360px] rounded-2xl" />
         <div className="grid gap-6 lg:grid-cols-5">
-          <div className="h-[360px] bg-slate-200 rounded-2xl lg:col-span-3" />
-          <div className="h-[360px] bg-slate-200 rounded-2xl lg:col-span-2" />
+          <div className="skeleton h-[360px] rounded-2xl lg:col-span-3" />
+          <div className="skeleton h-[360px] rounded-2xl lg:col-span-2" />
         </div>
       </div>
     )
@@ -65,8 +64,8 @@ export default function AnalyticsPage() {
     <div className="global-content py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Analytics</h1>
-        <p className="mt-1 text-sm text-slate-500">Performance across all your links</p>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Analytics</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Performance across all your links</p>
       </div>
 
       {/* KPI grid */}
@@ -104,34 +103,34 @@ export default function AnalyticsPage() {
 
       {/* Top performing links + Status breakdown */}
       <div className="grid gap-6 lg:grid-cols-5">
-        <div className="flex h-[360px] flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:col-span-3">
-          <h2 className="mb-4 shrink-0 text-xl font-bold text-slate-900">Top performing links</h2>
+        <div className="flex h-[360px] flex-col rounded-2xl border border-border bg-card p-6 shadow-sm lg:col-span-3">
+          <h2 className="mb-4 shrink-0 text-xl font-bold text-foreground">Top performing links</h2>
           {!topLinks || topLinks.length === 0 ? (
-            <div className="flex flex-1 items-center justify-center text-sm text-slate-400">No links yet</div>
+            <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">No links yet</div>
           ) : (
-            <ul className="flex-1 divide-y divide-slate-100 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden">
+            <ul className="flex-1 divide-y divide-border overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden">
               {topLinks.map((link, i) => (
                 <li key={link.id} className="flex items-center gap-3 py-3">
-                  <span className="text-xs font-medium text-slate-400 w-5 shrink-0">
+                  <span className="text-xs font-medium text-muted-foreground w-5 shrink-0">
                     {i + 1}
                   </span>
                   <FaviconImg url={link.originalUrl} size={20} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-slate-900 truncate">/{link.slug}</p>
-                    <p className="text-xs text-slate-400 truncate">{link.originalUrl}</p>
+                    <p className="text-sm font-medium text-foreground truncate">/{link.slug}</p>
+                    <p className="text-xs text-muted-foreground truncate">{link.originalUrl}</p>
                   </div>
                   <span
                     className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                       link.status === 'active'
-                        ? 'bg-emerald-50 text-emerald-700'
+                        ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400'
                         : link.status === 'disabled'
-                          ? 'bg-slate-100 text-slate-500'
-                          : 'bg-red-50 text-red-600'
+                          ? 'bg-muted text-muted-foreground'
+                          : 'bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400'
                     }`}
                   >
                     {link.status}
                   </span>
-                  <span className="text-sm font-semibold text-slate-900 tabular-nums w-16 text-right shrink-0">
+                  <span className="text-sm font-semibold text-foreground tabular-nums w-16 text-right shrink-0">
                     {link.clickCount.toLocaleString()}
                   </span>
                 </li>
@@ -145,7 +144,7 @@ export default function AnalyticsPage() {
             <SegmentChart
               title="Link status breakdown"
               data={statusBreakdown}
-              colors={STATUS_COLORS}
+              colors={statusColors}
             />
           )}
         </div>
@@ -158,7 +157,7 @@ export default function AnalyticsPage() {
           <SegmentChart
             title="Top referrers"
             data={referrers}
-            colors={SEGMENT_COLORS}
+            colors={segmentColors}
           />
         )}
       </div>
@@ -169,12 +168,12 @@ export default function AnalyticsPage() {
           <SegmentChart
             title="Top devices"
             data={devices.devices}
-            colors={SEGMENT_COLORS}
+            colors={segmentColors}
           />
           <SegmentChart
             title="Top browsers"
             data={devices.browsers}
-            colors={SEGMENT_COLORS}
+            colors={segmentColors}
           />
         </div>
       )}
@@ -185,12 +184,12 @@ export default function AnalyticsPage() {
           <SegmentChart
             title="Top Campaigns"
             data={utm.campaigns}
-            colors={SEGMENT_COLORS}
+            colors={segmentColors}
           />
           <SegmentChart
             title="Top Sources"
             data={utm.sources}
-            colors={SEGMENT_COLORS}
+            colors={segmentColors}
           />
         </div>
       )}

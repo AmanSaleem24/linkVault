@@ -10,31 +10,31 @@ export default function AuditLogPage() {
 
   if (isLoading || !result) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8 animate-pulse">
+      <div className="mx-auto max-w-4xl px-4 py-8 ">
         <div className="mb-8">
-          <div className="h-8 w-48 bg-slate-200 rounded-md" />
-          <div className="mt-2 h-5 w-64 bg-slate-200 rounded-md" />
+          <div className="h-8 w-48 skeleton rounded-md" />
+          <div className="mt-2 h-5 w-64 skeleton rounded-md" />
         </div>
         <div className="space-y-6">
           <div className="flex gap-4">
-            <div className="mt-1 h-10 w-10 shrink-0 bg-slate-200 rounded-full" />
+            <div className="mt-1 h-10 w-10 shrink-0 skeleton rounded-full" />
             <div className="flex-1 space-y-2">
-              <div className="h-5 w-full max-w-md bg-slate-200 rounded-md" />
-              <div className="h-4 w-32 bg-slate-200 rounded-md" />
+              <div className="h-5 w-full max-w-md skeleton rounded-md" />
+              <div className="h-4 w-32 skeleton rounded-md" />
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="mt-1 h-10 w-10 shrink-0 bg-slate-200 rounded-full" />
+            <div className="mt-1 h-10 w-10 shrink-0 skeleton rounded-full" />
             <div className="flex-1 space-y-2">
-              <div className="h-5 w-full max-w-md bg-slate-200 rounded-md" />
-              <div className="h-4 w-32 bg-slate-200 rounded-md" />
+              <div className="h-5 w-full max-w-md skeleton rounded-md" />
+              <div className="h-4 w-32 skeleton rounded-md" />
             </div>
           </div>
           <div className="flex gap-4">
-            <div className="mt-1 h-10 w-10 shrink-0 bg-slate-200 rounded-full" />
+            <div className="mt-1 h-10 w-10 shrink-0 skeleton rounded-full" />
             <div className="flex-1 space-y-2">
-              <div className="h-5 w-full max-w-md bg-slate-200 rounded-md" />
-              <div className="h-4 w-32 bg-slate-200 rounded-md" />
+              <div className="h-5 w-full max-w-md skeleton rounded-md" />
+              <div className="h-4 w-32 skeleton rounded-md" />
             </div>
           </div>
         </div>

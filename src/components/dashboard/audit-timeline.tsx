@@ -111,17 +111,17 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
   return (
     <div className="global-content py-8">
       <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-slate-900">Activity log</h1>
-        <p className="mt-1.5 text-base text-slate-500">
+        <h1 className="text-[28px] font-bold text-foreground">Activity log</h1>
+        <p className="mt-1.5 text-base text-muted-foreground">
           A record of all actions taken on your links
         </p>
       </div>
 
       {logs.length === 0 && !isLoadingMore && (
-        <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
-          <FileText className="mx-auto size-10 text-slate-300 mb-3" />
-          <p className="text-base font-medium text-slate-700">No activity yet</p>
-          <p className="mt-1 text-sm text-slate-400">
+        <div className="rounded-xl border border-border bg-card p-12 text-center">
+          <FileText className="mx-auto size-10 text-muted-foreground/60 mb-3" />
+          <p className="text-base font-medium text-foreground">No activity yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">
             Actions like creating, updating, or deleting links will appear here.
           </p>
         </div>
@@ -133,7 +133,7 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
             <div key={date}>
               {/* Date header */}
               <div className="flex items-center gap-3 mb-4">
-                <h2 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {date}
                 </h2>
                 <div className="flex-1 h-px bg-slate-200" />
@@ -160,7 +160,7 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
 
                       {/* Content */}
                       <div className={cn('flex-1 pb-6', isLast && 'pb-0')}>
-                        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                        <div className="rounded-xl border border-border bg-card p-4 shadow-sm">
                           <div className="flex items-center justify-between">
                             <span className={cn(
                               'inline-flex items-center gap-1.5 text-xs font-semibold px-2 py-0.5 rounded-full',
@@ -170,19 +170,19 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
                               <Icon className="size-3" />
                               {config.label}
                             </span>
-                            <span className="text-xs text-slate-400">{time}</span>
+                            <span className="text-xs text-muted-foreground">{time}</span>
                           </div>
 
                           <div className="mt-3 space-y-1">
                             {log.linkSlug && (
                               <div className="flex items-center gap-2 text-sm">
-                                <span className="font-medium text-slate-700">/{log.linkSlug}</span>
+                                <span className="font-medium text-foreground">/{log.linkSlug}</span>
                                 {log.linkUrl && (
                                   <a
                                     href={log.linkUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-slate-400 hover:text-brand transition-colors"
+                                    className="text-muted-foreground hover:text-brand transition-colors"
                                   >
                                     <ExternalLink className="size-3.5" />
                                   </a>
@@ -191,12 +191,12 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
                             )}
 
                             {log.previousValue && (
-                              <p className={cn('text-xs', isToggle ? 'text-slate-400' : 'text-slate-400')}>
+                              <p className={cn('text-xs', isToggle ? 'text-muted-foreground' : 'text-muted-foreground')}>
                                 From: {formatJsonValue(log.previousValue)}
                               </p>
                             )}
                             {log.newValue && (
-                              <p className={cn('text-xs', isToggle ? 'text-slate-600 font-medium' : 'text-slate-500')}>
+                              <p className={cn('text-xs', isToggle ? 'text-muted-foreground font-medium' : 'text-muted-foreground')}>
                                 To: {formatJsonValue(log.newValue)}
                               </p>
                             )}
@@ -216,7 +216,7 @@ export function AuditTimeline({ initialLogs, totalCount }: AuditTimelineProps) {
               <button
                 onClick={handleLoadMore}
                 disabled={isLoadingMore}
-                className="text-[0.85rem] font-medium text-slate-500 hover:text-[#3D52A0] transition-colors disabled:opacity-50"
+                className="text-[0.85rem] font-medium text-muted-foreground hover:text-[#3D52A0] transition-colors disabled:opacity-50"
               >
                 {isLoadingMore ? 'Loading...' : 'Load more'}
               </button>

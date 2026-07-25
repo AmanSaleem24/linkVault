@@ -48,14 +48,16 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 
   /* Brand palette */
-  --color-brand-50: #EDE8F5;
+  --color-brand-50:  #EDE8F5;
   --color-brand-100: #ADBBDA;
   --color-brand-200: #8697C4;
   --color-brand-300: #7091E6;
   --color-brand-400: #3D52A0;
   --color-brand-500: #2E3F80;
   --color-brand-600: #1F2C5C;
-  --color-brand: #3D52A0;
+  --color-brand:     #3D52A0;
+  /* brand-400 in r g b form for rgba() usage in keyframes */
+  --color-brand-rgb: 61 82 160;
 }
 
 :root {
@@ -95,40 +97,116 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* ── Semantic surface tokens ──────────────────────────────────────────── */
+  --surface-base:    oklch(1 0 0);
+  --surface-raised:  oklch(1 0 0);
+  --surface-overlay: oklch(0.985 0 0);
+  --surface-sunken:  oklch(0.97 0 0);
+
+  /* ── Semantic text tokens ─────────────────────────────────────────────── */
+  --text-primary:    oklch(0.145 0 0);
+  --text-secondary:  oklch(0.45 0 0);
+  --text-muted:      oklch(0.556 0 0);
+  --text-disabled:   oklch(0.7 0 0);
+  --text-on-accent:  #ffffff;
+
+  /* ── Semantic border tokens ───────────────────────────────────────────── */
+  --border-subtle:   oklch(0.95 0 0);
+  --border-default:  oklch(0.922 0 0);
+  --border-strong:   oklch(0.80 0 0);
+
+  /* ── Accent tokens (brand-consistent) ────────────────────────────────── */
+  --accent-brand:         #3D52A0;
+  --accent-brand-hover:   #2E3F80;
+  --accent-brand-active:  #1F2C5C;
+  --accent-brand-subtle:  #EDE8F5;
+  --accent-brand-muted:   #8697C4;
+
+  /* ── Semantic status tokens ───────────────────────────────────────────── */
+  --status-success:  oklch(0.55 0.18 145);
+  --status-warning:  oklch(0.65 0.18 75);
+  --status-danger:   oklch(0.577 0.245 27.325);
+  --status-info:     oklch(0.60 0.18 255);
+
+  /* ── Skeleton shimmer ─────────────────────────────────────────────────── */
+  --skeleton-from:   oklch(0.93 0 0);
+  --skeleton-to:     oklch(0.87 0 0);
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
+  /*
+   * Elevation scale — each step is ~6-8% oklch lightness above the one below:
+   *   base (#0D0D0F)  → card (#1A1A1E)  → popover (#252529)
+   * Never use pure #000 or #fff — avoids halation.
+   */
+  --background: oklch(0.09 0 0);          /* #0D0D0F — page bg, darkest */
+  --foreground: oklch(0.92 0 0);          /* #E8E8E6 — off-white, never #fff */
+  --card: oklch(0.155 0 0);               /* #1A1A1E — cards, clearly above page */
+  --card-foreground: oklch(0.92 0 0);
+  --popover: oklch(0.22 0 0);             /* #252529 — floating layers, lightest */
+  --popover-foreground: oklch(0.92 0 0);
   --primary: var(--color-brand-300);
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.26 0 0);           /* slightly above popover for secondary els */
+  --secondary-foreground: oklch(0.92 0 0);
+  --muted: oklch(0.22 0 0);              /* subtle fill — same as popover surface */
+  --muted-foreground: oklch(0.60 0 0);
+  --accent: oklch(0.26 0 0);
+  --accent-foreground: oklch(0.92 0 0);
   --destructive: oklch(0.704 0.191 22.216);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --input: oklch(1 0 0 / 14%);
   --ring: var(--color-brand-300);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --chart-1: oklch(0.80 0 0);
+  --chart-2: oklch(0.65 0 0);
+  --chart-3: oklch(0.50 0 0);
+  --chart-4: oklch(0.38 0 0);
+  --chart-5: oklch(0.28 0 0);
+  --sidebar: oklch(0.13 0 0);             /* sidebar sits between page and card */
+  --sidebar-foreground: oklch(0.92 0 0);
+  --sidebar-primary: var(--color-brand-300);
+  --sidebar-primary-foreground: oklch(0.92 0 0);
+  --sidebar-accent: oklch(0.22 0 0);
+  --sidebar-accent-foreground: oklch(0.92 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: var(--color-brand-300);
+
+  /* ── Semantic surface tokens (mirrors the shadcn vars above) ─────────── */
+  --surface-base:    oklch(0.09 0 0);    /* page bg */
+  --surface-raised:  oklch(0.155 0 0);   /* cards, panels */
+  --surface-overlay: oklch(0.22 0 0);    /* dropdowns, popovers, modals */
+  --surface-sunken:  oklch(0.065 0 0);   /* inset inputs, recessed wells */
+
+  /* ── Semantic text tokens ─────────────────────────────────────────────── */
+  --text-primary:    oklch(0.92 0 0);
+  --text-secondary:  oklch(0.65 0 0);
+  --text-muted:      oklch(0.50 0 0);
+  --text-disabled:   oklch(0.38 0 0);
+  --text-on-accent:  #ffffff;
+
+  /* ── Semantic border tokens ───────────────────────────────────────────── */
+  --border-subtle:   oklch(1 0 0 / 6%);
+  --border-default:  oklch(1 0 0 / 9%);
+  --border-strong:   oklch(1 0 0 / 18%);
+
+  /* ── Accent tokens — same BRAND HUE (225°), increased lightness ───────── */
+  --accent-brand:        #7091E6;
+  --accent-brand-hover:  #8BA8EE;
+  --accent-brand-active: #9DB7F2;
+  --accent-brand-subtle: hsl(225 44% 20%);
+  --accent-brand-muted:  #5B77D4;
+  --color-brand-rgb: 112 145 230; /* brand-300 in dark mode */
+
+  /* ── Semantic status tokens ───────────────────────────────────────────── */
+  --status-success:  oklch(0.72 0.18 145);
+  --status-warning:  oklch(0.80 0.18 75);
+  --status-danger:   oklch(0.704 0.191 22.216);
+  --status-info:     oklch(0.76 0.18 255);
+
+  /* ── Skeleton shimmer (dark) — starts at card level, shimmers slightly lighter */
+  --skeleton-from:   oklch(0.19 0 0);
+  --skeleton-to:     oklch(0.28 0 0);
 }
 
 @layer base {
@@ -184,8 +262,8 @@
 }
 
 @keyframes number-glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(61, 82, 160, 0.15); }
-  50%      { box-shadow: 0 0 18px rgba(61, 82, 160, 0.3); }
+  0%, 100% { box-shadow: 0 0 8px rgba(var(--color-brand-rgb) / 0.15); }
+  50%      { box-shadow: 0 0 18px rgba(var(--color-brand-rgb) / 0.30); }
 }
 
 @keyframes bar-shimmer {
@@ -228,7 +306,7 @@
 
 .hover-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px -12px rgba(61, 82, 160, 0.18);
+  box-shadow: 0 12px 40px -12px rgba(var(--color-brand-rgb) / 0.18);
 }
 
 .hover-card-static {
@@ -237,7 +315,44 @@
 
 .hover-card-static:hover {
   transform: scale(1.02);
-  box-shadow: 0 8px 30px -10px rgba(61, 82, 160, 0.15);
+  box-shadow: 0 8px 30px -10px rgba(var(--color-brand-rgb) / 0.15);
+}
+
+/* ── Dark mode: elevation via lighter surfaces, not shadows ─────── */
+
+.dark .hover-card:hover {
+  box-shadow: 0 0 0 1px var(--border-strong), 0 12px 40px -12px rgba(var(--color-brand-rgb) / 0.25);
+}
+
+.dark .hover-card-static:hover {
+  box-shadow: 0 0 0 1px var(--border-default);
+}
+
+/* ── Skeleton shimmer ───────────────────────────────────────────── */
+
+.skeleton {
+  background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 50%, var(--skeleton-from) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────── */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+/* ── Selection ──────────────────────────────────────────────────── */
+
+::selection {
+  background-color: rgba(var(--color-brand-rgb) / 0.2);
+  color: var(--text-primary);
 }
 
 /* ── prefers-reduced-motion ─────────────────────────────────────── */

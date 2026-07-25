@@ -128,48 +128,48 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
 
   if (isLoading) {
     return (
-      <div className="global-content bg-white mt-12 pb-10 pt-8">
-        <div className="animate-pulse space-y-6 pt-10">
+      <div className="global-content bg-card mt-12 pb-10 pt-8">
+        <div className=" space-y-6 pt-10">
           {/* Title */}
-          <div className="h-8 w-32 rounded bg-slate-200" />
+          <div className="h-8 w-32 rounded skeleton" />
 
           {/* Warning banner */}
-          <div className="h-20 rounded-lg bg-slate-200" />
+          <div className="h-20 rounded-lg skeleton" />
 
           {/* Short link section */}
           <div className="space-y-2">
-            <div className="h-4 w-24 rounded bg-slate-200" />
-            <div className="h-6 w-48 rounded bg-slate-200" />
+            <div className="h-4 w-24 rounded skeleton" />
+            <div className="h-6 w-48 rounded skeleton" />
           </div>
 
           {/* Destination URL section */}
           <div className="space-y-2">
-            <div className="h-4 w-32 rounded bg-slate-200" />
-            <div className="h-6 w-64 rounded bg-slate-200" />
+            <div className="h-4 w-32 rounded skeleton" />
+            <div className="h-6 w-64 rounded skeleton" />
           </div>
 
           {/* Divider */}
-          <div className="h-px w-full bg-slate-200" />
+          <div className="h-px w-full skeleton" />
 
           {/* Optional details */}
           <div className="space-y-4">
-            <div className="h-4 w-32 rounded bg-slate-200" />
+            <div className="h-4 w-32 rounded skeleton" />
             <div className="space-y-4">
               <div className="space-y-2">
-                <div className="h-4 w-12 rounded bg-slate-200" />
-                <div className="h-12 rounded-none bg-slate-200" />
+                <div className="h-4 w-12 rounded skeleton" />
+                <div className="h-12 rounded-none skeleton" />
               </div>
               <div className="space-y-2">
-                <div className="h-4 w-20 rounded bg-slate-200" />
-                <div className="h-12 rounded-none bg-slate-200" />
+                <div className="h-4 w-20 rounded skeleton" />
+                <div className="h-12 rounded-none skeleton" />
               </div>
             </div>
           </div>
 
           {/* Footer buttons */}
           <div className="flex justify-end gap-3">
-            <div className="h-12 w-24 rounded-none bg-slate-200" />
-            <div className="h-12 w-24 rounded-none bg-slate-200" />
+            <div className="h-12 w-24 rounded-none skeleton" />
+            <div className="h-12 w-24 rounded-none skeleton" />
           </div>
         </div>
       </div>
@@ -178,34 +178,34 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
 
   if (!link) {
     return (
-      <div className="global-content bg-white pt-10 text-sm text-red-600">
+      <div className="global-content bg-card pt-10 text-sm text-red-600">
         Link not found
       </div>
     )
   }
 
   return (
-    <div className="global-content bg-white mt-12 pb-10 pt-8">
+    <div className="global-content bg-card mt-12 pb-10 pt-8">
       {/* Header */}
-      <h1 className="text-[28px] font-bold text-slate-900 mb-8">Edit link</h1>
+      <h1 className="text-[28px] font-bold text-foreground mb-8">Edit link</h1>
 
       {/* Warning banner */}
       {showWarning && (
-        <div className="relative mb-8 flex gap-3 rounded-lg bg-[#F1ECFB] p-4">
-          <Info className="size-5 shrink-0 text-[#6B4FBB] mt-0.5" />
-          <p className="text-sm text-[#4B3D72] leading-relaxed pr-8">
+        <div className="relative mb-8 flex gap-3 rounded-lg bg-[var(--accent-brand-subtle)] p-4 dark:bg-[var(--accent-brand-subtle)]">
+          <Info className="size-5 shrink-0 text-[var(--accent-brand)] mt-0.5" />
+          <p className="text-sm text-foreground leading-relaxed pr-8">
             Editing your short link will create a <strong>new, separate</strong> short link.
             The current short link <strong>will remain active</strong> and continue to point to the same destination.{' '}
             {/* <button
               onClick={() => {}}
-              className="underline underline-offset-2 font-medium hover:text-[#3D2B6B] transition-colors"
+              className="underline underline-offset-2 font-medium hover:text-[var(--accent-brand-hover)] transition-colors"
             >
               Learn more
             </button> */}
           </p>
           <button
             onClick={() => setShowWarning(false)}
-            className="absolute top-3 right-3 rounded p-1 text-[#6B4FBB] hover:bg-[#E5DCF7] transition-colors"
+            className="absolute top-3 right-3 rounded p-1 text-[var(--accent-brand)] hover:bg-[var(--accent-brand-subtle)]/80 transition-colors"
             aria-label="Dismiss"
           >
             <X className="size-4" />
@@ -215,15 +215,15 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
 
       {/* Short link section */}
       <div className="mb-8">
-        <h2 className="text-sm font-semibold text-slate-700 mb-2">Short link</h2>
-        <span className="text-base font-medium text-slate-900">/{link.slug}</span>
+        <h2 className="text-sm font-semibold text-foreground mb-2">Short link</h2>
+        <span className="text-base font-medium text-foreground">/{link.slug}</span>
       </div>
 
       {/* Destination URL section */}
       <div className="mb-8">
-        <h2 className="text-sm font-semibold text-slate-700 mb-2">Destination URL</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-2">Destination URL</h2>
         <div className="flex items-center gap-3">
-          <span className="text-base text-slate-900 truncate flex-1">{link.originalUrl}</span>
+          <span className="text-base text-foreground truncate flex-1">{link.originalUrl}</span>
           <button
             onClick={() => window.open(link.originalUrl, '_blank', 'noopener,noreferrer')}
             className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-500 transition-colors shrink-0"
@@ -236,15 +236,15 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
       </div>
 
       {/* Divider */}
-      <hr className="border-slate-200 my-8" />
+      <hr className="border-border my-8" />
 
       {/* Optional details */}
       <div>
-        <h2 className="text-sm font-semibold text-slate-700 mb-4">Optional details</h2>
+        <h2 className="text-sm font-semibold text-foreground mb-4">Optional details</h2>
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
           {/* Slug */}
           <div className="flex-1">
-            <Label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <Label className="block text-sm font-medium text-foreground mb-1.5">
               Slug
             </Label>
             <Input
@@ -254,7 +254,7 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
                 setSlug(val)
                 if (slugError) validateSlug(val)
               }}
-              className="h-12 rounded-none border-slate-200"
+              className="h-12 rounded-none border-border"
             />
             {slugError && (
               <p className="text-xs text-red-600 mt-1">{slugError}</p>
@@ -282,7 +282,7 @@ export default function EditLinkPage({ params }: { params: Promise<{ id: string 
           variant="outline"
           onClick={() => router.push('/link')}
           disabled={isSaving}
-          className="h-12 px-8 text-[0.95rem] font-medium border-slate-200 hover:bg-slate-50"
+          className="h-12 px-8 text-[0.95rem] font-medium border-border hover:bg-muted/50"
         >
           Cancel
         </Button>

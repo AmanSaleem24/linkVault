@@ -140,42 +140,42 @@ export function SettingsClient({
   return (
     <div className="grid gap-8 pb-24">
       {/* ── Profile Settings ──────────────────────────────────────────────── */}
-      <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-border dark:bg-card">
-        <div className="border-b border-slate-100 p-6 dark:border-border">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-foreground">
+      <section className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm dark:border-border dark:bg-card">
+        <div className="border-b border-border p-6 dark:border-border">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-foreground dark:text-foreground">
             <User className="size-5 text-brand-500" />
             Profile Settings
           </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
             Update your personal information and email address.
           </p>
         </div>
         <div className="p-6">
           <form onSubmit={handleUpdateProfile} className="space-y-6 max-w-xl">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Display Name</label>
+              <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">Display Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+                <User className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="text"
                   required
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Email Address</label>
+              <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">Email Address</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+                <Mail className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                   type="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
               </div>
             </div>
@@ -194,51 +194,51 @@ export function SettingsClient({
 
       {/* ── Security Settings ──────────────────────────────────────────────── */}
       {hasPassword ? (
-        <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-border dark:bg-card">
-          <div className="border-b border-slate-100 p-6 dark:border-border">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-foreground">
+        <section className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm dark:border-border dark:bg-card">
+          <div className="border-b border-border p-6 dark:border-border">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-foreground dark:text-foreground">
               <Shield className="size-5 text-brand-500" />
               Security
             </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
               Ensure your account is using a long, random password to stay secure.
             </p>
           </div>
           <div className="p-6">
             <form onSubmit={handleUpdatePassword} className="space-y-6 max-w-xl">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Current Password</label>
+                <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">Current Password</label>
                 <div className="relative">
-                  <Key className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
+                  <Key className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                   <input
                     type="password"
                     required
                     value={currentPassword}
                     onChange={(e) => setCurrentPassword(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                    className="h-11 w-full rounded-xl border border-border bg-muted/50 pl-10 pr-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                   />
                 </div>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">New Password</label>
+                  <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">New Password</label>
                   <input
                     type="password"
                     required
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                    className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Confirm Password</label>
+                  <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">Confirm Password</label>
                   <input
                     type="password"
                     required
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
+                    className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 dark:border-border dark:bg-background dark:focus:bg-background"
                   />
                 </div>
               </div>
@@ -255,15 +255,15 @@ export function SettingsClient({
           </div>
         </section>
       ) : (
-        <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-border dark:bg-card">
-          <div className="border-b border-slate-100 p-6 dark:border-border">
-            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-foreground">
+        <section className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm dark:border-border dark:bg-card">
+          <div className="border-b border-border p-6 dark:border-border">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-foreground dark:text-foreground">
               <Shield className="size-5 text-brand-500" />
               Security
             </h2>
           </div>
           <div className="p-6">
-            <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-600 dark:border-border dark:bg-muted dark:text-muted-foreground">
+            <div className="rounded-xl border border-border bg-muted/50 p-4 text-sm text-muted-foreground dark:border-border dark:bg-muted dark:text-muted-foreground">
               You signed in using a connected provider (e.g. Google). Password changes are managed by your provider.
             </div>
           </div>
@@ -271,14 +271,14 @@ export function SettingsClient({
       )}
 
       {/* ── Link Defaults (UTM) ─────────────────────────────────────────────── */}
-      <section className="overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm dark:border-border dark:bg-card">
-        <div className="border-b border-slate-100 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 dark:border-border">
+      <section className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm dark:border-border dark:bg-card">
+        <div className="border-b border-border p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 dark:border-border">
           <div>
-            <h2 className="flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-foreground">
+            <h2 className="flex items-center gap-2 text-lg font-bold text-foreground dark:text-foreground">
               <LinkIcon className="size-5 text-brand-500" />
               Link Defaults (UTM Tags)
             </h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
               Automatically append these tracking tags to every new link you create.
             </p>
           </div>
@@ -292,7 +292,7 @@ export function SettingsClient({
           <form onSubmit={handleUpdateDefaults} className="space-y-6 max-w-xl">
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
                   Default Source
                 </label>
                 <input
@@ -301,12 +301,12 @@ export function SettingsClient({
                   disabled={!isPro}
                   value={utmSource}
                   onChange={(e) => setUtmSource(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
                   Default Medium
                 </label>
                 <input
@@ -315,12 +315,12 @@ export function SettingsClient({
                   disabled={!isPro}
                   value={utmMedium}
                   onChange={(e) => setUtmMedium(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
               </div>
 
               <div className="space-y-2 sm:col-span-2">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                <label className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
                   Default Campaign
                 </label>
                 <input
@@ -329,7 +329,7 @@ export function SettingsClient({
                   disabled={!isPro}
                   value={utmCampaign}
                   onChange={(e) => setUtmCampaign(e.target.value)}
-                  className="h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
+                  className="h-11 w-full rounded-xl border border-border bg-muted/50 px-4 text-sm focus:border-brand-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 disabled:cursor-not-allowed disabled:opacity-60 dark:border-border dark:bg-background dark:focus:bg-background"
                 />
               </div>
               <div className="space-y-2 sm:col-span-2">
@@ -362,19 +362,19 @@ export function SettingsClient({
       </section>
 
       {/* ── Danger Zone ──────────────────────────────────────────────── */}
-      <section className="overflow-hidden rounded-3xl border border-red-200/60 bg-white shadow-sm dark:border-red-900/30 dark:bg-card">
+      <section className="overflow-hidden rounded-3xl border border-red-200/60 bg-card shadow-sm dark:border-red-900/30 dark:bg-card">
         <div className="border-b border-red-100 p-6 dark:border-red-900/20">
           <h2 className="flex items-center gap-2 text-lg font-bold text-red-600 dark:text-red-400">
             <AlertTriangle className="size-5" />
             Danger Zone
           </h2>
-          <p className="mt-1 text-sm text-slate-500 dark:text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground dark:text-muted-foreground">
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
         </div>
         <div className="p-6">
           <div className="max-w-xl space-y-4">
-            <p className="text-sm font-medium text-slate-700 dark:text-slate-300">
+            <p className="text-sm font-medium text-foreground dark:text-muted-foreground/60">
               Type <strong className="text-red-600 dark:text-red-400 font-bold select-none">DELETE</strong> below to confirm.
             </p>
             <input

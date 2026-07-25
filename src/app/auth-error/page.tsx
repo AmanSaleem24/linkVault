@@ -18,21 +18,21 @@ export default async function AuthErrorPage({
   const message = ERROR_MESSAGES[error ?? ''] ?? ERROR_MESSAGES.Default
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+    <div className="flex min-h-screen items-center justify-center bg-muted/50 px-4">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-white p-10 text-center shadow-sm">
         <div className="mx-auto mb-6 flex size-14 items-center justify-center rounded-full bg-red-50">
           <AlertTriangle className="size-7 text-red-500" />
         </div>
-        <h1 className="mb-2 text-xl font-semibold text-slate-900">
+        <h1 className="mb-2 text-xl font-semibold text-foreground">
           Authentication Error
         </h1>
         {error && (
-          <p className="mb-1 text-xs font-mono text-slate-400">Code: {error}</p>
+          <p className="mb-1 text-xs font-mono text-muted-foreground">Code: {error}</p>
         )}
-        <p className="mb-8 text-sm text-slate-500">{message}</p>
+        <p className="mb-8 text-sm text-muted-foreground">{message}</p>
         <Link
           href="/login"
-          className="inline-flex items-center justify-center rounded-xl border border-[#23007A] bg-gradient-to-b from-[#3D00D1] to-[#2B0094] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-[#4300E6] hover:to-[#3100A8]"
+          className="inline-flex items-center justify-center rounded-xl border border-[var(--accent-brand-hover)] bg-gradient-to-b from-[var(--accent-brand)] to-[var(--accent-brand)] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:from-[var(--accent-brand-active)] hover:to-[var(--accent-brand)]"
         >
           Back to login
         </Link>
