@@ -56,8 +56,8 @@ export function ExpirySelector({
               className={[
                 'h-9 px-4 rounded-lg text-[0.85rem] font-semibold transition-all duration-150 cursor-pointer',
                 isActive
-                  ? 'bg-white text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-white/50',
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-card/50',
                 disabled && 'opacity-50 cursor-not-allowed',
               ].join(' ')}
             >
@@ -73,8 +73,8 @@ export function ExpirySelector({
           className={[
             'h-9 px-4 rounded-lg text-[0.85rem] font-semibold transition-all duration-150 cursor-pointer',
             isCustom
-              ? 'bg-white text-foreground shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-white/50',
+              ? 'bg-card text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground hover:bg-card/50',
             disabled && 'opacity-50 cursor-not-allowed',
           ].join(' ')}
         >
@@ -99,7 +99,7 @@ export function ExpirySelector({
               {UNIT_LABELS[customUnit] ?? 'Hrs'}
               <ChevronDown className="size-3.5 text-muted-foreground" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-30 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+            <DropdownMenuContent align="start" className="w-30 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
               {(['m', 'h'] as const).map((unit) => (
                 <DropdownMenuItem
                   key={unit}

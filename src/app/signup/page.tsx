@@ -107,7 +107,7 @@ export default function SignupPage() {
       <button
         type="button"
         onClick={() => googleSignInAction()}
-        className="flex h-12 w-full items-center justify-center gap-3 rounded-sm border-2 border-border bg-card text-[15px] font-medium text-foreground shadow-sm transition-all hover:border-[var(--accent-brand-muted)] hover:bg-muted/50 hover:shadow-md active:scale-[0.98]"
+        className="flex h-12 w-full items-center justify-center gap-3 rounded-md border border-border bg-card/80 text-[15px] font-medium text-foreground shadow-sm backdrop-blur-sm transition-all hover:border-[var(--accent-brand-muted)] hover:bg-card hover:shadow-md active:scale-[0.98]"
       >
         <svg width="20" height="20" viewBox="0 0 48 48">
           <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -118,13 +118,13 @@ export default function SignupPage() {
         Continue with Google
       </button>
 
-      <div className="flex items-center gap-4 my-2">
-        <div className="h-px flex-1 bg-slate-200" />
-        <span className="text-[13px] font-medium text-muted-foreground">OR</span>
-        <div className="h-px flex-1 bg-slate-200" />
+      <div className="flex items-center gap-4 my-4">
+        <div className="h-[1px] flex-1 bg-border" />
+        <span className="text-[12px] font-semibold text-muted-foreground tracking-wider uppercase">Or</span>
+        <div className="h-[1px] flex-1 bg-border" />
       </div>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-8">
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
         {error && (
           <div className="flex items-center gap-2 rounded-sm bg-destructive/10 px-4 py-3 text-[15px] font-medium text-destructive">
             <AlertCircle className="h-4 w-4 shrink-0" />
@@ -163,7 +163,7 @@ export default function SignupPage() {
 
         <Button
           type="submit"
-          className="mt-2 h-12 w-full rounded-sm bg-brand text-[15px] font-semibold text-white shadow-lg hover:bg-brand-500 hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all"
+          className="mt-2 h-12 w-full rounded-md bg-[var(--accent-brand)] text-[15px] font-semibold text-white shadow-[0_0_20px_-5px_rgba(112,145,230,0.4)] hover:bg-[var(--accent-brand-hover)] hover:shadow-[0_0_25px_-5px_rgba(112,145,230,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all"
           disabled={loading}
         >
           {loading ? (

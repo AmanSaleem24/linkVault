@@ -30,6 +30,7 @@ import { HeroDashboardMockup } from "@/components/home/login-mockup-3d";
 import {
   AnimatedCounter,
 } from "@/components/home/page-shared";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -261,20 +262,20 @@ function SectionHeader({
 // ─── Logo Marquee ─────────────────────────────────────────────────────────────
 
 function LogoMarquee() {
-  const extended = [...logos, ...logos];
+  const extended = [...logos, ...logos, ...logos, ...logos, ...logos, ...logos];
   return (
-    <div className="relative overflow-hidden py-6">
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white to-transparent dark:from-slate-900 z-10" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white to-transparent dark:from-slate-900 z-10" />
+    <div className="relative overflow-hidden py-6 w-full">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-white to-transparent dark:from-[#1b1c1d] z-10" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-48 bg-gradient-to-l from-white to-transparent dark:from-[#1b1c1d] z-10" />
       <motion.div
-        animate={{ x: [0, -420] }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="flex gap-16 whitespace-nowrap"
+        animate={{ x: ["0%", "-50%"] }}
+        transition={{ duration: 120, repeat: Infinity, ease: "linear" }}
+        className="flex w-max gap-32 whitespace-nowrap"
       >
         {extended.map((name, i) => (
           <span
             key={i}
-            className="text-lg font-bold text-muted-foreground/60 dark:text-muted-foreground select-none tracking-wide"
+            className="text-xl font-bold text-muted-foreground/60 dark:text-muted-foreground select-none tracking-widest"
           >
             {name}
           </span>
@@ -318,7 +319,7 @@ function PricingCard({
         className={`relative flex h-full flex-col rounded-2xl border bg-white shadow-lg transition-shadow duration-300 hover:shadow-xl dark:bg-card ${
           highlighted
             ? "border-[var(--accent-brand)] shadow-[var(--accent-brand)]/10 dark:shadow-[var(--accent-brand)]/20"
-            : "border-border dark:border-slate-700"
+            : "border-border"
         }`}
       >
         {highlighted && (
@@ -398,8 +399,8 @@ function Navbar() {
     <motion.header
       className={`fixed top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-border bg-white/90 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900/90"
-          : "border-b border-transparent bg-white/80 backdrop-blur-sm dark:bg-slate-900/80"
+          ? "border-b border-border bg-white/90 shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-[#040814]/90"
+          : "border-b border-transparent bg-white/80 backdrop-blur-sm dark:bg-[#040814]/80"
       }`}
     >
       <div className="global-content flex items-center justify-between py-4">
@@ -424,6 +425,8 @@ function Navbar() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
+          <div className="mx-1 h-4 w-px bg-border/50" />
           <Link
             href="/login"
             className="text-sm font-semibold text-muted-foreground transition-colors hover:text-[var(--accent-brand)] dark:text-muted-foreground dark:hover:text-[var(--accent-brand)]"
@@ -440,13 +443,16 @@ function Navbar() {
         </div>
 
         {/* Mobile menu toggle */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground dark:text-muted-foreground md:hidden"
-          aria-label="Toggle menu"
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground dark:text-muted-foreground"
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>}
+          </button>
+        </div>
       </div>
 
       {mobileOpen && (
@@ -454,7 +460,7 @@ function Navbar() {
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
-          className="border-t border-border bg-white/95 px-6 pb-6 backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95 md:hidden"
+          className="border-t border-border bg-background/95 dark:border-border md:hidden"
         >
           {links.map((link) => (
             <Link
@@ -496,7 +502,7 @@ function FeatureCard({ feature, index }: { feature: Feature; index: number }) {
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.08, ease: "easeOut" }}
       whileHover={{ y: -6, transition: { type: "spring", stiffness: 300, damping: 22 } }}
-      className="group relative flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-xl dark:border-slate-700 dark:bg-card dark:hover:shadow-[var(--accent-brand)]/15"
+      className="group relative flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-xl dark:bg-card dark:hover:shadow-[var(--accent-brand)]/15"
     >
       {/* Icon */}
       <div
@@ -553,7 +559,7 @@ function DashboardPreview() {
 
           <div className="relative mx-auto max-w-5xl">
             {/* Browser chrome */}
-            <div className="rounded-t-xl border border-b-0 border-border bg-muted px-4 py-3 dark:border-slate-700 dark:bg-card">
+            <div className="rounded-t-xl border border-b-0 border-border bg-muted px-4 py-3 dark:bg-card">
               <div className="flex items-center gap-2">
                 <div className="flex gap-1.5">
                   <div className="h-3 w-3 rounded-full bg-red-400 dark:bg-red-500" />
@@ -567,10 +573,10 @@ function DashboardPreview() {
             </div>
 
             {/* Dashboard content */}
-            <div className="rounded-b-xl border border-border bg-white shadow-2xl shadow-slate-200/50 dark:border-slate-700 dark:bg-slate-900 dark:shadow-slate-900/50">
+            <div className="rounded-b-xl border border-border bg-card">
               <div className="grid grid-cols-12">
                 {/* Sidebar mock */}
-                <div className="hidden md:col-span-3 md:flex md:flex-col md:border-r md:border-border md:dark:border-slate-700 md:p-4 md:gap-1">
+                <div className="hidden md:col-span-3 md:flex md:flex-col md:border-r md:border-border md:p-4 md:gap-1">
                   {["Overview", "All Links", "Analytics", "QR Codes", "Activity", "Settings"].map((item, i) => (
                     <motion.div
                       key={item}
@@ -608,7 +614,7 @@ function DashboardPreview() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.5 + i * 0.1, duration: 0.5 }}
-                        className="rounded-xl border border-border bg-muted/50/80 p-4 dark:border-slate-700 dark:bg-card/80"
+                        className="rounded-xl border border-border bg-card/80"
                       >
                         <p className="text-xs font-medium text-muted-foreground dark:text-muted-foreground">
                           {stat.label}
@@ -630,7 +636,7 @@ function DashboardPreview() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.9, duration: 0.5 }}
-                    className="mt-4 rounded-xl border border-border bg-muted/50/80 p-5 dark:border-slate-700 dark:bg-card/80"
+                    className="mt-4 rounded-xl border border-border bg-card/80"
                   >
                     <div className="flex items-center justify-between">
                       <div>
@@ -679,9 +685,9 @@ function DashboardPreview() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 1.2, duration: 0.5 }}
-                    className="mt-4 rounded-xl border border-border bg-muted/50/80 dark:border-slate-700 dark:bg-card/80 overflow-hidden"
+                    className="mt-4 rounded-xl border border-border bg-card/80 overflow-hidden"
                   >
-                    <div className="border-b border-border px-5 py-3 dark:border-slate-700">
+                    <div className="border-b border-border px-5 py-3">
                       <p className="text-sm font-semibold text-foreground dark:text-white">
                         Recent Links
                       </p>
@@ -693,7 +699,7 @@ function DashboardPreview() {
                     ].map((link) => (
                       <div
                         key={link.slug}
-                        className="flex items-center justify-between border-b border-border px-5 py-3 last:border-0 dark:border-slate-700/50"
+                        className="flex items-center justify-between border-b border-border/50"
                       >
                         <div className="flex items-center gap-3">
                           <div className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -776,7 +782,7 @@ function TestimonialCard({ testimonial, index }: { testimonial: Testimonial; ind
       initial={{ opacity: 0, y: 20 }}
       animate={isInView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.6, delay: index * 0.1, ease: "easeOut" }}
-      className="flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:border-slate-700 dark:bg-card"
+      className="flex h-full flex-col rounded-2xl border border-border bg-white p-7 shadow-sm transition-shadow duration-300 hover:shadow-lg dark:bg-card"
     >
       <Quote className="mb-4 h-8 w-8 text-[var(--accent-brand)]/20 dark:text-[var(--accent-brand)]/20" />
       <p className="flex-1 text-sm leading-relaxed text-muted-foreground dark:text-muted-foreground/60">
@@ -891,7 +897,7 @@ export default function Home() {
                 </Link>
                 <Link
                   href="#how-it-works"
-                  className="inline-flex h-14 items-center rounded-2xl border-2 border-border bg-white px-8 text-base font-bold text-foreground transition-all duration-200 hover:border-[var(--accent-brand)]/30 hover:bg-[var(--accent-brand-subtle)]/50 dark:border-slate-700 dark:bg-card dark:text-foreground dark:hover:border-[var(--accent-brand)]/50 dark:hover:bg-[var(--accent-brand)]/10 active:scale-[0.97]"
+                  className="inline-flex h-14 items-center rounded-2xl border-2 border-border bg-white px-8 text-base font-bold text-foreground transition-all duration-200 hover:border-[var(--accent-brand)]/30 hover:bg-[var(--accent-brand-subtle)]/50 dark:bg-card dark:text-foreground dark:hover:border-[var(--accent-brand)]/50 dark:hover:bg-[var(--accent-brand)]/10 active:scale-[0.97]"
                   prefetch={false}
                 >
                   See How It Works
@@ -906,7 +912,7 @@ export default function Home() {
               >
                 <div className="flex -space-x-2">
                   {["bg-[var(--accent-brand)]", "bg-[#7091E6]", "bg-[#ADBBDA]", "bg-[#8697C4]"].map((color, i) => (
-                    <div key={i} className={`h-8 w-8 rounded-full border-2 border-white ${color} dark:border-slate-800`} />
+                    <div key={i} className={`h-8 w-8 rounded-full border-2 border-white ${color}`} />
                   ))}
                 </div>
                 <div>
@@ -936,15 +942,17 @@ export default function Home() {
       </section>
 
       {/* ── Logo Marquee ───────────────────────────────────────────────── */}
-      <section className="border-y border-border bg-muted/50/80 dark:border-slate-800 dark:bg-card/30">
+      <section className="sticky top-20 -z-10 border-y border-border/50 py-4">
         <div className="global-content">
           <p className="py-6 text-center text-xs font-semibold uppercase tracking-widest text-muted-foreground dark:text-muted-foreground">
             Trusted by innovative teams worldwide
           </p>
-          <LogoMarquee />
         </div>
+        <LogoMarquee />
       </section>
 
+      {/* ── Parallax Foreground Layer ───────────────────────────────────── */}
+      <div className="relative z-10 bg-background shadow-[0_-20px_40px_rgba(0,0,0,0.05)] dark:shadow-[0_-20px_40px_rgba(0,0,0,0.2)]">
       {/* ── Stats Section ──────────────────────────────────────────────── */}
       <section className="relative overflow-hidden py-20">
         <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -1043,7 +1051,7 @@ export default function Home() {
             subtitle="Start free, upgrade when you need more. No hidden fees, no surprises."
           />
 
-          <div className="mt-16 grid gap-8 lg:grid-cols-3">
+          <div className="mx-auto mt-16 grid max-w-4xl gap-8 lg:grid-cols-2">
             {pricingTiers.map((tier, i) => (
               <PricingCard key={tier.name} {...tier} delay={i * 0.1} />
             ))}
@@ -1052,63 +1060,57 @@ export default function Home() {
       </section>
 
       {/* ── CTA Section ────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden py-24">
-        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-          <div className="absolute left-1/2 top-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-[#3D52A0]/15 via-[#7091E6]/10 to-[#ADBBDA]/10 blur-[120px] dark:from-[#3D52A0]/20 dark:via-[#7091E6]/12 dark:to-[#ADBBDA]/15" />
+      <section className="relative overflow-hidden bg-muted/40 py-24 sm:py-32 dark:bg-card/30 border-t border-border/50">
+        {/* Decorative */}
+        <div className="pointer-events-none absolute inset-0 opacity-[0.03] dark:opacity-5" aria-hidden="true">
+          <div className="h-full w-full" style={{
+            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+          }} />
         </div>
 
-        <div className="global-content relative z-10">
+        <div className="global-content relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-80px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}
-            className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl bg-gradient-to-br from-[#3D52A0] to-[var(--accent-brand-hover)] px-8 py-16 text-center shadow-2xl shadow-[var(--accent-brand)]/25 dark:shadow-[var(--accent-brand)]/30 sm:px-16"
+            className="mx-auto max-w-3xl"
           >
-            {/* Decorative */}
-            <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
-              <div className="h-full w-full" style={{
-                backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-                backgroundSize: "24px 24px",
-              }} />
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--accent-brand)]/10">
+              <Rocket className="h-8 w-8 text-[var(--accent-brand)]" />
             </div>
-
-            <div className="relative z-10">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
-                <Rocket className="h-8 w-8 text-white" />
-              </div>
-              <h2 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
-                Ready to supercharge your links?
-              </h2>
-              <p className="mt-4 text-lg leading-relaxed text-white/80">
-                Join thousands of teams using LinkVault to create, manage, and track their short links.
-                Start free today — no credit card required.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-                <Link
-                  href="/signup"
-                  className="group inline-flex h-14 items-center rounded-2xl bg-white px-8 text-base font-bold text-[var(--accent-brand)] shadow-lg transition-all duration-200 hover:bg-[var(--accent-brand-subtle)] hover:shadow-xl active:scale-[0.97]"
-                >
-                  Start Building for Free
-                  <ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  href="/login"
-                  className="inline-flex h-14 items-center rounded-2xl border-2 border-white/25 px-8 text-base font-bold text-white transition-all duration-200 hover:border-white/50 hover:bg-white/10 active:scale-[0.97]"
-                >
-                  Sign In
-                </Link>
-              </div>
-              <p className="mt-4 text-xs text-white/50">
-                Free forever for personal use · No credit card required
-              </p>
+            <h2 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
+              Ready to supercharge your links?
+            </h2>
+            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+              Join thousands of teams using LinkVault to create, manage, and track their short links.
+              Start free today — no credit card required.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/signup"
+                className="group inline-flex h-14 items-center rounded-2xl bg-[var(--accent-brand)] px-8 text-base font-bold text-white shadow-lg transition-all duration-200 hover:bg-[var(--accent-brand-hover)] hover:shadow-xl active:scale-[0.97]"
+              >
+                Start Building for Free
+                <ArrowRight className="ml-2.5 h-5 w-5 transition-transform duration-200 group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex h-14 items-center rounded-2xl border-2 border-border px-8 text-base font-bold text-foreground transition-all duration-200 hover:border-foreground/20 hover:bg-muted active:scale-[0.97]"
+              >
+                Sign In
+              </Link>
             </div>
+            <p className="mt-4 text-xs text-muted-foreground/70">
+              Free forever for personal use · No credit card required
+            </p>
           </motion.div>
         </div>
       </section>
 
       {/* ── Footer ─────────────────────────────────────────────────────── */}
-      <footer className="border-t border-border bg-muted/50 dark:border-slate-800 dark:bg-slate-900">
+      <footer className="border-t border-border bg-muted/50">
         <div className="global-content py-16 md:py-20">
           <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-5">
             {/* Brand column */}
@@ -1189,7 +1191,7 @@ export default function Home() {
               <ul className="mt-4 space-y-3">
                 {["Privacy Policy", "Terms of Service", "Cookie Policy"].map((item) => (
                   <li key={item}>
-                    <span className="text-sm text-muted-foreground dark:text-muted-foreground">
+                    <span className="text-sm text-muted-foreground">
                       {item}
                     </span>
                   </li>
@@ -1198,18 +1200,19 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-border pt-8 dark:border-slate-800">
+          <div className="mt-16 border-t border-border pt-8">
             <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 &copy; {new Date().getFullYear()} LinkVault. All rights reserved.
               </p>
-              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 Built with Next.js, Prisma, and edge caching
               </p>
             </div>
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 }

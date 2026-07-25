@@ -88,7 +88,7 @@ export function CommandPalette() {
         
         <CommandGroup heading="Actions">
           <CommandItem onSelect={() => handleNavigate('/link?create=true')}>
-            <Plus className="mr-2 size-4 text-brand-500" />
+            <Plus className="mr-2 size-4 text-foreground" />
             <span>Create new link</span>
           </CommandItem>
           <CommandItem onSelect={() => handleNavigate('/analytics')}>
@@ -96,7 +96,7 @@ export function CommandPalette() {
             <span>View analytics</span>
           </CommandItem>
           <CommandItem onSelect={() => handleNavigate('/link')}>
-            <Download className="mr-2 size-4 text-sky-500" />
+            <Download className="mr-2 size-4 text-foreground" />
             <span>Download CSV</span>
           </CommandItem>
         </CommandGroup>
@@ -109,7 +109,7 @@ export function CommandPalette() {
             <span>Home</span>
           </CommandItem>
           <CommandItem onSelect={() => handleNavigate('/link')}>
-            <Link2 className="mr-2 size-4 text-brand-500" />
+            <Link2 className="mr-2 size-4 text-foreground" />
             <span>All Links</span>
           </CommandItem>
           <CommandItem onSelect={() => handleNavigate('/analytics')}>
@@ -131,7 +131,7 @@ export function CommandPalette() {
                   key={link.id}
                   onSelect={() => handleNavigate(`/link/${link.id}`)}
                 >
-                  <Search className="mr-2 size-4 text-indigo-500" />
+                  <Search className="mr-2 size-4 text-muted-foreground" />
                   <span className="truncate">/{link.slug}</span>
                   <span className="ml-auto text-xs text-muted-foreground truncate max-w-[200px]">
                     {link.originalUrl}

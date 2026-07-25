@@ -124,7 +124,7 @@ export function LinkRow({
             <DropdownMenuTrigger className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus:outline-none">
               <MoreHorizontal className="size-4" />
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+            <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
               <DropdownMenuItem
                 onClick={onCopy}
                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[0.85rem] font-medium text-foreground hover:bg-muted/50 cursor-pointer"

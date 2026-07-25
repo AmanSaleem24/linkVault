@@ -26,6 +26,8 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -136,59 +138,58 @@
 
 .dark {
   /*
-   * Elevation scale — each step is ~6-8% oklch lightness above the one below:
-   *   base (#0D0D0F)  → card (#1A1A1E)  → popover (#252529)
-   * Never use pure #000 or #fff — avoids halation.
+   * Elevation scale — each step is 5% HSL lightness above the one below.
+   * Uses a very subtle brand hue (225) to keep it cool but gray.
    */
-  --background: oklch(0.09 0 0);          /* #0D0D0F — page bg, darkest */
-  --foreground: oklch(0.92 0 0);          /* #E8E8E6 — off-white, never #fff */
-  --card: oklch(0.155 0 0);               /* #1A1A1E — cards, clearly above page */
-  --card-foreground: oklch(0.92 0 0);
-  --popover: oklch(0.22 0 0);             /* #252529 — floating layers, lightest */
-  --popover-foreground: oklch(0.92 0 0);
+  --background: hsl(225, 4%, 11%);        /* Base tier — page background */
+  --foreground: hsl(225, 4%, 94%);
+  --card: hsl(225, 4%, 16%);              /* Raised tier — cards (+5% lightness) */
+  --card-foreground: hsl(225, 4%, 94%);
+  --popover: hsl(225, 4%, 21%);           /* Overlay tier — dropdowns (+5% lightness) */
+  --popover-foreground: hsl(225, 4%, 94%);
   --primary: var(--color-brand-300);
   --primary-foreground: #ffffff;
-  --secondary: oklch(0.26 0 0);           /* slightly above popover for secondary els */
-  --secondary-foreground: oklch(0.92 0 0);
-  --muted: oklch(0.22 0 0);              /* subtle fill — same as popover surface */
-  --muted-foreground: oklch(0.60 0 0);
-  --accent: oklch(0.26 0 0);
-  --accent-foreground: oklch(0.92 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 14%);
+  --secondary: hsl(225, 4%, 21%);
+  --secondary-foreground: hsl(225, 4%, 94%);
+  --muted: hsl(225, 4%, 18%);             /* Subtle fill for hovered items */
+  --muted-foreground: hsl(225, 4%, 68%);
+  --accent: hsl(225, 4%, 21%);
+  --accent-foreground: hsl(225, 4%, 94%);
+  --destructive: hsl(0, 62%, 50%);
+  --border: hsl(225, 4%, 20%);            /* Softened card border */
+  --input: hsl(225, 4%, 24%);
   --ring: var(--color-brand-300);
-  --chart-1: oklch(0.80 0 0);
-  --chart-2: oklch(0.65 0 0);
-  --chart-3: oklch(0.50 0 0);
-  --chart-4: oklch(0.38 0 0);
-  --chart-5: oklch(0.28 0 0);
-  --sidebar: oklch(0.13 0 0);             /* sidebar sits between page and card */
-  --sidebar-foreground: oklch(0.92 0 0);
+  --chart-1: hsl(225, 70%, 75%);
+  --chart-2: hsl(225, 60%, 65%);
+  --chart-3: hsl(225, 50%, 55%);
+  --chart-4: hsl(225, 40%, 45%);
+  --chart-5: hsl(225, 30%, 35%);
+  --sidebar: hsl(225, 4%, 13%);            /* Sidebar sits between base and raised */
+  --sidebar-foreground: hsl(225, 4%, 94%);
   --sidebar-primary: var(--color-brand-300);
-  --sidebar-primary-foreground: oklch(0.92 0 0);
-  --sidebar-accent: oklch(0.22 0 0);
-  --sidebar-accent-foreground: oklch(0.92 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: hsl(225, 4%, 18%);
+  --sidebar-accent-foreground: hsl(225, 4%, 94%);
+  --sidebar-border: hsl(225, 4%, 20%);
   --sidebar-ring: var(--color-brand-300);
 
   /* ── Semantic surface tokens (mirrors the shadcn vars above) ─────────── */
-  --surface-base:    oklch(0.09 0 0);    /* page bg */
-  --surface-raised:  oklch(0.155 0 0);   /* cards, panels */
-  --surface-overlay: oklch(0.22 0 0);    /* dropdowns, popovers, modals */
-  --surface-sunken:  oklch(0.065 0 0);   /* inset inputs, recessed wells */
+  --surface-base:    hsl(225, 4%, 11%);
+  --surface-raised:  hsl(225, 4%, 16%);
+  --surface-overlay: hsl(225, 4%, 21%);
+  --surface-sunken:  hsl(225, 4%, 9%);
 
   /* ── Semantic text tokens ─────────────────────────────────────────────── */
-  --text-primary:    oklch(0.92 0 0);
+  --text-primary:    hsl(225, 6%, 92%);
   --text-secondary:  oklch(0.65 0 0);
   --text-muted:      oklch(0.50 0 0);
   --text-disabled:   oklch(0.38 0 0);
   --text-on-accent:  #ffffff;
 
   /* ── Semantic border tokens ───────────────────────────────────────────── */
-  --border-subtle:   oklch(1 0 0 / 6%);
-  --border-default:  oklch(1 0 0 / 9%);
-  --border-strong:   oklch(1 0 0 / 18%);
+  --border-subtle:   hsl(225, 4%, 29%);   /* Light-mode-adjacent gray for popover highlights */
+  --border-default:  hsl(225, 4%, 20%);   /* Soft card border */
+  --border-strong:   hsl(225, 4%, 25%);
 
   /* ── Accent tokens — same BRAND HUE (225°), increased lightness ───────── */
   --accent-brand:        #7091E6;
@@ -199,14 +200,14 @@
   --color-brand-rgb: 112 145 230; /* brand-300 in dark mode */
 
   /* ── Semantic status tokens ───────────────────────────────────────────── */
-  --status-success:  oklch(0.72 0.18 145);
-  --status-warning:  oklch(0.80 0.18 75);
-  --status-danger:   oklch(0.704 0.191 22.216);
-  --status-info:     oklch(0.76 0.18 255);
+  --status-success:  hsl(145, 60%, 45%);
+  --status-warning:  hsl(35, 80%, 55%);
+  --status-danger:   hsl(0, 62%, 50%);
+  --status-info:     hsl(210, 80%, 55%);
 
   /* ── Skeleton shimmer (dark) — starts at card level, shimmers slightly lighter */
-  --skeleton-from:   oklch(0.19 0 0);
-  --skeleton-to:     oklch(0.28 0 0);
+  --skeleton-from:   hsl(225, 4%, 18%);
+  --skeleton-to:     hsl(225, 4%, 24%);
 }
 
 @layer base {

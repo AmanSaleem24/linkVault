@@ -208,7 +208,7 @@ export function QrManager({ qrCodes, isPro, qrLimit, appUrl }: QrManagerProps) {
                         >
                           <Download className="size-4 text-muted-foreground" />
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 shadow-xl ring-1 ring-white/8 dark:ring-white/8">
+                        <DropdownMenuContent align="end" className="w-48 rounded-2xl p-2 shadow-xl ring-1 ring-border-subtle dark:ring-border-subtle">
                           <DropdownMenuItem 
                             onClick={() => downloadImage(qr.id, qr.link ? qr.link.slug : 'raw', 'png')}
                             className="flex cursor-pointer items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted/50 dark:text-muted-foreground/60 dark:hover:bg-muted/50"

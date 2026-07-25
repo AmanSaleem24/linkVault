@@ -65,8 +65,8 @@ export function Sidebar({ isPro: _isPro = false }: { isPro?: boolean }) {
             </span>
           </Link>
         ) : (
-          <Link href="/home" className="mx-auto flex size-7 items-center justify-center">
-            <Image src="/logo.svg" alt="LinkVault" width={32} height={32} className="rounded-md w-auto h-8" />
+          <Link href="/home" className="mx-auto flex items-center justify-center">
+            <Image src="/logo.svg" alt="LinkVault" width={48} height={48} className="rounded-md w-auto h-12" />
           </Link>
         )}
       </div>

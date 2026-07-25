@@ -56,7 +56,7 @@ export function SortDropdown({ sort, onSort }: SortDropdownProps) {
         {activeRow ? SORT_TRIGGER_LABEL[sort.field]?.(sort.order) ?? 'Sort' : 'Sort'}
         <ChevronDown className="size-3.5 text-muted-foreground" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 rounded-xl border border-border bg-popover p-1 shadow-lg shadow-black/20 ring-1 ring-white/8">
+      <DropdownMenuContent align="end" className="w-52 rounded-xl border border-border bg-popover p-1 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
         {SORT_ROWS.map(row => {
           const isActive = sort.field === row.value
           return (

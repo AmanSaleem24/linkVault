@@ -44,8 +44,8 @@ export function AuthField({
         placeholder={placeholder}
         value={value}
         onChange={onChange}
-        className={`h-11 w-full rounded-sm border-2 bg-card px-4 text-[15px] text-foreground outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-blue-400 focus:ring-4 focus:ring-brand/10 ${
-          error ? 'border-red-500 focus:border-red-500' : 'border-white focus:border-brand'
+        className={`h-11 w-full rounded-sm border-2 bg-card px-4 text-[15px] text-foreground outline-none transition-all shadow-[0_0_10px_rgba(0,0,0,0.06)] hover:border-[var(--accent-brand-hover)] focus:ring-4 focus:ring-[var(--accent-brand)]/10 ${
+          error ? 'border-red-500 focus:border-red-500' : 'border-border focus:border-[var(--accent-brand)]'
         } ${inputClassName ?? ''}`}
       />
       {error && <span className="text-[13px] text-red-500">{error}</span>}

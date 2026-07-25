@@ -211,7 +211,7 @@ export default function LinkAnalyticsPage() {
                 <DropdownMenuTrigger className="flex size-9 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted/50 transition-colors">
                   <MoreHorizontal className="size-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+                <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
                   <DropdownMenuItem onClick={handleCopy} className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground cursor-pointer">
                     <Copy className="size-4 text-muted-foreground" /> Copy link
                   </DropdownMenuItem>

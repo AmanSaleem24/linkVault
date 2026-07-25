@@ -60,7 +60,7 @@ export function LinkFilters({
               <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
             </svg>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+          <DropdownMenuContent align="end" className="w-44 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
             {STATUS_OPTIONS.map(option => (
               <DropdownMenuItem
                 key={option.value}

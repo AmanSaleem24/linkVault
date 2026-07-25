@@ -211,7 +211,7 @@ export function DateFilterPopover({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 z-50 mt-2 w-[340px] rounded-2xl border border-border bg-popover p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] ring-1 ring-white/8 animate-in fade-in slide-in-from-top-2 duration-200 origin-top">
+          <div className="absolute top-full left-0 z-50 mt-2 w-[340px] rounded-2xl border border-border bg-popover p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.25)] ring-1 ring-border-subtle animate-in fade-in slide-in-from-top-2 duration-200 origin-top">
             
             {/* Mode tabs */}
             <div className="mb-4 flex rounded-lg border border-border bg-muted/50 p-1">

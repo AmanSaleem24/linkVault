@@ -162,7 +162,7 @@ export default function CreateLinkPage() {
               </label>
 
               {/* Link Expiration */}
-              <div className={`rounded-xl border transition-all duration-200 ${expires && isPro ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/2' : 'border-border bg-white'}`}>
+              <div className={`rounded-xl border transition-all duration-200 ${expires && isPro ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/2' : 'border-border bg-card'}`}>
                 <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${expires && isPro ? '' : 'hover:-translate-y-px hover:border-border hover:shadow-md'}`}>
                   <div className="flex items-center gap-3.5">
                     <div className="relative flex size-4.5 items-center justify-center">
@@ -211,7 +211,7 @@ export default function CreateLinkPage() {
                             </span>
                             <ChevronDown className="size-4 text-muted-foreground transition-transform" />
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="start" className="w-[220px] rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+                          <DropdownMenuContent align="start" className="w-[220px] rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
                             {PRESET_DURATIONS.filter(d => d.value !== null).map(d => (
                               <DropdownMenuItem
                                 key={d.value as string}
@@ -250,7 +250,7 @@ export default function CreateLinkPage() {
                                 {customUnit === 'm' ? 'Min' : 'Hrs'}
                                 <ChevronDown className="size-3.5 text-muted-foreground" />
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="start" className="w-25 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-white/8">
+                              <DropdownMenuContent align="start" className="w-25 rounded-xl border border-border bg-popover p-1.5 shadow-lg shadow-black/20 ring-1 ring-border-subtle">
                                 <DropdownMenuItem
                                   onClick={() => setCustomUnit('m')}
                                   className={`flex items-center justify-between rounded-lg px-3 py-2 text-[0.85rem] font-medium transition-colors cursor-pointer ${customUnit === 'm' ? 'bg-[var(--accent-brand)]/8 text-[var(--accent-brand)]' : 'text-foreground hover:bg-muted/50'}`}
@@ -276,7 +276,7 @@ export default function CreateLinkPage() {
               </div>
 
               {/* UTM Tags */}
-              <div className={`rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/2' : 'border-border bg-white'}`}>
+              <div className={`rounded-xl border transition-all duration-200 ${showUtms && isPro ? 'border-[var(--accent-brand)]/30 bg-[var(--accent-brand)]/2' : 'border-border bg-card'}`}>
                 <label className={`flex cursor-pointer items-center justify-between p-4 transition-all ${showUtms && isPro ? '' : 'hover:-translate-y-px hover:border-border hover:shadow-md'}`}>
                   <div className="flex items-center gap-3.5">
                     <div className="relative flex size-4.5 items-center justify-center">
